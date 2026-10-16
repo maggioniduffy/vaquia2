@@ -27,7 +27,7 @@ Demo users (password `vaquia-demo`), from `scripts/seed.mts`:
 | hse@andesservicios.test | Andes Servicios Petroleros SA | hse |
 | admin@vaquia.test | both | admin |
 
-Without `RESEND_API_KEY`, magic-link emails are printed to the `pnpm dev` log.
+Without `RESEND_API_KEY`, login codes are printed to the `pnpm dev` log.
 
 ## Checks
 
@@ -43,6 +43,21 @@ pnpm build && pnpm test:e2e                # Playwright: light/dark × desktop/m
 2. Run migrations with the **direct** connection string:
    `DATABASE_URL=<neon direct url> pnpm db:migrate`
 3. In Vercel set `DATABASE_URL` (Neon **pooled** URL), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`
-   (the public URL), `RESEND_API_KEY`, `EMAIL_FROM`.
-4. Create the first company and admin with a one-off script against the direct URL (no
-   self-signup: accounts are invite-only). Never run `db:seed` or `db:reset` against Neon.
+   (the public URL), `RESEND_API_KEY`, `EMAIL_FROM`. `BETTER_AUTH_URL` can be left unset on
+   preview deployments (it falls back to `VERCEL_URL`).
+4. Create the first company and its admin with the one-off script against the **direct** URL
+   (no self-signup: accounts are invite-only):
+
+   ```bash
+   DATABASE_URL='<neon direct url>' pnpm admin:create-company \
+     --name "Petrosur Servicios SRL" --admin-email ana@petrosur.com.ar \
+     --admin-name "Ana López" --cuit 30-71111111-1   # --cuit is optional
+   ```
+
+   The admin has no password: they sign in with the 6-digit code sent to their email. The
+   script only inserts (it fails if the CUIT already exists). Never run `db:seed` or
+   `db:reset` against Neon.
+
+5. Optional, guest sessions: create a separate "Empresa demo" company with the same script, then
+   set `GUEST_LOGIN_ENABLED=true` and `GUEST_COMPANY_ID=<demo company id>` in Vercel. Use a demo
+   company only, never a customer's.

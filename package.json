@@ -18,6 +18,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "db:seed": "node --env-file-if-exists=.env.local scripts/seed.mts",
+    "admin:create-company": "node --env-file-if-exists=.env.local scripts/create-company.mts",
     "test:db": "vitest run --config vitest.db.config.ts",
     "db:migrate": "node scripts/dbmate.mjs --wait up",
     "db:rollback": "node scripts/dbmate.mjs rollback",
