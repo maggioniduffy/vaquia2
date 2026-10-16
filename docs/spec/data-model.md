@@ -13,18 +13,32 @@ All tenant tables have `id uuid (v7, client-generatable)`, `company_id uuid`, `c
 ## People & places
 | Table | Key columns | Notes |
 |---|---|---|
-| `personas` | full_name, dni, crew_id?, active | not every persona is a user |
-| `crews` | name, supervisor_persona_id, location_id? | |
-| `locations` | name, field (yacimiento), operator_id?, geo point? | |
-| `operators` | name, code | YPF, PAE… shared catalog (no company_id) |
+| `personas` | full_name, dni (unique per company), crew_id?, active | not every persona is a user; `memberships.persona_id` links a login to a persona |
+| `crews` | name (unique per company), supervisor_persona_id?, location_id? | |
+| `locations` | name (unique per company), field (yacimiento), operator_id?, lat?, lng? | plain numeric lat/lng (no PostGIS) |
+| `operators` | name, code (unique) | YPF, PAE… shared catalog (no company_id), read-only for users |
+
+Same-company references use composite FKs `(company_id, x_id) → x(company_id, id)`, so a row can never point at another tenant's crew/location/persona.
+Writes (insert/update/delete) on people & places: `hse`, `admin`. Every member of the company reads them.
 
 ## Qualifications (A1)
 | Table | Key columns | Notes |
 |---|---|---|
-| `qualification_types` | name, default_validity_months, issuer, operator_id? | seeded + company-custom |
-| `qualifications` | persona_id, type_id, issued_on, expires_on, file_path, status (derived view) | |
-| `task_types` | name (altura, confinado, caliente, eléctrico, izaje, general) | |
-| `task_requirements` | task_type_id, qualification_type_id | which quals a task needs |
+| `qualification_types` | company_id? (null = global seed), name, default_validity_months?, issuer?, operator_id? | global rows read-only; company rows written by `hse`/`admin` |
+| `qualifications` | persona_id, type_id, issued_on, expires_on? (null = no expiry), file_path? | **renewal = new row**; the current one per persona × type is the latest `issued_on` (ties: latest `created_at`). Never updated to "renew"; corrections allowed by `hse`/`admin` |
+| `task_types` | company_id? (null = global seed), code, name | seed: general, altura, espacio_confinado, trabajo_en_caliente, electrico, izaje |
+| `task_requirements` | company_id? (null = global default), task_type_id, qualification_type_id | which quals a task needs; company rows add to the global defaults |
+
+Status of a persona's current qualification, computed on the ART date (`America/Argentina/Buenos_Aires`), never stored:
+- `expired`: `expires_on <= today` (0 days left counts as expired, matching A1's 0-day threshold);
+- `expiring`: `expires_on <= today + 30`;
+- `valid`: otherwise, or `expires_on` is null;
+- `missing`: the task requires the type and the persona has no qualification of that type.
+
+A persona is **apto** for a task type when every required type is `valid` or `expiring`.
+Views use `security_invoker` so RLS of the underlying tables applies.
+
+Files (certificates): stored by `src/lib/storage` under `{company_id}/qualifications/{id}/{name}`; local disk in dev/CI, Cloudflare R2 in production. Downloads go through an authenticated route that checks the key's company prefix against the current company. Attaching a file is optional until R2 is configured.
 
 ## Records
 | Table | Key columns | Notes |

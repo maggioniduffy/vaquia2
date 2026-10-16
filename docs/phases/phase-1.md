@@ -7,7 +7,7 @@
 - [ ] **1.1** (implementer) Migrations: `operators` (global, seeded), `locations`, `crews`, `personas`, `qualification_types` (global seed + company custom), `qualifications`, `task_types`, `task_requirements`. RLS + audit triggers.
 - [ ] **1.2** (implementer) View `qualification_status` → `valid | expiring (≤30d) | expired | missing` per persona × required type.
 - [ ] **1.3** (implementer) Office CRUD: personas, crews, locations (table + sheet form, no extra pages).
-- [ ] **1.4** (implementer) Qualifications per persona: add/renew with file upload (private R2 bucket, presigned URLs). Renewal = new row, old kept.
+- [ ] **1.4** (implementer) Qualifications per persona: add/renew with file upload (`src/lib/storage`: local disk in dev, private R2 in prod; downloads via an authenticated route; file optional until R2 is set up). Renewal = new row, old kept.
 - [ ] **1.5** (implementer) CSV import for personas and qualifications: preview, row-level errors, commit. Template CSV downloadable.
 - [ ] **1.6** (implementer) "Personal apto / no apto" screen: filter by crew, location, task type; status dots.
 - [ ] **1.7** (implementer) Link persona ↔ membership (invite user from persona).
