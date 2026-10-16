@@ -14,7 +14,8 @@ export default async function LoginPage({
       <h1 className="mt-1 mb-8 text-xl font-medium">{t.auth.title}</h1>
       <LoginForm
         next={safeNextPath(next)}
-        initialError={error === "link" ? t.auth.linkExpired : undefined}
+        // Better Auth redirects failed magic links here with ?error=<CODE>.
+        initialError={error ? t.auth.linkExpired : undefined}
       />
     </main>
   );

@@ -29,6 +29,24 @@ jobs:
   db-e2e:
     name: DB tests + e2e
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: vaquia
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/vaquia?sslmode=disable
+      BETTER_AUTH_SECRET: ci-only-secret-not-used-anywhere-else-0123456789
+      BETTER_AUTH_URL: http://localhost:3000
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -37,20 +55,15 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Start Supabase (db + auth + api only)
-        run: pnpm exec supabase start -x realtime,storage-api,imgproxy,edge-runtime,logflare,vector,studio,postgres-meta,supavisor
+      - name: Migrate
+        run: pnpm db:migrate
+      - name: Migrations roll back cleanly
+        run: |
+          pnpm db:rollback && pnpm db:rollback && pnpm db:rollback
+          pnpm db:migrate
       - name: DB tests (RLS, append-only)
-        run: pnpm exec supabase test db
-      - name: Generated types are up to date
-        run: |
-          pnpm db:types
-          git diff --exit-code src/lib/supabase/database.types.ts
-      - name: App env from local Supabase
-        run: |
-          pnpm exec supabase status -o env | tr -d '"' | awk -F= '
-            /^API_URL=/ { print "NEXT_PUBLIC_SUPABASE_URL=" $2 }
-            /^ANON_KEY=/ { print "NEXT_PUBLIC_SUPABASE_ANON_KEY=" $2 }' >> "$GITHUB_ENV"
-          echo "NEXT_PUBLIC_SITE_URL=http://localhost:3000" >> "$GITHUB_ENV"
+        run: pnpm test:db
+      - run: pnpm db:seed
       - run: pnpm build
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:e2e

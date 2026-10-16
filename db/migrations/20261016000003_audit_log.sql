@@ -1,7 +1,8 @@
+-- migrate:up
 -- Phase 0.5 — Append-only audit log + generic triggers.
 
 -- Reusable guard for every append-only table (audit_log, rule_evaluations, notifications,
--- period_snapshots, exports). Applies to every role, including service_role.
+-- period_snapshots, exports). Applies to every role, including the table owner.
 create or replace function public.reject_mutation()
 returns trigger
 language plpgsql
@@ -16,7 +17,7 @@ $$;
 create table public.audit_log (
   id uuid primary key default public.uuid_generate_v7(),
   company_id uuid not null references public.companies (id) on delete restrict,
-  actor_id uuid default auth.uid(),
+  actor_id uuid default app.current_user_id(),
   entity text not null,
   entity_id uuid not null,
   action text not null check (action in ('insert', 'update', 'delete')),
@@ -35,7 +36,6 @@ create trigger audit_log_no_truncate
   for each statement execute function public.reject_mutation();
 
 alter table public.audit_log enable row level security;
-revoke all on public.audit_log from anon, authenticated;
 grant select on public.audit_log to authenticated;
 
 create policy audit_log_select on public.audit_log
@@ -85,13 +85,13 @@ begin
   end if;
 
   insert into public.audit_log (company_id, actor_id, entity, entity_id, action, diff)
-  values (tenant, auth.uid(), tg_table_name, (row_data ->> 'id')::uuid, lower(tg_op), changes);
+  values (tenant, app.current_user_id(), tg_table_name, (row_data ->> 'id')::uuid, lower(tg_op), changes);
 
   return null;
 end;
 $$;
 
-revoke all on function public.audit_row() from public, anon, authenticated;
+revoke all on function public.audit_row() from public;
 
 create trigger companies_audit
   after insert or update or delete on public.companies
@@ -100,3 +100,10 @@ create trigger companies_audit
 create trigger memberships_audit
   after insert or update or delete on public.memberships
   for each row execute function public.audit_row();
+
+-- migrate:down
+drop trigger memberships_audit on public.memberships;
+drop trigger companies_audit on public.companies;
+drop function public.audit_row();
+drop table public.audit_log;
+drop function public.reject_mutation();
