@@ -44,7 +44,7 @@ Rules:
 
 ## Commands
 - `pnpm dev` · `pnpm lint` · `pnpm typecheck` · `pnpm test` · `pnpm test:e2e`
-- `supabase start` · `supabase db reset` · `supabase test db`
+- `supabase start` · `supabase db reset` · `supabase test db` · `pnpm db:types` (regenerate `src/lib/supabase/database.types.ts` after a migration; CI checks it)
 
 ## Cost awareness
 Prefer free tiers and boring tech. Flag any new paid service before adding it.
