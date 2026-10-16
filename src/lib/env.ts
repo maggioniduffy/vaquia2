@@ -1,3 +1,5 @@
+const DEMO_COMPANY_ID = "30000000-0000-7000-8000-000000000001";
+
 function required(name: string): string {
   const value = process.env[name];
   if (!value) throw new Error(`Missing environment variable ${name}`);
@@ -22,6 +24,15 @@ export const env = {
   get resendApiKey() {
     return process.env.RESEND_API_KEY;
   },
+  // Any SMTP server, e.g. Gmail: smtp.gmail.com, port 465, user = the Gmail address,
+  // password = a Google app password (not the account password).
+  get smtp() {
+    const host = process.env.SMTP_HOST;
+    const user = process.env.SMTP_USER;
+    const password = process.env.SMTP_PASSWORD;
+    if (!host || !user || !password) return null;
+    return { host, port: Number(process.env.SMTP_PORT ?? 465), user, password };
+  },
   get emailFrom() {
     return process.env.EMAIL_FROM ?? "Vaquia <no-reply@vaquia.local>";
   },
@@ -29,11 +40,12 @@ export const env = {
   get emailOutboxFile() {
     return process.env.EMAIL_OUTBOX_FILE;
   },
-  // Temporary guest sessions for demos. Needs the flag AND a demo company to attach guests to.
+  // Temporary guest sessions for demos: on unless GUEST_LOGIN_ENABLED=false. Guests join the
+  // demo company created by db/migrations/*_demo_company.sql (override with GUEST_COMPANY_ID).
   get guestLoginEnabled() {
-    return process.env.GUEST_LOGIN_ENABLED === "true" && Boolean(process.env.GUEST_COMPANY_ID);
+    return process.env.GUEST_LOGIN_ENABLED !== "false";
   },
   get guestCompanyId() {
-    return process.env.GUEST_COMPANY_ID;
+    return process.env.GUEST_COMPANY_ID ?? DEMO_COMPANY_ID;
   },
 };

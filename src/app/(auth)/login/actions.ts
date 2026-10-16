@@ -16,28 +16,6 @@ function readEmail(formData: FormData): string {
     .toLowerCase();
 }
 
-export async function signInWithPassword(
-  _prev: LoginState,
-  formData: FormData,
-): Promise<LoginState> {
-  const email = readEmail(formData);
-  const password = String(formData.get("password") ?? "");
-  if (!email || !password) return { error: t.auth.invalidCredentials };
-
-  try {
-    await auth.api.signInEmail({ body: { email, password }, headers: await headers() });
-  } catch (error) {
-    if (
-      error instanceof APIError &&
-      (error.status === "UNAUTHORIZED" || error.statusCode === 401)
-    ) {
-      return { error: t.auth.invalidCredentials };
-    }
-    return { error: t.auth.genericError };
-  }
-  redirect(safeNextPath(String(formData.get("next") ?? "")));
-}
-
 export async function sendCode(_prev: LoginState, formData: FormData): Promise<LoginState> {
   const email = readEmail(formData);
   if (!email) return { error: t.auth.genericError };

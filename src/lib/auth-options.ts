@@ -3,7 +3,6 @@ import type { BetterAuthOptions } from "better-auth";
 // Table/column mapping shared by the app and the schema generator. Tables live in `public`
 // with snake_case columns; ids are uuid so tenant tables can reference users(id).
 export const authOptions = {
-  emailAndPassword: { enabled: true, disableSignUp: true, minPasswordLength: 10 },
   advanced: { database: { generateId: "uuid" } },
   user: {
     modelName: "users",
