@@ -1,14 +1,24 @@
-function required(name: string, value: string | undefined): string {
+function required(name: string): string {
+  const value = process.env[name];
   if (!value) throw new Error(`Missing environment variable ${name}`);
   return value;
 }
 
-// Inlined at build time by Next (NEXT_PUBLIC_*), so they must be referenced literally.
+// Server-only configuration. Read lazily so `next build` works without secrets.
 export const env = {
-  supabaseUrl: required("NEXT_PUBLIC_SUPABASE_URL", process.env.NEXT_PUBLIC_SUPABASE_URL),
-  supabaseAnonKey: required(
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-  ),
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  get databaseUrl() {
+    return required("DATABASE_URL");
+  },
+  get authSecret() {
+    return required("BETTER_AUTH_SECRET");
+  },
+  get siteUrl() {
+    return process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
+  },
+  get resendApiKey() {
+    return process.env.RESEND_API_KEY;
+  },
+  get emailFrom() {
+    return process.env.EMAIL_FROM ?? "Vaquia <no-reply@vaquia.local>";
+  },
 };

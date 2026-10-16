@@ -1,12 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { withUser } from "@/lib/db";
+import { getUserId } from "@/lib/session";
 
 export async function switchCompany(companyId: string): Promise<{ ok: boolean }> {
-  const supabase = await createClient();
-  const { error } = await supabase.rpc("set_active_company", { target: companyId });
-  if (error) return { ok: false };
+  const { userId } = await getUserId();
+  try {
+    await withUser(userId, (db) => db.query("select public.set_active_company($1)", [companyId]));
+  } catch {
+    return { ok: false };
+  }
   revalidatePath("/", "layout");
   return { ok: true };
 }

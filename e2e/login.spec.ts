@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-// Demo users from supabase/seed.sql.
+// Demo users from scripts/seed.mts.
 const PASSWORD = "vaquia-demo";
 
 async function login(page: Page, email: string) {
@@ -69,4 +69,23 @@ test("user with two companies can switch between them", async ({ page }, info) =
   await page.reload();
   await expect(selected()).toHaveText(other);
   await expect(page.getByTestId("company-name")).toHaveCount(0);
+});
+
+test("an invalid magic link shows why", async ({ page }) => {
+  await page.goto(
+    "/api/auth/magic-link/verify?token=not-a-token&callbackURL=/&errorCallbackURL=/login",
+  );
+  await expect(page).toHaveURL(/\/login\?error=/);
+  await expect(
+    page.getByRole("alert").filter({ hasText: "El enlace venció o ya se usó." }),
+  ).toBeVisible();
+});
+
+test("signing out ends the session", async ({ page }) => {
+  await login(page, "hse@petrosur.test");
+  await expect(page).toHaveURL(/\/dashboard$/);
+  await page.getByRole("button", { name: "Salir" }).click();
+  await expect(page).toHaveURL(/\/login/);
+  await page.goto("/dashboard");
+  await expect(page).toHaveURL(/\/login\?next=%2Fdashboard/);
 });

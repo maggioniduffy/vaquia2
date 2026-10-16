@@ -18,7 +18,8 @@ describe("safeNextPath", () => {
 describe("isPublicPath", () => {
   it("allows login and auth routes only", () => {
     expect(isPublicPath("/login")).toBe(true);
-    expect(isPublicPath("/auth/callback")).toBe(true);
+    expect(isPublicPath("/api/auth/sign-in/email")).toBe(true);
+    expect(isPublicPath("/auth/callback")).toBe(false);
     expect(isPublicPath("/dashboard")).toBe(false);
     expect(isPublicPath("/loginx")).toBe(false);
   });

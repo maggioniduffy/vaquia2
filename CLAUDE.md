@@ -1,6 +1,6 @@
 # Vaquia — Claude instructions
 
-HSE platform for oilfield service SMEs (Neuquén). PWA: Next.js 16 + Supabase.
+HSE platform for oilfield service SMEs (Neuquén). PWA: Next.js 16 + Postgres (Neon) + Better Auth.
 
 ## Context loading (keep context small)
 1. Read `docs/PLAN.md` (phase index + status). **Do not** read all phases.
@@ -38,13 +38,15 @@ Rules:
 - Every tenant table has `company_id` + RLS. Every new table gets an RLS test (written in the phase's test task).
 - Append-only tables (`audit_log`, `rule_evaluations`, `notifications`, `period_snapshots`, `exports`): no UPDATE/DELETE, ever.
 - Locked records are never edited — corrections are amendment records.
-- Migrations via Supabase CLI (`supabase/migrations`). Never edit an applied migration.
+- Migrations: plain SQL with dbmate (`db/migrations`, `-- migrate:up` / `-- migrate:down`). Never edit an applied migration.
+- Tenant data access only through `withUser()` (`src/lib/db`): it runs as the `authenticated` role so RLS applies. The bare pool is the table owner and bypasses RLS — Better Auth and scripts only.
+- Every new table: explicit `grant` to `authenticated` (no default privileges).
 - UI follows `docs/spec/design.md`: greys only; color = meaning (danger/warning/success).
 - Commits: Conventional Commits. Small and per task.
 
 ## Commands
 - `pnpm dev` · `pnpm lint` · `pnpm typecheck` · `pnpm test` · `pnpm test:e2e`
-- `supabase start` · `supabase db reset` · `supabase test db` · `pnpm db:types` (regenerate `src/lib/supabase/database.types.ts` after a migration; CI checks it)
+- `docker compose up -d` (local Postgres) · `pnpm db:migrate` · `pnpm db:reset` (local only) · `pnpm db:seed` · `pnpm db:new <name>` · `pnpm test:db`
 
 ## Cost awareness
 Prefer free tiers and boring tech. Flag any new paid service before adding it.

@@ -1,10 +1,11 @@
 "use server";
 
+import { APIError } from "better-auth/api";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { t } from "@/i18n/es-AR";
-import { env } from "@/lib/env";
+import { auth } from "@/lib/auth";
 import { safeNextPath } from "@/lib/routes";
-import { createClient } from "@/lib/supabase/server";
 
 export type LoginState = { error?: string; info?: string };
 
@@ -22,12 +23,16 @@ export async function signInWithPassword(
   const password = String(formData.get("password") ?? "");
   if (!email || !password) return { error: t.auth.invalidCredentials };
 
-  const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) {
-    return {
-      error: error.code === "invalid_credentials" ? t.auth.invalidCredentials : t.auth.genericError,
-    };
+  try {
+    await auth.api.signInEmail({ body: { email, password }, headers: await headers() });
+  } catch (error) {
+    if (
+      error instanceof APIError &&
+      (error.status === "UNAUTHORIZED" || error.statusCode === 401)
+    ) {
+      return { error: t.auth.invalidCredentials };
+    }
+    return { error: t.auth.genericError };
   }
   redirect(safeNextPath(String(formData.get("next") ?? "")));
 }
@@ -37,19 +42,14 @@ export async function sendMagicLink(_prev: LoginState, formData: FormData): Prom
   if (!email) return { error: t.auth.genericError };
 
   const next = safeNextPath(String(formData.get("next") ?? ""));
-  const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: {
-      // Invite-only: never create accounts from the login screen.
-      shouldCreateUser: false,
-      emailRedirectTo: `${env.siteUrl}/auth/callback?next=${encodeURIComponent(next)}`,
-    },
-  });
-  // Same answer whether or not the email exists (unknown emails are rejected as signups), to avoid
-  // account enumeration. Only surface errors the user can act on.
-  if (error?.code === "over_email_send_rate_limit" || error?.status === 429) {
+  try {
+    await auth.api.signInMagicLink({
+      body: { email, callbackURL: next, errorCallbackURL: "/login" },
+      headers: await headers(),
+    });
+  } catch {
     return { error: t.auth.genericError };
   }
+  // Same answer whether or not the email exists, to avoid account enumeration.
   return { info: t.auth.magicLinkSent };
 }

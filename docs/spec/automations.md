@@ -1,7 +1,7 @@
 # Automations
 
 ## A1 — Qualification expiry alerts
-- Daily job 06:00 ART (pg_cron → Edge Function).
+- Daily job 06:00 ART (Vercel Cron → `/api/cron/a1`).
 - Thresholds 30 / 15 / 7 / 0 days. Dedupe key `(qualification_id, threshold)`.
 - **One digest per recipient per day**, never one message per item. Recipients per `workflow.md` escalation table.
 - At 0 days: status `expired` → Layer 1 blocks that persona from signing ATS/PT whose task type requires it (`task_requirements`).

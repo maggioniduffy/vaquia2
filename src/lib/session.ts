@@ -1,7 +1,9 @@
 import "server-only";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import { createClient } from "@/lib/supabase/server";
+import { auth } from "@/lib/auth";
+import { withUser } from "@/lib/db";
 
 export type Role = "worker" | "supervisor" | "hse" | "manager" | "admin";
 
@@ -19,17 +21,26 @@ export type Session = {
   active: CompanyMembership | null;
 };
 
-// One lookup per request. Redirects to /login if there is no valid session.
+type CompanyRow = { company_id: string; name: string; role: Role; is_active: boolean };
+
+// Validated session (cookie → sessions table). Redirects to /login if missing or expired.
+export const getUserId = cache(async (): Promise<{ userId: string; email: string }> => {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) redirect("/login");
+  return { userId: session.user.id, email: session.user.email };
+});
+
+// One lookup per request.
 export const getSession = cache(async (): Promise<Session> => {
-  const supabase = await createClient();
-  const { data: claimsData } = await supabase.auth.getClaims();
-  const claims = claimsData?.claims;
-  if (!claims?.sub) redirect("/login");
+  const { userId, email } = await getUserId();
+  const rows = await withUser(userId, async (db) => {
+    const result = await db.query<CompanyRow>(
+      "select company_id, name, role, is_active from public.my_companies()",
+    );
+    return result.rows;
+  });
 
-  const { data, error } = await supabase.rpc("my_companies");
-  if (error) throw error;
-
-  const companies: CompanyMembership[] = (data ?? []).map((row) => ({
+  const companies = rows.map((row) => ({
     companyId: row.company_id,
     name: row.name,
     role: row.role,
@@ -37,8 +48,8 @@ export const getSession = cache(async (): Promise<Session> => {
   }));
 
   return {
-    userId: claims.sub,
-    email: typeof claims.email === "string" ? claims.email : "",
+    userId,
+    email,
     companies,
     active: companies.find((c) => c.isActive) ?? null,
   };

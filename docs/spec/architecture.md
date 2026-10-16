@@ -1,14 +1,15 @@
 # Architecture
 
 ## Shape
-Single PWA (Next.js on Vercel) for office (desktop) and field (mobile, offline) + Supabase (Postgres, RLS, Auth, Storage). Scheduled jobs: `pg_cron` → Supabase Edge Functions (not Vercel cron).
+Single PWA (Next.js on Vercel) for office (desktop) and field (mobile, offline) + Postgres on Neon (RLS) + Better Auth (in the Next app) + Cloudflare R2 (files). Scheduled jobs: Vercel Cron → route handlers `/api/cron/*` (protected by `CRON_SECRET`).
 
 ```
 PWA (Next.js)
  ├─ app/(office)  dashboards, review, config
  ├─ app/(field)   capture, offline → Dexie (IndexedDB) + outbox
- └─ server actions / route handlers → Supabase
-                                       ├─ pg_cron → Edge Functions (A1, A2, escalation, notifications)
+ ├─ /api/auth/*  Better Auth (sessions in Postgres)
+ ├─ /api/cron/*  scheduled jobs (A1, A2, escalation, notifications) ← Vercel Cron
+ └─ server actions / route handlers → withUser() → Postgres (Neon)
                                        ├─ SQL views (KPIs)
                                        └─ append-only tables (triggers)
 Notifications: in-app inbox · email (Resend) · web push (VAPID)
@@ -27,8 +28,11 @@ Later: STT API · Claude API
 | Rules | json-logic-js |
 | PDF / XLSX | @react-pdf/renderer / exceljs |
 | Email | Resend |
-| Tests | Vitest, Playwright, `supabase test db` |
-| Hosting | Vercel (**Pro once billing customers; Hobby is non-commercial**) + Supabase |
+| Auth | Better Auth: email+password and magic link, invite-only (`disableSignUp`). Tables `users`, `sessions`, `accounts`, `verifications` |
+| DB access | `pg` (node-postgres), raw SQL. Migrations: dbmate |
+| Files | Cloudflare R2 (S3 API), private bucket, presigned URLs |
+| Tests | Vitest (unit + `db/tests` against real Postgres), Playwright |
+| Hosting | Vercel (**Pro once billing customers; Hobby is non-commercial**) + Neon (free tier until pilot; branch per environment) |
 
 ## Offline sync
 - UUIDv7 generated on client; idempotent upsert by id.
@@ -40,10 +44,12 @@ Later: STT API · Claude API
 
 ## Security & tenancy
 - `company_id` on every tenant row; RLS via `current_company_id()` and `has_role(role[])`.
+- Request identity: the app connects as the DB owner; `withUser(userId, fn)` opens a transaction, `set local role authenticated` and sets `app.user_id`, read by `app.current_user_id()`. Use Neon's **pooled** URL (transaction pooling keeps `set local` safe).
+- Cron: Vercel Hobby only allows daily jobs. Hourly escalation (phase 4) needs Vercel Pro, or a GitHub Actions schedule calling the same route as a stopgap.
 - Append-only (`audit_log`, `rule_evaluations`, `notifications`, `period_snapshots`, `exports`): `reject_mutation()` trigger rejects UPDATE/DELETE/TRUNCATE for every role; inserts via functions.
 - Audit: attach `audit_row()` (AFTER INSERT/UPDATE/DELETE) to every tenant table; diff = `{new}` / `{old}` / `{col: {old,new}}`.
-- Private storage buckets, signed URLs.
-- TLS + Supabase encryption at rest. Region: confirm with pilot (São Paulo closest).
+- Private R2 bucket, short-lived presigned URLs; object keys prefixed by `company_id`.
+- TLS + Neon encryption at rest. Region: confirm with pilot (São Paulo closest).
 - Signatures: store signer, timestamp, geo, hash of signed content (firma electrónica, Ley 25.506).
 
 ## Language

@@ -40,7 +40,7 @@ export function OfficeShell({ session, children }: { session: Session; children:
             </NavLink>
           ))}
         </nav>
-        <div className="mt-auto hidden flex-col gap-2 md:flex">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 md:mt-auto md:flex-col md:items-start">
           <Link href="/field" className="text-muted hover:text-text text-sm">
             {t.nav.toField}
           </Link>
