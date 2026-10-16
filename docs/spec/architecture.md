@@ -28,7 +28,7 @@ Later: STT API · Claude API
 | Rules | json-logic-js |
 | PDF / XLSX | @react-pdf/renderer / exceljs |
 | Email | Resend |
-| Auth | Better Auth: email+password and magic link, invite-only (`disableSignUp`). Tables `users`, `sessions`, `accounts`, `verifications` |
+| Auth | Better Auth: email+password and 6-digit email OTP (`emailOTP`, 5 min, 3 attempts, hashed; no magic link), invite-only (`disableSignUp`). Temporary guest sessions (`anonymous` plugin, only when `GUEST_LOGIN_ENABLED=true` and `GUEST_COMPANY_ID` set; demo company only, `hse` role; to be removed). Base URL: `BETTER_AUTH_URL`, else `https://$VERCEL_URL` (preview deploys; `VERCEL_URL`/`VERCEL_BRANCH_URL` are trusted origins). Tables `users`, `sessions`, `accounts`, `verifications` |
 | DB access | `pg` (node-postgres), raw SQL. Migrations: dbmate |
 | Files | Cloudflare R2 (S3 API), private bucket, presigned URLs |
 | Tests | Vitest (unit + `db/tests` against real Postgres), Playwright |
