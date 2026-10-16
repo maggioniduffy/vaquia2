@@ -7,6 +7,7 @@ All tenant tables have `id uuid (v7, client-generatable)`, `company_id uuid`, `c
 |---|---|---|
 | `companies` | name, cuit, plan, settings jsonb | settings: report_day, timezone, kpi_base |
 | `memberships` | user_id, company_id, role enum(worker, supervisor, hse, manager, admin), persona_id? | role lives here |
+| `user_settings` | user_id (pk), active_company_id | user-scoped, not tenant. Written only via `set_active_company()`. `current_company_id()` = active company if still a member, else oldest membership. `my_companies()` feeds the switcher. |
 
 ## People & places
 | Table | Key columns | Notes |

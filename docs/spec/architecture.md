@@ -18,7 +18,7 @@ Later: STT API · Claude API
 ## Stack
 | Concern | Choice |
 |---|---|
-| Framework | Next.js 16 App Router, React 19, TS strict, pnpm |
+| Framework | Next.js 16 App Router, React 19, TS strict (TS 6.x until typescript-eslint supports 7), pnpm. Auth guard lives in `src/proxy.ts` (Next 16 replacement for middleware). |
 | Styling | Tailwind v4 + CSS variables (`docs/spec/design.md`) |
 | Primitives | shadcn/ui (Radix) restyled to tokens |
 | Client state | Zustand (UI only); server state via RSC + server actions |
@@ -40,7 +40,8 @@ Later: STT API · Claude API
 
 ## Security & tenancy
 - `company_id` on every tenant row; RLS via `current_company_id()` and `has_role(role[])`.
-- Append-only (`audit_log`, `rule_evaluations`, `notifications`, `period_snapshots`, `exports`): triggers reject UPDATE/DELETE; inserts via functions.
+- Append-only (`audit_log`, `rule_evaluations`, `notifications`, `period_snapshots`, `exports`): `reject_mutation()` trigger rejects UPDATE/DELETE/TRUNCATE for every role; inserts via functions.
+- Audit: attach `audit_row()` (AFTER INSERT/UPDATE/DELETE) to every tenant table; diff = `{new}` / `{old}` / `{col: {old,new}}`.
 - Private storage buckets, signed URLs.
 - TLS + Supabase encryption at rest. Region: confirm with pilot (São Paulo closest).
 - Signatures: store signer, timestamp, geo, hash of signed content (firma electrónica, Ley 25.506).
