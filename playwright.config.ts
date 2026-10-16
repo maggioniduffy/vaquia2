@@ -7,9 +7,6 @@ const baseURL = process.env.E2E_BASE_URL ?? "http://localhost:3000";
 const outboxFile = process.env.E2E_OUTBOX_FILE ?? path.resolve(".e2e-outbox.jsonl");
 process.env.E2E_OUTBOX_FILE = outboxFile;
 
-// Fixed id of the seeded "Empresa Demo" company (scripts/seed.mts), used as GUEST_COMPANY_ID.
-const GUEST_COMPANY_ID = "30000000-0000-7000-8000-000000000001";
-
 // webServer.env replaces process.env when set, so carry the rest of the environment over
 // (DATABASE_URL, BETTER_AUTH_SECRET, ...). Playwright's type wants string values only.
 const inheritedEnv = Object.fromEntries(
@@ -19,7 +16,10 @@ const inheritedEnv = Object.fromEntries(
 // Login → shell must render in light and dark, on mobile and desktop (phase 0 acceptance).
 export default defineConfig({
   testDir: "e2e",
-  fullyParallel: true,
+  // Logins share per-email OTP state on the server: one worker keeps codes from overwriting
+  // each other across projects.
+  workers: 1,
+  fullyParallel: false,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? "github" : "list",
@@ -46,8 +46,6 @@ export default defineConfig({
         env: {
           ...inheritedEnv,
           EMAIL_OUTBOX_FILE: outboxFile,
-          GUEST_LOGIN_ENABLED: "true",
-          GUEST_COMPANY_ID,
         },
       },
 });

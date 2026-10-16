@@ -27,8 +27,8 @@ Later: STT API · Claude API
 | Offline | Serwist + Dexie |
 | Rules | json-logic-js |
 | PDF / XLSX | @react-pdf/renderer / exceljs |
-| Email | Resend |
-| Auth | Better Auth: email+password and 6-digit email OTP (`emailOTP`, 5 min, 3 attempts, hashed; no magic link), invite-only (`disableSignUp`). Temporary guest sessions (`anonymous` plugin, only when `GUEST_LOGIN_ENABLED=true` and `GUEST_COMPANY_ID` set; demo company only, `hse` role; to be removed). Base URL: `BETTER_AUTH_URL`, else `https://$VERCEL_URL` (preview deploys; `VERCEL_URL`/`VERCEL_BRANCH_URL` are trusted origins). Tables `users`, `sessions`, `accounts`, `verifications` |
+| Email | Resend (needs a verified domain) or any SMTP server (Gmail app password for now); `src/lib/email.ts` |
+| Auth | Better Auth: 6-digit email OTP only (`emailOTP`, 5 min, 3 attempts, hashed; no passwords, no magic link), invite-only (`disableSignUp`). Temporary guest sessions (`anonymous` plugin, on unless `GUEST_LOGIN_ENABLED=false`; guests join the `Empresa Demo` company created by migration as `hse`; to be removed before real customers). Base URL: `BETTER_AUTH_URL`, else `https://$VERCEL_URL` (preview deploys; `VERCEL_URL`/`VERCEL_BRANCH_URL` are trusted origins). Tables `users`, `sessions`, `accounts`, `verifications` |
 | DB access | `pg` (node-postgres), raw SQL. Migrations: dbmate |
 | Files | Cloudflare R2 (S3 API), private bucket, presigned URLs |
 | Tests | Vitest (unit + `db/tests` against real Postgres), Playwright |

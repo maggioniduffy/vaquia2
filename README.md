@@ -18,7 +18,8 @@ pnpm db:reset                     # migrate + seed (local only)
 pnpm dev
 ```
 
-Demo users (password `vaquia-demo`), from `scripts/seed.mts`:
+Demo users from `scripts/seed.mts`. There are no passwords: enter the email, and the 6-digit
+code is printed to the `pnpm dev` log (when no email sender is configured):
 
 | Email | Company | Role |
 |---|---|---|
@@ -29,10 +30,8 @@ Demo users (password `vaquia-demo`), from `scripts/seed.mts`:
 | otp@petrosur.test | Petrosur Servicios SRL | supervisor (OTP e2e only) |
 | otp-lock@petrosur.test | Petrosur Servicios SRL | supervisor (OTP e2e only) |
 
-Seeded company without members: `Empresa Demo` (`30000000-0000-7000-8000-000000000001`), the
-target of `GUEST_COMPANY_ID` for guest sessions.
-
-Without `RESEND_API_KEY`, login codes are printed to the `pnpm dev` log.
+"Entrar como invitado" logs into `Empresa Demo` (created by a migration) as `hse`. It is on by
+default for now; set `GUEST_LOGIN_ENABLED=false` to hide it.
 
 ## Checks
 
@@ -48,8 +47,14 @@ pnpm build && pnpm test:e2e                # Playwright: light/dark × desktop/m
 2. Run migrations with the **direct** connection string:
    `DATABASE_URL=<neon direct url> pnpm db:migrate`
 3. In Vercel set `DATABASE_URL` (Neon **pooled** URL), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`
-   (the public URL), `RESEND_API_KEY`, `EMAIL_FROM`. `BETTER_AUTH_URL` can be left unset on
-   preview deployments (it falls back to `VERCEL_URL`).
+   (the public URL; can stay unset on previews, it falls back to `VERCEL_URL`) and an email
+   sender for the login codes:
+   - **Gmail (free, no domain needed):** turn on 2-step verification, create an app password at
+     https://myaccount.google.com/apppasswords, then set `SMTP_HOST=smtp.gmail.com`,
+     `SMTP_PORT=465`, `SMTP_USER=<your gmail>`, `SMTP_PASSWORD=<the 16-char app password>`,
+     `EMAIL_FROM="Vaquia <your gmail>"`. Limit: about 500 emails/day.
+   - **Resend:** `RESEND_API_KEY` + `EMAIL_FROM` on a verified domain (without a domain Resend
+     only delivers to your own address). Takes precedence over SMTP when set.
 4. Create the first company and its admin with the one-off script against the **direct** URL
    (no self-signup: accounts are invite-only):
 
@@ -62,7 +67,3 @@ pnpm build && pnpm test:e2e                # Playwright: light/dark × desktop/m
    The admin has no password: they sign in with the 6-digit code sent to their email. The
    script only inserts (it fails if the CUIT already exists). Never run `db:seed` or
    `db:reset` against Neon.
-
-5. Optional, guest sessions: create a separate "Empresa demo" company with the same script, then
-   set `GUEST_LOGIN_ENABLED=true` and `GUEST_COMPANY_ID=<demo company id>` in Vercel. Use a demo
-   company only, never a customer's.

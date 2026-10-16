@@ -1,14 +1,7 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import { login } from "./helpers";
 
-// Demo users from scripts/seed.mts.
-const PASSWORD = "vaquia-demo";
-
-async function login(page: Page, email: string) {
-  await page.goto("/login");
-  await page.getByLabel("Email").fill(email);
-  await page.getByLabel("Contraseña").fill(PASSWORD);
-  await page.getByRole("button", { name: "Ingresar", exact: true }).click();
-}
+// Demo users from scripts/seed.mts; they sign in with the emailed code (read from the outbox).
 
 function rgb(hex: string) {
   const n = Number.parseInt(hex.slice(1), 16);
@@ -19,16 +12,8 @@ test("unauthenticated users are sent to login", async ({ page }) => {
   await page.goto("/dashboard");
   await expect(page).toHaveURL(/\/login\?next=%2Fdashboard/);
   await expect(page.getByRole("heading", { name: "Ingresar" })).toBeVisible();
-});
-
-test("wrong password shows an error", async ({ page }) => {
-  await page.goto("/login");
-  await page.getByLabel("Email").fill("hse@petrosur.test");
-  await page.getByLabel("Contraseña").fill("wrong-password");
-  await page.getByRole("button", { name: "Ingresar", exact: true }).click();
-  await expect(
-    page.getByRole("alert").filter({ hasText: "Email o contraseña incorrectos." }),
-  ).toBeVisible();
+  // Code-only login: no password field.
+  await expect(page.getByLabel("Contraseña")).toHaveCount(0);
 });
 
 test("HSE logs in and sees the office shell of their company", async ({ page }, info) => {
