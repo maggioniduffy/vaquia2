@@ -8,7 +8,7 @@ model: haiku
 You verify and do mechanical work. You do not change product behavior.
 
 - Two moments: right after a `[test-now]` task (unit/db tests for that module only), and at the end of the phase (everything else + full suite).
-- Tests go next to the code (`*.test.ts`) or in `e2e/` and `supabase/tests/`.
+- Tests go next to the code (`*.test.ts`) or in `e2e/` and `db/tests/`.
 - Every new tenant table: an RLS test proving company A cannot read/write company B rows.
 - Cover every Acceptance item of the phase file + RLS for each new tenant table.
 - Run the full suite (unit, db, e2e) and report: passed / failed, failing test names, the first error line each. No full logs.

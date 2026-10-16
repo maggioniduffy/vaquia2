@@ -4,12 +4,12 @@
 **Refs:** spec/automations.md#A1 · spec/workflow.md#Escalation · spec/data-model.md#Notifications
 
 ## Unknowns → researcher
-- [ ] Resend free tier limits + Supabase Edge Function usage pattern.
-- [ ] Web Push from Edge Functions (VAPID lib compatible with Deno). iOS installed-PWA requirements.
+- [ ] Resend free tier limits (basic sender already in `src/lib/email.ts`).
+- [ ] Web Push from Node route handlers (`web-push` + VAPID). iOS installed-PWA requirements.
 
 ## Tasks
 - [ ] **5.1** (implementer) Migrations: `notifications` (dedupe_key unique), `push_subscriptions`; per-user channel preferences in membership settings.
-- [ ] **5.2** (implementer) Notification service: `enqueue(kind, recipients, payload, dedupeKey)`; dispatcher Edge Function sends by channel (in-app always, email, push); retries; marks `sent_at`.
+- [ ] **5.2** (implementer) Notification service: `enqueue(kind, recipients, payload, dedupeKey)`; dispatcher (`/api/cron/notifications`) sends by channel (in-app always, email, push); retries; marks `sent_at`.
 - [ ] **5.3** (implementer) In-app inbox (bell → list, mark read). Minimal.
 - [ ] **5.4** (implementer) Daily job 06:00 ART: qualifications at 30/15/7/0 days → status update → enqueue per spec/workflow.md#Escalation → **one digest per recipient** (email template, plain and minimal).
 - [ ] **5.5** (implementer) Wire phase 4 overdue escalation + record-blocked events into the same service.
