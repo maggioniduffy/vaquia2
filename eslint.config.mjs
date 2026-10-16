@@ -7,7 +7,14 @@ const config = [
   ...nextTs,
   prettier,
   {
-    ignores: [".next/**", "node_modules/**", "playwright-report/**", "test-results/**", "next-env.d.ts", "supabase/functions/**"],
+    ignores: [
+      ".next/**",
+      "node_modules/**",
+      "playwright-report/**",
+      "test-results/**",
+      "next-env.d.ts",
+      "supabase/functions/**",
+    ],
   },
 ];
 
