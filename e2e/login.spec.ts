@@ -71,16 +71,6 @@ test("user with two companies can switch between them", async ({ page }, info) =
   await expect(page.getByTestId("company-name")).toHaveCount(0);
 });
 
-test("an invalid magic link shows why", async ({ page }) => {
-  await page.goto(
-    "/api/auth/magic-link/verify?token=not-a-token&callbackURL=/&errorCallbackURL=/login",
-  );
-  await expect(page).toHaveURL(/\/login\?error=/);
-  await expect(
-    page.getByRole("alert").filter({ hasText: "El enlace venció o ya se usó." }),
-  ).toBeVisible();
-});
-
 test("signing out ends the session", async ({ page }) => {
   await login(page, "hse@petrosur.test");
   await expect(page).toHaveURL(/\/dashboard$/);

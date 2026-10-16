@@ -26,6 +26,11 @@ Demo users (password `vaquia-demo`), from `scripts/seed.mts`:
 | supervisor@petrosur.test | Petrosur Servicios SRL | supervisor |
 | hse@andesservicios.test | Andes Servicios Petroleros SA | hse |
 | admin@vaquia.test | both | admin |
+| otp@petrosur.test | Petrosur Servicios SRL | supervisor (OTP e2e only) |
+| otp-lock@petrosur.test | Petrosur Servicios SRL | supervisor (OTP e2e only) |
+
+Seeded company without members: `Empresa Demo` (`30000000-0000-7000-8000-000000000001`), the
+target of `GUEST_COMPANY_ID` for guest sessions.
 
 Without `RESEND_API_KEY`, login codes are printed to the `pnpm dev` log.
 
