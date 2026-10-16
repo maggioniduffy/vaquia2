@@ -1,0 +1,38 @@
+name: Migrate Neon
+
+# Applies pending db/migrations to the production Neon database after they land on main.
+# Needs the repo secret DATABASE_URL = Neon *direct* (non-pooler) connection string.
+# Run it by hand the first time: Actions → Migrate Neon → Run workflow.
+on:
+  push:
+    branches: [main]
+    paths: ["db/migrations/**"]
+  workflow_dispatch:
+
+# Never two migration runs against the same database at once.
+concurrency:
+  group: migrate-neon
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    name: dbmate up
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Migrate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::Missing repo secret DATABASE_URL (Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
+          # scripts/dbmate.mjs strips Neon's channel_binding param, so the URL can be pasted as is.
+          pnpm db:migrate
