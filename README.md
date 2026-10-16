@@ -44,8 +44,11 @@ pnpm build && pnpm test:e2e                # Playwright: light/dark × desktop/m
 ## Deploying (Neon + Vercel)
 
 1. Create a Neon project (Postgres 17, region São Paulo unless the pilot requires otherwise).
-2. Run migrations with the **direct** connection string:
-   `DATABASE_URL=<neon direct url> pnpm db:migrate`
+2. Migrations run automatically on every merge to `main` that touches `db/migrations`
+   (workflow `Migrate Neon`). Set it up once: repo Settings → Secrets and variables → Actions →
+   secret `DATABASE_URL` = Neon **direct** connection string (paste it as is), then run the
+   workflow by hand (Actions → Migrate Neon → Run workflow). Manual alternative:
+   `DATABASE_URL='<neon direct url>' pnpm db:migrate`
 3. In Vercel set `DATABASE_URL` (Neon **pooled** URL), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`
    (the public URL; can stay unset on previews, it falls back to `VERCEL_URL`) and an email
    sender for the login codes:
