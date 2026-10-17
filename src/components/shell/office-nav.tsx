@@ -6,13 +6,16 @@ import { t } from "@/i18n/es-AR";
 import { cn } from "@/lib/cn";
 import { activeNavHref, OFFICE_NAV } from "./office-nav-config";
 
-export function OfficeNav({ counts }: { counts: Partial<Record<string, number>> }) {
+export function OfficeNav({
+  counts,
+  onNavigate,
+}: {
+  counts: Partial<Record<string, number>>;
+  onNavigate?: () => void;
+}) {
   const active = activeNavHref(usePathname());
   return (
-    <nav
-      aria-label={t.officeShell.mainNav}
-      className="flex w-full flex-row gap-1 overflow-x-auto md:flex-col md:overflow-visible"
-    >
+    <nav aria-label={t.officeShell.mainNav} className="flex w-full flex-col gap-1">
       {OFFICE_NAV.map(({ href, label, icon: Icon }) => {
         const isActive = href === active;
         const count = counts[href];
@@ -21,6 +24,7 @@ export function OfficeNav({ counts }: { counts: Partial<Record<string, number>> 
             key={href}
             href={href}
             aria-current={isActive ? "page" : undefined}
+            onClick={onNavigate}
             className={cn(
               "flex h-10 shrink-0 items-center gap-3 rounded-r-[var(--radius-control)] border-l-2 pr-3 pl-2.5 whitespace-nowrap",
               isActive

@@ -139,3 +139,8 @@ export const SettingsIcon = (p: IconProps) => (
     <circle cx="12" cy="12" r="3" />
   </Svg>
 );
+export const MenuIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M4 6h16M4 12h16M4 18h16" />
+  </Svg>
+);
