@@ -14,17 +14,13 @@ const workerT = "eeeeeeee-0000-7000-8000-000000000002"; // worker, membership ro
 const userDel = "eeeeeeee-0000-7000-8000-000000000003"; // worker, membership gets deleted
 const newMember = "eeeeeeee-0000-7000-8000-000000000004"; // no membership yet, gets one inserted
 
-const TRIGGERED_TABLES = [
-  "companies",
-  "crews",
-  "locations",
-  "memberships",
-  "personas",
-  "qualification_types",
-  "qualifications",
-  "task_requirements",
-  "task_types",
-];
+// Tenant tables (public base tables with a company_id column) that are NOT fed through the trigger.
+// Only append-only system tables belong here. Future append-only tables (rule_evaluations,
+// notifications, period_snapshots, exports) go here too; every other tenant table must carry the trigger.
+const TRIGGER_EXEMPT_TABLES = ["audit_log"];
+
+// `companies` is the tenant root (keyed by id, no company_id column), so it is checked explicitly.
+const TENANT_ROOT_TABLES = ["companies"];
 
 type Fx = {
   loc: string;
@@ -308,13 +304,33 @@ async function expireTrial(db: TestDb) {
 }
 
 describe("trial read-only trigger", () => {
-  it("is installed on every business tenant table", () =>
+  it("is installed on every business tenant table (dynamic: every public base table with company_id, minus exempt)", () =>
     withRollback(async (db) => {
-      const rows = await db.query<{ relname: string }>(
-        `select c.relname from pg_trigger t join pg_class c on c.oid = t.tgrelid
-         where t.tgname = 'assert_company_writable' and not t.tgisinternal order by c.relname`,
+      const tenantRows = await db.query<{ table_name: string }>(
+        `select c.table_name
+         from information_schema.columns c
+         join information_schema.tables t
+           on t.table_schema = c.table_schema and t.table_name = c.table_name
+         where c.table_schema = 'public' and c.column_name = 'company_id' and t.table_type = 'BASE TABLE'`,
       );
-      expect(rows.map((r) => r.relname)).toEqual([...TRIGGERED_TABLES].sort());
+      const tenantTables = tenantRows.map((r) => r.table_name);
+      expect(tenantTables.length, "no tenant tables found; the query is broken").toBeGreaterThan(0);
+
+      const expected = [
+        ...tenantTables.filter((t) => !TRIGGER_EXEMPT_TABLES.includes(t)),
+        ...TENANT_ROOT_TABLES,
+      ].sort();
+
+      const triggered = await db.query<{ relname: string }>(
+        `select c.relname from pg_trigger t join pg_class c on c.oid = t.tgrelid
+         where t.tgfoid = 'app.assert_company_writable'::regproc and not t.tgisinternal
+         order by c.relname`,
+      );
+      const actual = triggered.map((r) => r.relname).sort();
+
+      const missing = expected.filter((t) => !actual.includes(t));
+      expect(missing, "tenant tables without assert_company_writable trigger").toEqual([]);
+      expect(actual).toEqual(expected);
     }));
 
   it("trial in the future: writes to every business table succeed (authenticated)", () =>
