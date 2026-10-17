@@ -1,0 +1,201 @@
+﻿DNI;Nombre;Cuadrilla;Activo
+40.000.000;Juan Pérez 0;;si
+40000007;María Díaz 1;cuadrilla sur;SI
+40000014;Carlos Benítez 2;Cuadrilla Este;no
+40000021;Lucía Fernández 3;Cuadrilla Norte;true
+40000028;Pedro Romero 4;;1
+40.000.035;Ana Gómez 5;Cuadrilla Este;0
+40000042;Diego Martínez 6;Cuadrilla Norte;
+40000049;Sofía Ibáñez 7;cuadrilla sur;si
+40000056;Martín López 8;;SI
+40000063;Laura Álvarez 9;Cuadrilla Norte;no
+12.34;Bad Dni;;
+abc;Bad Dni Letters;;
+;Sin Dni;;
+41000001;Crew Fantasma;Cuadrilla Fantasma;si
+41000002;Crew Norte Short;Norte;si
+40.000.070;Hugo Rodríguez 10;cuadrilla sur;true
+40000077;Elena Sosa 11;Cuadrilla Este;1
+40000084;Juan Pérez 12;;0
+40000091;María Díaz 13;cuadrilla sur;
+40000098;Carlos Benítez 14;Cuadrilla Este;si
+40.000.105;Lucía Fernández 15;Cuadrilla Norte;SI
+40000112;Pedro Romero 16;;no
+40000119;Ana Gómez 17;Cuadrilla Este;true
+40000126;Diego Martínez 18;Cuadrilla Norte;1
+40000133;Sofía Ibáñez 19;cuadrilla sur;0
+40.000.140;Martín López 20;;
+40000147;Laura Álvarez 21;Cuadrilla Norte;si
+40000154;Hugo Rodríguez 22;cuadrilla sur;SI
+40000161;Elena Sosa 23;Cuadrilla Este;no
+40000168;Juan Pérez 24;;true
+40.000.175;María Díaz 25;cuadrilla sur;1
+40000182;Carlos Benítez 26;Cuadrilla Este;0
+40000189;Lucía Fernández 27;Cuadrilla Norte;
+40000196;Pedro Romero 28;;si
+40000203;Ana Gómez 29;Cuadrilla Este;SI
+40.000.210;Diego Martínez 30;Cuadrilla Norte;no
+40000217;Sofía Ibáñez 31;cuadrilla sur;true
+40000224;Martín López 32;;1
+40000231;Laura Álvarez 33;Cuadrilla Norte;0
+40000238;Hugo Rodríguez 34;cuadrilla sur;
+40.000.245;Elena Sosa 35;Cuadrilla Este;si
+40000252;Juan Pérez 36;;SI
+40000259;María Díaz 37;cuadrilla sur;no
+40000266;Carlos Benítez 38;Cuadrilla Este;true
+40000273;Lucía Fernández 39;Cuadrilla Norte;1
+40.000.280;Pedro Romero 40;;0
+40000287;Ana Gómez 41;Cuadrilla Este;
+40000294;Diego Martínez 42;Cuadrilla Norte;si
+40000301;Sofía Ibáñez 43;cuadrilla sur;SI
+40000308;Martín López 44;;no
+40.000.315;Laura Álvarez 45;Cuadrilla Norte;true
+40000322;Hugo Rodríguez 46;cuadrilla sur;1
+40000329;Elena Sosa 47;Cuadrilla Este;0
+40000336;Juan Pérez 48;;
+40000343;María Díaz 49;cuadrilla sur;si
+40.000.350;Carlos Benítez 50;Cuadrilla Este;SI
+40000357;Lucía Fernández 51;Cuadrilla Norte;no
+40000364;Pedro Romero 52;;true
+40000371;Ana Gómez 53;Cuadrilla Este;1
+40000378;Diego Martínez 54;Cuadrilla Norte;0
+40.000.385;Sofía Ibáñez 55;cuadrilla sur;
+40000392;Martín López 56;;si
+40000399;Laura Álvarez 57;Cuadrilla Norte;SI
+40000406;Hugo Rodríguez 58;cuadrilla sur;no
+40000413;Elena Sosa 59;Cuadrilla Este;true
+40.000.420;Juan Pérez 60;;1
+40000427;María Díaz 61;cuadrilla sur;0
+40000434;Carlos Benítez 62;Cuadrilla Este;
+40000441;Lucía Fernández 63;Cuadrilla Norte;si
+40000448;Pedro Romero 64;;SI
+40.000.455;Ana Gómez 65;Cuadrilla Este;no
+40000462;Diego Martínez 66;Cuadrilla Norte;true
+40000469;Sofía Ibáñez 67;cuadrilla sur;1
+40000476;Martín López 68;;0
+40000483;Laura Álvarez 69;Cuadrilla Norte;
+40.000.490;Hugo Rodríguez 70;cuadrilla sur;si
+40000497;Elena Sosa 71;Cuadrilla Este;SI
+40000504;Juan Pérez 72;;no
+40000511;María Díaz 73;cuadrilla sur;true
+40000518;Carlos Benítez 74;Cuadrilla Este;1
+40.000.525;Lucía Fernández 75;Cuadrilla Norte;0
+40000532;Pedro Romero 76;;
+40000539;Ana Gómez 77;Cuadrilla Este;si
+40000546;Diego Martínez 78;Cuadrilla Norte;SI
+40000553;Sofía Ibáñez 79;cuadrilla sur;no
+40.000.560;Martín López 80;;true
+40000567;Laura Álvarez 81;Cuadrilla Norte;1
+40000574;Hugo Rodríguez 82;cuadrilla sur;0
+40000581;Elena Sosa 83;Cuadrilla Este;
+40000588;Juan Pérez 84;;si
+40.000.595;María Díaz 85;cuadrilla sur;SI
+40000602;Carlos Benítez 86;Cuadrilla Este;no
+40000609;Lucía Fernández 87;Cuadrilla Norte;true
+40000616;Pedro Romero 88;;1
+40000623;Ana Gómez 89;Cuadrilla Este;0
+40.000.630;Diego Martínez 90;Cuadrilla Norte;
+40000637;Sofía Ibáñez 91;cuadrilla sur;si
+40000644;Martín López 92;;SI
+40000651;Laura Álvarez 93;Cuadrilla Norte;no
+40000658;Hugo Rodríguez 94;cuadrilla sur;true
+41000003;;Cuadrilla Este;si
+41000004;Activo Raro;Cuadrilla Este;quizas
+40000021;Duplicado en archivo;;
+40.000.014;Duplicado con puntos;;
+123456789012;Dni Largo;;
+40.000.665;Elena Sosa 95;Cuadrilla Este;1
+40000672;Juan Pérez 96;;0
+40000679;María Díaz 97;cuadrilla sur;
+40000686;Carlos Benítez 98;Cuadrilla Este;si
+40000693;Lucía Fernández 99;Cuadrilla Norte;SI
+40.000.700;Pedro Romero 100;;no
+40000707;Ana Gómez 101;Cuadrilla Este;true
+40000714;Diego Martínez 102;Cuadrilla Norte;1
+40000721;Sofía Ibáñez 103;cuadrilla sur;0
+40000728;Martín López 104;;
+40.000.735;Laura Álvarez 105;Cuadrilla Norte;si
+40000742;Hugo Rodríguez 106;cuadrilla sur;SI
+40000749;Elena Sosa 107;Cuadrilla Este;no
+40000756;Juan Pérez 108;;true
+40000763;María Díaz 109;cuadrilla sur;1
+40.000.770;Carlos Benítez 110;Cuadrilla Este;0
+40000777;Lucía Fernández 111;Cuadrilla Norte;
+40000784;Pedro Romero 112;;si
+40000791;Ana Gómez 113;Cuadrilla Este;SI
+40000798;Diego Martínez 114;Cuadrilla Norte;no
+40.000.805;Sofía Ibáñez 115;cuadrilla sur;true
+40000812;Martín López 116;;1
+40000819;Laura Álvarez 117;Cuadrilla Norte;0
+40000826;Hugo Rodríguez 118;cuadrilla sur;
+40000833;Elena Sosa 119;Cuadrilla Este;si
+40.000.840;Juan Pérez 120;;SI
+40000847;María Díaz 121;cuadrilla sur;no
+40000854;Carlos Benítez 122;Cuadrilla Este;true
+40000861;Lucía Fernández 123;Cuadrilla Norte;1
+40000868;Pedro Romero 124;;0
+40.000.875;Ana Gómez 125;Cuadrilla Este;
+40000882;Diego Martínez 126;Cuadrilla Norte;si
+40000889;Sofía Ibáñez 127;cuadrilla sur;SI
+40000896;Martín López 128;;no
+40000903;Laura Álvarez 129;Cuadrilla Norte;true
+40.000.910;Hugo Rodríguez 130;cuadrilla sur;1
+40000917;Elena Sosa 131;Cuadrilla Este;0
+40000924;Juan Pérez 132;;
+40000931;María Díaz 133;cuadrilla sur;si
+40000938;Carlos Benítez 134;Cuadrilla Este;SI
+40.000.945;Lucía Fernández 135;Cuadrilla Norte;no
+40000952;Pedro Romero 136;;true
+40000959;Ana Gómez 137;Cuadrilla Este;1
+40000966;Diego Martínez 138;Cuadrilla Norte;0
+40000973;Sofía Ibáñez 139;cuadrilla sur;
+40.000.980;Martín López 140;;si
+40000987;Laura Álvarez 141;Cuadrilla Norte;SI
+40000994;Hugo Rodríguez 142;cuadrilla sur;no
+40001001;Elena Sosa 143;Cuadrilla Este;true
+40001008;Juan Pérez 144;;1
+40.001.015;María Díaz 145;cuadrilla sur;0
+40001022;Carlos Benítez 146;Cuadrilla Este;
+40001029;Lucía Fernández 147;Cuadrilla Norte;si
+40001036;Pedro Romero 148;;SI
+40001043;Ana Gómez 149;Cuadrilla Este;no
+40.001.050;Diego Martínez 150;Cuadrilla Norte;true
+40001057;Sofía Ibáñez 151;cuadrilla sur;1
+40001064;Martín López 152;;0
+40001071;Laura Álvarez 153;Cuadrilla Norte;
+40001078;Hugo Rodríguez 154;cuadrilla sur;si
+40.001.085;Elena Sosa 155;Cuadrilla Este;SI
+40001092;Juan Pérez 156;;no
+40001099;María Díaz 157;cuadrilla sur;true
+40001106;Carlos Benítez 158;Cuadrilla Este;1
+40001113;Lucía Fernández 159;Cuadrilla Norte;0
+40.001.120;Pedro Romero 160;;
+40001127;Ana Gómez 161;Cuadrilla Este;si
+40001134;Diego Martínez 162;Cuadrilla Norte;SI
+40001141;Sofía Ibáñez 163;cuadrilla sur;no
+40001148;Martín López 164;;true
+40.001.155;Laura Álvarez 165;Cuadrilla Norte;1
+40001162;Hugo Rodríguez 166;cuadrilla sur;0
+40001169;Elena Sosa 167;Cuadrilla Este;
+40001176;Juan Pérez 168;;si
+40001183;María Díaz 169;cuadrilla sur;SI
+40.001.190;Carlos Benítez 170;Cuadrilla Este;no
+40001197;Lucía Fernández 171;Cuadrilla Norte;true
+40001204;Pedro Romero 172;;1
+40001211;Ana Gómez 173;Cuadrilla Este;0
+40001218;Diego Martínez 174;Cuadrilla Norte;
+40.001.225;Sofía Ibáñez 175;cuadrilla sur;si
+40001232;Martín López 176;;SI
+40001239;Laura Álvarez 177;Cuadrilla Norte;no
+40001246;Hugo Rodríguez 178;cuadrilla sur;true
+40001253;Elena Sosa 179;Cuadrilla Este;1
+40.001.260;Juan Pérez 180;;0
+40001267;María Díaz 181;cuadrilla sur;
+40001274;Carlos Benítez 182;Cuadrilla Este;si
+40001281;Lucía Fernández 183;Cuadrilla Norte;SI
+40001288;Pedro Romero 184;;no
+40.001.295;Ana Gómez 185;Cuadrilla Este;true
+40001302;Diego Martínez 186;Cuadrilla Norte;1
+40001309;Sofía Ibáñez 187;cuadrilla sur;0
+40001316;Martín López 188;;
+40001323;Laura Álvarez 189;Cuadrilla Norte;si

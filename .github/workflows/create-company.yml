@@ -1,0 +1,56 @@
+name: Create company
+
+# Provisions a company and its first admin on the production Neon database
+# (scripts/create-company.mts). The admin signs in with the emailed 6-digit code.
+# Run: Actions → Create company → Run workflow. Uses the repo secret DATABASE_URL.
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: Company name
+        required: true
+      admin_email:
+        description: Admin email
+        required: true
+      admin_name:
+        description: Admin full name
+        required: true
+      cuit:
+        description: CUIT (optional)
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: migrate-neon
+  cancel-in-progress: false
+
+jobs:
+  create:
+    name: admin:create-company
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Create company and admin
+        # Inputs go through env vars, never interpolated into the script (no shell injection).
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          COMPANY_NAME: ${{ inputs.name }}
+          ADMIN_EMAIL: ${{ inputs.admin_email }}
+          ADMIN_NAME: ${{ inputs.admin_name }}
+          CUIT: ${{ inputs.cuit }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::Missing repo secret DATABASE_URL."
+            exit 1
+          fi
+          set -- --name "$COMPANY_NAME" --admin-email "$ADMIN_EMAIL" --admin-name "$ADMIN_NAME"
+          if [ -n "$CUIT" ]; then set -- "$@" --cuit "$CUIT"; fi
+          pnpm admin:create-company "$@"
