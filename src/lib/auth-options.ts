@@ -39,3 +39,9 @@ export const authOptions = {
     fields: { expiresAt: "expires_at", createdAt: "created_at", updatedAt: "updated_at" },
   },
 } satisfies Partial<BetterAuthOptions>;
+
+// Linking only happens when the provider reports the email as verified (no `trustedProviders`,
+// which would link even with email_verified = false).
+export const accountLinking = { enabled: true } satisfies NonNullable<
+  BetterAuthOptions["account"]
+>["accountLinking"];

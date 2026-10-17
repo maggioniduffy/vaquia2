@@ -36,6 +36,7 @@ Rules:
 - TypeScript strict. Code, identifiers, commits, docs: **English**. UI copy: **Spanish (es-AR)**, only in `src/i18n/es-AR.ts`.
 - Server is authoritative; client validation is UX only.
 - Every tenant table has `company_id` + RLS. Every new table gets an RLS test (written in the phase's test task).
+- Every new tenant business table gets the `app.assert_company_writable()` trigger (expired trials are read-only).
 - Append-only tables (`audit_log`, `rule_evaluations`, `notifications`, `period_snapshots`, `exports`): no UPDATE/DELETE, ever.
 - Locked records are never edited — corrections are amendment records.
 - Migrations: plain SQL with dbmate (`db/migrations`, `-- migrate:up` / `-- migrate:down`). Never edit an applied migration.

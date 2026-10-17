@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { VaquiaWordmark } from "@/components/ui/brand";
 import { BellIcon, ChevronDownIcon } from "@/components/ui/icons";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { t } from "@/i18n/es-AR";
@@ -8,6 +9,8 @@ import { displayNameFromEmail, initials } from "@/lib/office/greeting";
 import { countHabilitaciones } from "@/lib/office/queries";
 import type { Session } from "@/lib/session";
 import pkg from "../../../package.json";
+import { InvitationsNotice } from "./invitations-notice";
+import { TrialBanner } from "./trial-banner";
 import { CompanySwitcher } from "./company-switcher";
 import { MobileMenu } from "./mobile-menu";
 import { OfficeNav } from "./office-nav";
@@ -33,7 +36,7 @@ export async function OfficeShell({
     <div className="flex min-h-dvh flex-col md:flex-row">
       <aside className="border-border sticky top-0 hidden h-dvh w-56 shrink-0 flex-col border-r md:flex">
         <div className="border-border flex h-16 shrink-0 items-center gap-3 border-b px-6">
-          <span className="text-lg font-medium tracking-tight">{t.app.name}</span>
+          <VaquiaWordmark />
           <span aria-hidden className="bg-border h-4 w-px" />
           <span className="text-muted text-xs">{t.officeShell.tagline}</span>
         </div>
@@ -50,6 +53,8 @@ export async function OfficeShell({
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
+        <TrialBanner userId={session.userId} />
+        <InvitationsNotice userId={session.userId} isGuest={session.isGuest} />
         <header className="border-border bg-bg sticky top-0 z-10 flex h-16 shrink-0 items-center gap-3 border-b px-4 md:static md:z-auto md:gap-4 md:bg-transparent md:px-6">
           <div className="flex min-w-0 flex-1 items-center gap-3 md:hidden">
             <MobileMenu
@@ -61,7 +66,7 @@ export async function OfficeShell({
               theme={theme}
               version={pkg.version}
             />
-            <span className="text-lg font-medium tracking-tight">{t.app.name}</span>
+            <VaquiaWordmark />
           </div>
           {companies.length > 1 ? (
             <div className="hidden md:block">

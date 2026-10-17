@@ -7,6 +7,7 @@ import { withUser } from "@/lib/db";
 import { parseDateInput } from "@/lib/dates";
 import { validDateRange } from "@/lib/people/import";
 import { getSession } from "@/lib/session";
+import { isReadOnlyError } from "@/lib/trial";
 import { getStorage } from "@/lib/storage";
 import {
   MAX_FILE_BYTES,
@@ -153,6 +154,7 @@ export async function addQualification(formData: FormData): Promise<AddQualifica
         fieldErrors: error.field ? { [error.field]: error.message } : undefined,
       };
     }
+    if (isReadOnlyError(error)) return { ok: false, error: t.trial.readOnly };
     console.error("addQualification failed", error);
     return { ok: false, error: e.generic };
   }

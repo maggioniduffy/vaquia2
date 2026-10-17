@@ -48,14 +48,14 @@ export const ArrowLeftIcon = (p: IconProps) => (
   </Svg>
 );
 export const SunIcon = (p: IconProps) => (
-  <Svg {...p}>
+  <Svg strokeWidth={1.6} {...p}>
     <circle cx="12" cy="12" r="4" />
     <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
   </Svg>
 );
 export const MoonIcon = (p: IconProps) => (
-  <Svg {...p}>
-    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+  <Svg strokeWidth={1.6} {...p}>
+    <path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" />
   </Svg>
 );
 export const WifiOffIcon = (p: IconProps) => (
@@ -142,5 +142,38 @@ export const SettingsIcon = (p: IconProps) => (
 export const MenuIcon = (p: IconProps) => (
   <Svg {...p}>
     <path d="M4 6h16M4 12h16M4 18h16" />
+  </Svg>
+);
+export const ShieldIcon = (p: IconProps) => (
+  <Svg strokeWidth={1.6} {...p}>
+    <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z" />
+  </Svg>
+);
+export const HeartPulseIcon = (p: IconProps) => (
+  <Svg strokeWidth={1.6} {...p}>
+    <path d="M12 20s-8-4.8-8-10.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 8 2.5C20 15.2 12 20 12 20z" />
+    <path d="M6 12h3l1.5-2.5 2 4 1.5-1.5h4" />
+  </Svg>
+);
+export const BarsIcon = (p: IconProps) => (
+  <Svg strokeWidth={1.6} {...p}>
+    <rect x="4" y="13" width="3.5" height="7" rx="1" />
+    <rect x="10.25" y="9" width="3.5" height="11" rx="1" />
+    <rect x="16.5" y="4" width="3.5" height="16" rx="1" />
+  </Svg>
+);
+export const ChartIcon = (p: IconProps) => (
+  <Svg strokeWidth={1.6} {...p}>
+    <path d="M4 20V10" />
+    <path d="M10 20V5" />
+    <path d="M16 20v-7" />
+    <path d="M3 20h18" />
+  </Svg>
+);
+export const HardHatIcon = (p: IconProps) => (
+  <Svg strokeWidth={1.6} {...p}>
+    <path d="M4 15a8 8 0 0 1 16 0" />
+    <path d="M3 15h18v2.5H3z" />
+    <path d="M12 7V4" />
   </Svg>
 );

@@ -96,3 +96,16 @@ export async function signInAsGuest(): Promise<LoginState> {
   await auth.api.signInAnonymous({ headers: await headers() });
   redirect("/");
 }
+
+export async function signInWithGoogle(next: string): Promise<void> {
+  if (!env.googleEnabled) redirect("/login");
+  if (!(await allowed([`google:ip:${await clientIp()}`, { limit: 20, windowSeconds: TEN_MIN }]))) {
+    redirect("/login");
+  }
+  const { url } = await auth.api.signInSocial({
+    body: { provider: "google", callbackURL: safeNextPath(next) },
+    headers: await headers(),
+  });
+  if (!url) redirect("/login");
+  redirect(url);
+}

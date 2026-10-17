@@ -8,12 +8,17 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { t } from "@/i18n/es-AR";
 import { formatDateAr, todayInArt } from "@/lib/dates";
 import { cn } from "@/lib/cn";
-import { getPersonaAccess } from "@/lib/people/access";
+import { getPersonaAccess, getPersonaInvitation } from "@/lib/people/access";
 import { formatDayMonth } from "@/lib/people/qualification-dates";
 import { getPersonaDetail, type CurrentQualificationRow } from "@/lib/people/qualifications";
 import { getSession } from "@/lib/session";
 import { getStorage } from "@/lib/storage";
-import { ChangeRoleSheet, GrantAccessSheet, RemoveAccessSheet } from "./access-controls";
+import {
+  ChangeRoleSheet,
+  GrantAccessSheet,
+  RemoveAccessSheet,
+  RevokeInvitationButton,
+} from "./access-controls";
 import { QualificationSheet } from "./qualification-sheet";
 
 const q = t.qualifications;
@@ -95,6 +100,8 @@ export async function PersonaDetail({
   const isAdmin = role === "admin";
   // The linked login email is only shown to admins.
   const access = isAdmin ? await getPersonaAccess(session.userId, persona.id) : null;
+  const invitation =
+    isAdmin && !access ? await getPersonaInvitation(session.userId, persona.id) : null;
   const storageAvailable = getStorage().isAvailable;
   const today = todayInArt();
   const sheetProps = { personaId: persona.id, types, storageAvailable, today };
@@ -280,6 +287,15 @@ export async function PersonaDetail({
                   <RemoveAccessSheet personaId={persona.id} personaName={persona.full_name} />
                 </div>
               ) : null}
+            </div>
+          ) : invitation ? (
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <p className="text-sm">
+                <span className="text-muted text-xs">{acc.pendingTitle}</span>
+                <br />
+                {acc.pendingLine(invitation.email, t.roles[invitation.role])}
+              </p>
+              <RevokeInvitationButton personaId={persona.id} />
             </div>
           ) : (
             <div className="flex flex-wrap items-center justify-between gap-4">

@@ -62,9 +62,11 @@ flowchart LR
 
 ## 5. Business model
 
-- Monthly SaaS priced per active field user or per crew, with an annual discount.
+- Monthly SaaS subscription per tier, priced in ARS and adjusted periodically for inflation. Annual billing = 2 months free (pay 10, ~17% off).
+- Tiers differ only by the number of active field staff: **Base** (up to 25), **Pro** (up to 100), **Premium** (unlimited + voice/AI + priority support). Every tier includes all modules. Illustrative prices in `docs/spec/billing.md`.
+- Self-serve sign-up with a 30-day free trial, no card. The tier is chosen in onboarding and can be switched freely during the trial; the 30 days belong to the company, not the tier. At day 30 the company pays or becomes read-only.
+- Payments through Mercado Pago subscriptions (phase 1c).
 - Paid onboarding for the first customers: loading people and qualifications, and setting up the operator template.
-- Premium tier later: voice + AI.
 
 **Pitch (to validate in discovery, not assume):**
 - Fewer supervisor hours on paperwork.

@@ -14,6 +14,8 @@ describe("es-AR dictionary", () => {
 
   it('does not use "vos" forms (design.md#Copy)', () => {
     const voseo = /\b(tenés|podés|querés|sos|ingresá|revisá|elegí)\b/i;
-    expect(strings(t).filter((s) => voseo.test(s))).toEqual([]);
+    // Marketing copy in t.landing is the documented exception (landing.md#Copy).
+    const app = Object.fromEntries(Object.entries(t).filter(([k]) => k !== "landing"));
+    expect(strings(app).filter((s) => voseo.test(s))).toEqual([]);
   });
 });

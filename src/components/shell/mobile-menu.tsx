@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Dialog as D } from "radix-ui";
 import { useState } from "react";
+import { VaquiaWordmark } from "@/components/ui/brand";
 import { CloseIcon, MenuIcon } from "@/components/ui/icons";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { t } from "@/i18n/es-AR";
@@ -49,7 +50,9 @@ export function MobileMenu({
           className="border-border bg-bg fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] flex-col border-r shadow-[12px_0_32px_rgba(0,0,0,.12)]"
         >
           <div className="border-border flex h-16 shrink-0 items-center gap-3 border-b pr-3 pl-4">
-            <D.Title className="text-lg font-medium tracking-tight">{t.app.name}</D.Title>
+            <D.Title className="flex">
+              <VaquiaWordmark />
+            </D.Title>
             <span aria-hidden className="bg-border h-4 w-px" />
             <span className="text-muted flex-1 text-xs">{t.officeShell.tagline}</span>
             <D.Close

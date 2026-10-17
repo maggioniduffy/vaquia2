@@ -11,23 +11,26 @@ Source of truth for values: `docs/design/vaquia-2/project/` (Claude Design hando
 ## Tokens (CSS variables in `src/app/globals.css`, exposed to Tailwind via `@theme`)
 | Token | Design name | Light | Dark | Use |
 |---|---|---|---|---|
-| `--bg` | base | #F2F2F3 | #1C1C1F | page (with grain) |
-| `--surface` | surf | #FAFAFA | #232327 | panels, inputs, dialogs |
-| `--border` | bd | #E4E4E7 | #2E2E33 | 1px lines |
-| `--text` | tx | #18181B | #F4F4F5 | primary text |
-| `--text-muted` | mu | #71717A | #A1A1AA | secondary, labels |
-| `--accent` | ac | #0E9F9A | #2DD4BF | non-text marks only: dots, borders, focus ring/outline, sync dot, stepper ring, selection bar. As text on light it is 2.9:1 (fails) |
-| `--accent-strong` | — | #0A7671 | #2DD4BF | text and primary fill: links, active nav/tab text, primary button bg. Measured: light 4.88:1 on bg, 5.24:1 on surface, 4.84:1 on hover, white on it 5.46:1; dark 9.13:1 on bg, 8.41:1 on surface, `--accent-text` on it 8.21:1 |
-| `--accent-hover` | — | #08605C | #5EEAD4 | link / primary hover (darker on light, lighter on dark) |
-| `--accent-subtle` | acs | rgba(14,159,154,.10) | rgba(45,212,191,.12) | focus ring, selected row/nav |
-| `--accent-text` | onac | #FFFFFF | #0B2A27 | text on accent |
+| `--bg` | base | #F5F7FA | #0D1820 | page (with grain) |
+| `--surface` | surf | #FFFFFF | #15232E | panels, inputs, dialogs |
+| `--border` | bd | #D6DEE5 | #2B3A47 | 1px lines |
+| `--text` | tx | #1F2E3B | #EEF2F5 | primary text |
+| `--text-muted` | mu | #5A6F82 | #8CA0B3 | secondary, labels |
+| `--accent` | ac | #0E9F9A | #00D1C7 | non-text marks only: dots, borders, focus ring/outline, sync dot, stepper ring, selection bar. As text on light it is 2.9:1 (fails) |
+| `--accent-strong` | — | #0A7671 | #00D1C7 | text and primary fill: links, active nav/tab text, primary button bg. Measured: light 4.88:1 on bg, 5.24:1 on surface, 4.84:1 on hover, white on it 5.46:1; dark 9.13:1 on bg, 8.41:1 on surface, `--accent-text` on it 8.21:1 |
+| `--accent-hover` | — | #08605C | #5CE8E0 | link / primary hover (darker on light, lighter on dark) |
+| `--accent-subtle` | acs | rgba(14,159,154,.10) | rgba(0,209,199,.12) | focus ring, selected row/nav |
+| `--accent-text` | onac | #FFFFFF | #0D1820 | text on accent |
 | `--danger` | dg | #DC2626 | #F87171 | blocked, expired, errors |
 | `--warning` | wn | #D97706 | #FBBF24 | warning, expiring, incomplete |
-| `--hover` | hov | #F1F1F2 | #29292E | row/button hover, disabled bg |
-| `--scrim` | scrim | rgba(24,24,27,.10) | rgba(0,0,0,.35) | dialog/sheet overlay |
+| `--hover` | hov | #EEF2F5 | #1B2B37 | row/button hover, disabled bg |
+| `--scrim` | scrim | rgba(31,46,59,.12) | rgba(0,0,0,.45) | dialog/sheet overlay |
 | `--grain` | grain | SVG noise, opacity .07 | SVG noise (white), opacity .05 | `background-image` on `body` |
 
-Theme: `theme` cookie (`light` | `dark` | absent = system). Root layout sets `data-theme` on `<html>`; `ThemeToggle` flips it. `themeColor` = #F2F2F3 / #1C1C1F. Never hard-code hex in components; use tokens.
+Theme: `theme` cookie (`light` | `dark` | absent = system). Root layout sets `data-theme` on `<html>`; `ThemeToggle` flips it. `themeColor` = #F5F7FA / #0D1820. Never hard-code hex in components; use tokens.
+
+### Brand
+Source: `docs/design/landing` (handoff). `VaquiaMark` / `VaquiaWordmark` (`src/components/ui/brand.tsx`): 120x92 mark, gradient + dark half colored by tokens `--logo-from` / `--logo-to` / `--logo-dark` (light #22E3D9 / #00B5AC / #2E4558; dark #2AF0E5 / #00C2B9 / #4A6478), so it follows the theme without JS. Wordmark sizes: `sm` (mark 18px, text 18px, app rows) and `md` (26px / 24px); text is 600, tracking -0.04em. App icons: `src/app/icon.svg` (favicon), `apple-icon.tsx` (180px), `pwa-icon/[size]` (192/512 PNG) and `manifest.ts`; all use the light icon and are public (no session). Muted text on `--hover` (light) is the tightest pair: 4.63:1.
 
 ## Type
 - Geist Sans (UI); **Geist Mono + `tabular-nums`** for IDs, dates, numbers, counts, KPIs.
@@ -38,9 +41,9 @@ Theme: `theme` cookie (`light` | `dark` | absent = system). Root layout sets `da
 - 4px spacing grid. Radius **6** controls (buttons, inputs, chips), **8** panels (cards, dialogs, toasts), **4** checkbox and kbd.
 - Shadows only on toast (`0 8px 24px rgba(0,0,0,.12)`), dialog (`0 16px 40px rgba(0,0,0,.18)`), side sheet (`-12px 0 32px rgba(0,0,0,.12)`) and popovers. Nothing else.
 - **Office:** 224px sidebar (right border), 64px header (bottom border, 24px side padding), page padding `24px 32px`, vertical gap 16–24px. Tables over cards.
-  - Sidebar: brand row 64px (bottom border, aligned with the header) = "Vaquia" 18/500 + 1px divider + muted 12px "Gestión HSE"; nav rows 40px with a 20px line icon + label + optional mono muted count; active = `--accent-subtle` bg + 2px `--accent` left border + `--accent-strong` text/icon; footer (top border) = sync dot + "Sincronizado" and mono muted version.
+  - Sidebar: brand row 64px (bottom border, aligned with the header) = `VaquiaWordmark` (mark 18px + "Vaquia" 18/600) + 1px divider + muted 12px "Gestión HSE"; nav rows 40px with a 20px line icon + label + optional mono muted count; active = `--accent-subtle` bg + 2px `--accent` left border + `--accent-strong` text/icon; footer (top border) = sync dot + "Sincronizado" and mono muted version.
   - Header: company chip (40px, bordered, name + chevron) · search field (36px, max 576px, "Ctrl K" hint; Ctrl/⌘K focuses it) · 40px bordered bell and theme buttons · bordered user chip (avatar + name + role) opening a menu with "Vista campo" and "Cerrar sesión". No breadcrumb.
-  - Mobile (< md): no sidebar. Sticky 64px top bar = hamburger (40px bordered) + "Vaquia" on the left, bell on the right. The hamburger opens a left drawer (288px, max 85vw, scrim): brand row + close, nav sections top to bottom, and a bottom block (top border) with profile (avatar, name, role), company (switcher if several), theme toggle, "Vista campo", "Cerrar sesión" and the version.
+  - Mobile (< md): no sidebar. Sticky 64px top bar = hamburger (40px bordered) + `VaquiaWordmark` on the left, bell on the right. The hamburger opens a left drawer (288px, max 85vw, scrim): brand row + close, nav sections top to bottom, and a bottom block (top border) with profile (avatar, name, role), company (switcher if several), theme toggle, "Vista campo", "Cerrar sesión" and the version.
 - **Field (390px):** 56px header (back arrow, title + muted subtitle, sync pill, 16px side padding); content padding 16px; primary action **52px pinned at the bottom**; **no tab bar** ("Hoy" is the hub); touch targets **≥ 48px**.
 
 ## Components (`src/components/ui`)
@@ -64,6 +67,7 @@ Theme: `theme` cookie (`light` | `dark` | absent = system). Root layout sets `da
 ## Copy
 - Spanish (es-AR), "vos" not used in UI — neutral imperative ("Firmar", "Guardar borrador").
 - All strings in `src/i18n/es-AR.ts`.
+- Exception: the public landing page (`t.landing`) uses voseo; see `landing.md`.
 - Alert copy always states *what* and *why*: "Juan Pérez no puede firmar: Trabajo en altura vencido el 02/10."
 
 ## Do / don't
@@ -99,3 +103,6 @@ Open `Vaquia.dc.html` for the canvas; each screen is a `<dc-import name=… scre
 | M07 | Acción con foto | Movil · `accion` |
 
 Components canvas: `Componentes.dc.html`.
+
+## Auth/onboarding shell
+Login, sign-up and onboarding share `src/components/auth/brand-shell.tsx` (`BrandShell`): full-bleed `--bg`, top teal/grey glow, ASCII mountains (`AsciiCanvas` from the landing, full width × 520px, `aria-hidden`), logo-only header (`VaquiaWordmark md`), typed `> Bienvenido a Vaquia` (`typed-welcome.tsx`, 85ms/char, full text under `prefers-reduced-motion`) and a 340px form column (16px gutters on mobile) over a soft scrim; no card. The same file exports the field/button class names (`authInput`, `authPrimary`, ...). Tokens `--a-*` (input bg, scrim, glow, focus ring; light/dark) cover only what the app has no token for; text, muted text, borders and buttons use the app tokens/components (handoffs are approximate: on conflict, the app wins) are scoped to `.auth-shell` in `globals.css`; the rest reuse app tokens. Theme follows the app theme (`data-theme` / system).

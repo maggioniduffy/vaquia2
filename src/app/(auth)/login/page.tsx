@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { BrandShell } from "@/components/auth/brand-shell";
 import { t } from "@/i18n/es-AR";
 import { auth } from "@/lib/auth";
 import { env } from "@/lib/env";
@@ -16,17 +17,12 @@ export default async function LoginPage({
   const { next } = await searchParams;
   if (session) redirect(safeNextPath(next));
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-[360px] flex-col justify-center px-4 py-12">
-      <div className="border-border bg-surface flex flex-col gap-6 rounded-[var(--radius-panel)] border p-6">
-        <div className="flex flex-col gap-4">
-          <p className="flex items-baseline gap-2">
-            <span className="text-base font-medium lowercase">{t.app.name}</span>
-            <span className="text-muted font-mono text-xs">{t.auth.tagline}</span>
-          </p>
-          <h1 className="text-xl font-medium">{t.auth.title}</h1>
-        </div>
-        <LoginForm next={safeNextPath(next)} guestEnabled={env.guestLoginEnabled} />
-      </div>
-    </main>
+    <BrandShell title={t.auth.title}>
+      <LoginForm
+        next={safeNextPath(next)}
+        guestEnabled={env.guestLoginEnabled}
+        googleEnabled={env.googleEnabled}
+      />
+    </BrandShell>
   );
 }

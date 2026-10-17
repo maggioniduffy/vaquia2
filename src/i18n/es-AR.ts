@@ -20,9 +20,48 @@ export const t = {
     codeTooManyAttempts: "Demasiados intentos. Pedir un código nuevo.",
     genericError: "No se pudo ingresar. Intentar de nuevo.",
     rateLimited: "Demasiados intentos. Esperar unos minutos e intentar de nuevo.",
+    googleSignIn: "Continuar con Google",
+    or: "o",
+    signUpTitle: "Crear cuenta",
+    signUpSubmit: "Crear cuenta",
+    signUpHint: "Se envía un código de 6 dígitos al email para verificarlo.",
+    noAccountYet: "¿No hay cuenta todavía?",
+    haveAccount: "¿Ya hay una cuenta?",
+    goToSignUp: "Crear cuenta",
+    goToLogin: "Ingresar",
     guestSignIn: "Entrar como invitado",
     signOut: "Cerrar sesión",
+    leaveDemo: "Salir de la demo y crear cuenta",
     noMembership: "Este usuario no pertenece a ninguna empresa. Contactar al administrador.",
+  },
+  onboarding: {
+    title: "Crear la empresa",
+    welcome: "Bienvenido a Vaquia",
+    stepOf: (current: number, total: number) => `Paso ${current} de ${total}`,
+    stepPerson: "Tus datos",
+    stepCompany: "La empresa",
+    fullName: "Nombre completo",
+    dni: "DNI",
+    dniHint: "7 u 8 dígitos, sin puntos.",
+    companyName: "Nombre de la empresa",
+    cuit: "CUIT de la empresa",
+    cuitHint: "Formato XX-XXXXXXXX-X.",
+    next: "Continuar",
+    back: "Volver",
+    submit: "Crear empresa",
+    duplicateContact: "Contactar a soporte",
+    duplicateHref: "mailto:hola@vaquia.com?subject=CUIT%20ya%20registrado",
+    trialNote: "Prueba gratuita de 30 días. El usuario queda como administrador.",
+    errors: {
+      invalidName: "Ingresar el nombre de la empresa.",
+      invalidFullName: "Ingresar el nombre completo.",
+      invalidDni: "El DNI debe tener 7 u 8 dígitos.",
+      invalidCuit: "El CUIT no es válido. Revisar los dígitos.",
+      duplicate:
+        "Esta empresa ya tiene una cuenta en Vaquia. Solicitar acceso al administrador de la empresa.",
+      notAllowed: "No es posible crear una empresa con este usuario.",
+      generic: "No se pudo crear la empresa. Intentar de nuevo.",
+    },
   },
   email: {
     otpSubject: "Código para ingresar a Vaquia",
@@ -40,7 +79,7 @@ export const t = {
     grant: "Dar acceso",
     grantTitle: "Dar acceso a Vaquia",
     grantDescription:
-      "Se envía una invitación por correo. El ingreso es con un código de 6 dígitos.",
+      "Se envía una invitación por correo. La persona la acepta al ingresar con ese correo.",
     emailLabel: "Correo electrónico",
     roleLabel: "Rol",
     submit: "Dar acceso",
@@ -54,8 +93,12 @@ export const t = {
       `${name} ya no podrá ingresar a esta empresa. La persona y sus registros se conservan.`,
     removeSubmit: "Quitar acceso",
     cancel: "Cancelar",
-    granted: "Acceso otorgado. Se envió la invitación.",
-    grantedNoEmail: "Acceso otorgado, pero no se pudo enviar la invitación por correo.",
+    granted: "Invitación enviada.",
+    grantedNoEmail: "Invitación creada, pero no se pudo enviar el correo.",
+    pendingTitle: "Invitación pendiente",
+    pendingLine: (email: string, role: string) => `${email} · ${role}`,
+    revoke: "Revocar",
+    revoked: "Invitación revocada.",
     roleChanged: "Rol actualizado.",
     removed: "Acceso quitado.",
     errors: {
@@ -66,6 +109,8 @@ export const t = {
       guestEmail: "Ese correo no se puede usar.",
       personaLinked: "Esta persona ya tiene acceso a Vaquia.",
       userLinkedOther: "Ese correo ya tiene acceso y está vinculado a otra persona.",
+      invitationPending: "Ya hay una invitación pendiente para esta persona o ese correo.",
+      emailIsMember: "Ese correo ya tiene acceso a esta empresa.",
       notFound: "No se encontró el acceso.",
       removeSelf: "No se puede quitar el propio acceso.",
       lastAdmin:
@@ -75,8 +120,24 @@ export const t = {
     },
     invite: {
       subject: (company: string) => `Invitación a Vaquia - ${company}`,
-      body: (name: string, company: string, loginUrl: string) =>
-        `Hola ${name},\n\nSe otorgó acceso a Vaquia para la empresa ${company}.\n\nPara ingresar, abrir ${loginUrl}, escribir este correo electrónico y pedir el código. Al ingresar, se envía por correo un código de 6 dígitos.\n`,
+      body: (name: string, company: string, signupUrl: string) =>
+        `Hola,\n\nSe invitó a ${name} a Vaquia para la empresa ${company}.\n\nIngresar o crear la cuenta con este correo para aceptar la invitación: ${signupUrl}\n`,
+    },
+  },
+  invitations: {
+    title: "Invitaciones",
+    description: (email: string) => `Invitaciones pendientes para ${email}.`,
+    roleLine: (role: string, date: string) => `Rol: ${role} · ${date}`,
+    accept: "Aceptar",
+    decline: "Rechazar",
+    createOwn: "Crear mi propia empresa",
+    notice: (count: number) =>
+      count === 1 ? "Hay una invitación pendiente." : `Hay ${count} invitaciones pendientes.`,
+    noticeLink: "Ver invitaciones",
+    errors: {
+      generic: "No se pudo completar la operación. Intentar de nuevo.",
+      notFound: "La invitación ya no está disponible.",
+      alreadyMember: "Ya se pertenece a esa empresa.",
     },
   },
   company: {
@@ -579,6 +640,27 @@ export const t = {
     soonClose: "El cierre mensual llega con la fase 7.",
     soonExports: "Las exportaciones llegan con la fase 8.",
   },
+  trial: {
+    daysLeft: (n: number) => `Prueba gratuita: ${n === 1 ? "queda 1 día" : `quedan ${n} días`}`,
+    expired: "La prueba terminó. La cuenta está en modo solo lectura.",
+    contact: "Activar la cuenta",
+    readOnly: "La prueba terminó: la cuenta está en modo solo lectura.",
+  },
+  onboardingChecklist: {
+    title: "Primeros pasos",
+    progress: (done: number, total: number) => `${done} de ${total}`,
+    dismiss: "Ocultar",
+    items: {
+      team: "Invitar al equipo",
+      people: "Importar personas",
+      crews: "Crear cuadrillas",
+      locations: "Cargar locaciones",
+    },
+    errors: {
+      forbidden: "Solo un administrador puede ocultar esta guía.",
+      generic: "No se pudo ocultar. Intentar de nuevo.",
+    },
+  },
   home: {
     attention: "Requiere atención",
     expired: "Vencidas",
@@ -586,6 +668,115 @@ export const t = {
     noAttention: "Nada requiere atención por ahora.",
     kpis: "Indicadores",
     kpisSoon: "Los indicadores llegan con la fase 6.",
+  },
+  // Marketing copy (public landing) is the exception to the no-vos rule: it uses voseo. See docs/spec/landing.md.
+  landing: {
+    meta: {
+      title: "Vaquia — HSE para operaciones en Vaca Muerta",
+      description:
+        "Registrá charlas, ATS y firmas en el yacimiento, aun sin señal, y convertilas en validaciones, acciones correctivas y cierres mensuales listos para auditar.",
+    },
+    nav: {
+      label: "Navegación",
+      product: "Producto",
+      field: "Campo",
+      office: "Oficina",
+      pricing: "Precios",
+      contractors: "Contratistas",
+      login: "Ingresar",
+      signup: "Crear cuenta",
+      toggleTheme: "Cambiar tema",
+    },
+    demoHref: "mailto:hola@vaquia.com?subject=Demo%20Vaquia",
+    hero: {
+      eyebrow: "HSE PARA OPERACIONES EN VACA MUERTA",
+      titleLine1: "Menos planillas.",
+      titleLine2: "Más tiempo en el campo.",
+      lead: "Vaquia registra charlas, ATS y firmas en el yacimiento —aun sin señal— y las convierte en validaciones, acciones correctivas y cierres mensuales listos para auditar.",
+      primary: "Crear cuenta",
+      secondary: "Ver demo",
+      secondaryFallback: "Ver cómo funciona",
+      dashboardAlt: "Pantalla de inicio del panel de oficina de Vaquia",
+    },
+    pillars: [
+      {
+        label: "MEJORES DECISIONES",
+        body: "Indicadores calculados con fórmulas visibles, sobre datos que llegaron firmados desde el campo.",
+      },
+      {
+        label: "MÁS BIENESTAR",
+        body: "Nadie entra a la locación sin aptitud médica, capacitación y EPP al día. El sistema lo bloquea antes.",
+      },
+      {
+        label: "MAYOR EFICIENCIA",
+        body: "Lo que se firma en el pozo llega a la oficina listo para validar. Sin transcribir, sin papeles perdidos.",
+      },
+    ],
+    field: {
+      eyebrow: "CAMPO · APP MÓVIL",
+      title: "En el yacimiento, funciona sin señal.",
+      body: "Charla de 5 minutos, ATS y firma de la cuadrilla desde el celular del supervisor. Todo queda en cola y se sincroniza al volver la conexión.",
+      chips: ["Charla 5 min", "ATS", "Firma en pantalla", "Cola offline"],
+      phones: {
+        hoy: "Pantalla Hoy de la app de campo",
+        charla: "Pantalla de charla de 5 minutos de la app de campo",
+        firma: "Pantalla de firma de la app de campo",
+      },
+    },
+    office: {
+      eyebrow: "OFICINA · PANEL HSE",
+      title: "En la oficina, nada se cierra sin revisión.",
+      body: "Cada registro recorre el mismo camino, con responsable y fecha en cada paso. Lo que se aprueba queda trazado para la auditoría.",
+      steps: [
+        {
+          title: "Registro",
+          body: "Llega desde campo con foto, ubicación y firma de la cuadrilla.",
+        },
+        { title: "Validación", body: "HSE revisa la evidencia y marca observaciones puntuales." },
+        { title: "Acción correctiva", body: "Cada desvío tiene responsable, plazo y aprobación." },
+        { title: "Cierre mensual", body: "Revisión HSE, aprobación de gerencia y exportación." },
+      ],
+      screenshotAlt: "Pantalla de acciones correctivas del panel de oficina de Vaquia",
+    },
+    pricing: {
+      eyebrow: "PRECIOS",
+      title: "Un plan según el tamaño de tu operación.",
+      labels: {
+        group: "Frecuencia de facturación",
+        monthly: "Mensual",
+        annual: "Anual",
+        twoFree: "2 meses gratis",
+        perMonth: "/mes",
+        billedAnnually: "facturado anualmente",
+        popular: "Más elegido",
+        cta: "Probar 30 días gratis",
+        features:
+          "Todos los módulos: captura offline, vencimientos, cierre mensual y export a operadora.",
+      },
+      tiers: {
+        base: { name: "Base", limit: "Hasta 25 personas de campo", extras: [] as string[] },
+        pro: { name: "Pro", limit: "Hasta 100 personas de campo", extras: [] as string[] },
+        premium: {
+          name: "Premium",
+          limit: "Personal ilimitado",
+          extras: ["Voz + IA (próximamente)", "Soporte prioritario"],
+        },
+      },
+      trialNote:
+        "Durante la prueba podés cambiar de plan cuando quieras. Los 30 días son de tu empresa, no del plan.",
+      footnote:
+        "Precios de referencia en ARS, sin IVA. Sin tarjeta para la prueba. Pagos con Mercado Pago.",
+    },
+    footer: {
+      cta: "Llevá Vaquia a tu próxima operación.",
+      demo: "Solicitar demo →",
+      productLabel: "Producto",
+      contactLabel: "Contacto",
+      email: "hola@vaquia.com",
+      location: "Neuquén, Argentina",
+      tagline: "Tecnología que impulsa la salud",
+      copyright: "© 2026 Vaquia",
+    },
   },
 } as const;
 

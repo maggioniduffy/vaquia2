@@ -1,5 +1,5 @@
 import { expect, test, type TestInfo } from "@playwright/test";
-import { latestCode, readOutbox, requestCode, submitCode } from "./helpers";
+import { latestCode, requestCode, submitCode } from "./helpers";
 
 // Seeded users used only by these tests (scripts/seed.mts). OTP state is per email on the server.
 const OTP_EMAIL = "otp@petrosur.test";
@@ -59,11 +59,11 @@ test("three wrong codes lock the email; the right code is then refused", async (
   await expect(page).toHaveURL(/\/login\?next=%2Fdashboard/);
 });
 
-test("an unknown email gets the same answer and no email is sent", async ({ page }, info) => {
+test("an unknown email gets the same answer and a code (open sign-up)", async ({ page }, info) => {
   test.skip(info.project.name !== "desktop-light", SKIP_REASON);
+  // Phase 1b: sign-up is open, so an unknown email is a new user and receives a code like any other.
   // requestCode asserts the same status message a known email gets.
-  await requestCode(page, UNKNOWN_EMAIL);
+  const requestedAt = await requestCode(page, UNKNOWN_EMAIL);
 
-  const sent = (await readOutbox()).filter((line) => line.to === UNKNOWN_EMAIL);
-  expect(sent).toHaveLength(0);
+  expect(await latestCode(UNKNOWN_EMAIL, requestedAt)).toMatch(/^\d{6}$/);
 });

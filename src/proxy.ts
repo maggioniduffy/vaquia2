@@ -11,7 +11,7 @@ export function proxy(request: NextRequest) {
   if (!hasSession && !isPublicPath(pathname)) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
-    url.search = pathname === "/" ? "" : `?next=${encodeURIComponent(pathname)}`;
+    url.search = `?next=${encodeURIComponent(pathname)}`;
     return NextResponse.redirect(url);
   }
   return NextResponse.next();
@@ -19,6 +19,6 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|apple-icon|pwa-icon/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };

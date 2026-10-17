@@ -6,7 +6,7 @@ import pg from "pg";
 
 const USAGE = `Usage:
   pnpm admin:create-company --name "Petrosur Servicios SRL" --admin-email ana@petrosur.com.ar \\
-    --admin-name "Ana López" [--cuit 30-71111111-1]`;
+    --admin-name "Ana López" [--cuit 30-70000000-8 (dashes optional)]`;
 
 function fail(message: string): never {
   console.error(`${message}\n\n${USAGE}`);
@@ -34,7 +34,8 @@ try {
 }
 
 const name = values.name?.trim();
-const cuit = values.cuit?.trim() || null;
+// Stored digits-only; the DB check (app.cuit_valid) rejects anything else.
+const cuit = values.cuit?.replace(/\D/g, "") || null;
 const adminEmail = values["admin-email"]?.trim().toLowerCase();
 const adminName = values["admin-name"]?.trim();
 
@@ -63,7 +64,7 @@ try {
   }
 
   const company = await client.query<{ id: string }>(
-    "insert into companies (name, cuit) values ($1, $2) returning id",
+    "insert into companies (name, cuit, plan) values ($1, $2, 'paid') returning id",
     [name, cuit],
   );
   const companyId = company.rows[0]!.id;

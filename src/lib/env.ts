@@ -43,4 +43,14 @@ export const env = {
   get guestLoginEnabled() {
     return process.env.GUEST_LOGIN_ENABLED !== "false";
   },
+  // Google sign-in is offered only when both are set.
+  get googleClientId() {
+    return process.env.GOOGLE_CLIENT_ID;
+  },
+  get googleClientSecret() {
+    return process.env.GOOGLE_CLIENT_SECRET;
+  },
+  get googleEnabled() {
+    return Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
+  },
 };

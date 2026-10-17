@@ -14,7 +14,18 @@ function current(): Theme {
 }
 
 /** 32×32 bordered icon button. Cycles light ↔ dark; persists in the `theme` cookie (1 year). */
-export function ThemeToggle({ className, initial }: { className?: string; initial?: Theme }) {
+export function ThemeToggle({
+  className,
+  initial,
+  variant = "square",
+  label,
+}: {
+  className?: string;
+  initial?: Theme;
+  /** `round`: landing nav style (40px circle, 18px icon, CSS-driven icon swap to avoid a flash). */
+  variant?: "square" | "round";
+  label?: string;
+}) {
   const [theme, setTheme] = useState<Theme | null>(initial ?? null);
 
   useEffect(() => {
@@ -31,6 +42,23 @@ export function ThemeToggle({ className, initial }: { className?: string; initia
   }
 
   const dark = theme === "dark";
+  if (variant === "round") {
+    return (
+      <button
+        type="button"
+        onClick={toggle}
+        aria-label={label ?? (dark ? t.theme.light : t.theme.dark)}
+        aria-pressed={dark}
+        className={cn(
+          "text-text inline-flex size-10 cursor-pointer items-center justify-center rounded-full border border-[var(--l-line)] bg-transparent p-0",
+          className,
+        )}
+      >
+        <MoonIcon size={18} strokeWidth={1.6} className="lp-moon" />
+        <SunIcon size={18} strokeWidth={1.6} className="lp-sun" />
+      </button>
+    );
+  }
   return (
     <button
       type="button"

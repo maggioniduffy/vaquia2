@@ -80,10 +80,10 @@ export async function twoCompanies(db: TestDb) {
   await createUser(db, ids.workerA, "a-worker@test.local");
   await createUser(db, ids.userB, "b-admin@test.local");
   await createUser(db, ids.both, "both@test.local");
-  await db.query("insert into companies (id, name) values ($1, 'Company A'), ($2, 'Company B')", [
-    ids.companyA,
-    ids.companyB,
-  ]);
+  await db.query(
+    "insert into companies (id, name, plan) values ($1, 'Company A', 'paid'), ($2, 'Company B', 'paid')",
+    [ids.companyA, ids.companyB],
+  );
   await db.query(
     `insert into memberships (company_id, user_id, role, created_at) values
        ($1, $3, 'hse', now()),
