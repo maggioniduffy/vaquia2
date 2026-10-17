@@ -7,7 +7,13 @@ import { Select } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useToast } from "@/components/ui/toast";
 import { t } from "@/i18n/es-AR";
-import { changeRole, grantAccess, removeAccess, type AccessResult } from "./access-actions";
+import {
+  changeRole,
+  grantAccess,
+  removeAccess,
+  revokeInvitation,
+  type AccessResult,
+} from "./access-actions";
 
 const a = t.access;
 const ROLES = ["worker", "supervisor", "hse", "manager", "admin"] as const;
@@ -230,5 +236,24 @@ function RemoveForm({ personaId, onDone }: { personaId: string; onDone: () => vo
         {pending ? a.saving : a.removeSubmit}
       </Button>
     </form>
+  );
+}
+
+export function RevokeInvitationButton({ personaId }: { personaId: string }) {
+  const { run, pending, error } = useAccessAction(() => {});
+
+  function onClick() {
+    const data = new FormData();
+    data.set("personaId", personaId);
+    run(revokeInvitation, data, () => [a.revoked, "success"]);
+  }
+
+  return (
+    <div className="flex flex-col items-end gap-2">
+      <Button type="button" variant="secondary" onClick={onClick} disabled={pending}>
+        {a.revoke}
+      </Button>
+      <ErrorBox message={error} />
+    </div>
   );
 }

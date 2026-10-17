@@ -57,22 +57,9 @@ function mapError(error: unknown): AccessResult {
   const code = (error as { code?: string } | null)?.code;
   if (isReadOnlyError(error)) return fail(t.trial.readOnly);
   if (code === "42501") return fail(e.noPermission);
-  if (code === "23505") return fail(e.personaLinked);
+  if (code === "23505") return fail(e.invitationPending);
   console.error("access action failed", error);
   return fail(e.generic);
-}
-
-/** Deletes a user created by this call if it ended up without any membership (no orphan users). */
-async function cleanupCreatedUser(userId: string | null) {
-  if (!userId) return;
-  try {
-    await pool.query(
-      "delete from users where id = $1 and not exists (select 1 from memberships where user_id = $1)",
-      [userId],
-    );
-  } catch (error) {
-    console.error("orphan user cleanup failed", error);
-  }
 }
 
 export async function grantAccess(formData: FormData): Promise<AccessResult> {
@@ -98,7 +85,7 @@ export async function grantAccess(formData: FormData): Promise<AccessResult> {
     const company = session.active;
     if (!company) return fail(e.noPermission);
 
-    // 1. Admin check and persona checks, as the caller (RLS).
+    // 1. Admin and persona checks, as the caller (RLS).
     const precheck = await withUser(session.userId, async (db) => {
       if (!(await isAdmin(db))) return "noPermission" as const;
       const persona = await db.query<{ full_name: string }>(
@@ -111,82 +98,76 @@ export async function grantAccess(formData: FormData): Promise<AccessResult> {
         [personaId],
       );
       if (linked.rows.length > 0) return "personaLinked" as const;
+      const pending = await db.query(
+        `select 1 from public.invitations
+          where company_id = public.current_company_id() and status = 'pending'
+            and (persona_id = $1 or email = $2)`,
+        [personaId, email],
+      );
+      if (pending.rows.length > 0) return "pending" as const;
       return persona.rows[0].full_name;
     });
     if (precheck === "noPermission") return fail(e.noPermission);
     if (precheck === "notFound") return fail(e.notFound);
     if (precheck === "personaLinked") return fail(e.personaLinked);
+    if (precheck === "pending") return fail(e.invitationPending);
     const fullName = precheck;
 
-    // 2. Owner pool: find or create the user (auth-side provisioning), only after the admin check.
-    const found = await pool.query<{ id: string }>("select id from users where lower(email) = $1", [
-      email,
-    ]);
-    let targetId = found.rows[0]?.id;
-    let createdUserId: string | null = null;
-    if (!targetId) {
-      const created = await pool.query<{ id: string }>(
-        `insert into users (name, email, email_verified) values ($1, $2, true)
-         on conflict (email) do update set email = excluded.email returning id`,
-        [fullName, email],
-      );
-      targetId = created.rows[0]!.id;
-      createdUserId = targetId;
+    // 2. The email must not already belong to a member of this company (users is owner-only).
+    const member = await pool.query(
+      `select 1 from users u join memberships m on m.user_id = u.id
+        where lower(u.email) = $1 and m.company_id = $2`,
+      [email, company.companyId],
+    );
+    if (member.rows.length > 0) {
+      return { ok: false, error: e.emailIsMember, fieldErrors: { email: e.emailIsMember } };
     }
-    const userId = targetId;
 
-    // 3. Membership as the admin (RLS).
-    let outcome: "ok" | "userLinkedOther" | "lastAdmin";
-    try {
-      outcome = await withUser(session.userId, async (db) => {
-        const existing = await db.query<{ id: string; persona_id: string | null; role: string }>(
-          "select id, persona_id, role from public.memberships where company_id = public.current_company_id() and user_id = $1",
-          [userId],
-        );
-        const row = existing.rows[0];
-        if (row) {
-          if (row.persona_id && row.persona_id !== personaId) return "userLinkedOther" as const;
-          if (row.role === "admin" && role !== "admin" && (await lockAndCountAdmins(db)) <= 1) {
-            return "lastAdmin" as const;
-          }
-          await db.query("update public.memberships set persona_id = $1, role = $2 where id = $3", [
-            personaId,
-            role,
-            row.id,
-          ]);
-          return "ok" as const;
-        }
-        await db.query(
-          `insert into public.memberships (company_id, user_id, role, persona_id)
+    // 3. The invitation, as the admin (RLS). No user or membership is created here.
+    await withUser(session.userId, async (db) => {
+      await db.query(
+        `insert into public.invitations (company_id, email, role, persona_id)
          values (public.current_company_id(), $1, $2, $3)`,
-          [userId, role, personaId],
-        );
-        return "ok" as const;
-      });
-    } catch (error) {
-      await cleanupCreatedUser(createdUserId);
-      throw error;
-    }
-    if (outcome !== "ok") await cleanupCreatedUser(createdUserId);
-    if (outcome === "userLinkedOther") {
-      return { ok: false, error: e.userLinkedOther, fieldErrors: { email: e.userLinkedOther } };
-    }
-    if (outcome === "lastAdmin") return fail(e.lastAdminRole);
+        [email, role, personaId],
+      );
+    });
     revalidate(personaId);
 
-    // 4. Invitation. A mail failure never rolls back the grant.
+    // 4. Email. A mail failure never rolls back the invitation.
     let emailSent = true;
     try {
       await sendEmail({
         to: email,
         subject: t.access.invite.subject(company.name),
-        text: t.access.invite.body(fullName, company.name, `${env.siteUrl}/login`),
+        text: t.access.invite.body(fullName, company.name, `${env.siteUrl}/signup`),
       });
     } catch (error) {
       console.error("invitation email failed", error);
       emailSent = false;
     }
     return { ok: true, emailSent };
+  } catch (error) {
+    return mapError(error);
+  }
+}
+
+export async function revokeInvitation(formData: FormData): Promise<AccessResult> {
+  const parsed = removeSchema.safeParse({ personaId: formData.get("personaId") });
+  if (!parsed.success) return fail(e.generic);
+  const { personaId } = parsed.data;
+  try {
+    const session = await getSession();
+    const result = await withUser(session.userId, async (db) => {
+      if (!(await isAdmin(db))) return fail(e.noPermission);
+      const r = await db.query(
+        `update public.invitations set status = 'revoked', responded_at = now()
+          where company_id = public.current_company_id() and persona_id = $1 and status = 'pending'`,
+        [personaId],
+      );
+      return r.rowCount ? ({ ok: true } as AccessResult) : fail(e.notFound);
+    });
+    revalidate(personaId);
+    return result;
   } catch (error) {
     return mapError(error);
   }

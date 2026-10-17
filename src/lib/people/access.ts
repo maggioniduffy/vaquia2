@@ -36,3 +36,20 @@ export async function getPersonaAccess(
   if (!email) return null;
   return { membershipId: row.id, userId: row.user_id, role: row.role, email };
 }
+
+export type PersonaInvitation = { id: string; email: string; role: Role };
+
+/** Pending invitation for this persona in the current company (admin only, RLS scoped). */
+export async function getPersonaInvitation(
+  userId: string,
+  personaId: string,
+): Promise<PersonaInvitation | null> {
+  return withUser(userId, async (db) => {
+    const result = await db.query<PersonaInvitation>(
+      `select id, email, role from public.invitations
+        where company_id = public.current_company_id() and persona_id = $1 and status = 'pending'`,
+      [personaId],
+    );
+    return result.rows[0] ?? null;
+  });
+}
