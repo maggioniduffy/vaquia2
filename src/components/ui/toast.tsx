@@ -52,7 +52,7 @@ export function Toaster({ children }: { children: ReactNode }) {
                 <button
                   type="button"
                   onClick={item.action.onClick}
-                  className="text-accent hover:text-accent-hover font-medium"
+                  className="text-accent-strong hover:text-accent-hover font-medium"
                 >
                   {item.action.label}
                 </button>

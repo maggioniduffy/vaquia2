@@ -14,8 +14,8 @@ function current(): Theme {
 }
 
 /** 32×32 bordered icon button. Cycles light ↔ dark; persists in the `theme` cookie (1 year). */
-export function ThemeToggle({ className }: { className?: string }) {
-  const [theme, setTheme] = useState<Theme | null>(null);
+export function ThemeToggle({ className, initial }: { className?: string; initial?: Theme }) {
+  const [theme, setTheme] = useState<Theme | null>(initial ?? null);
 
   useEffect(() => {
     // Resolve the effective theme after mount (system preference is client-only).
@@ -35,7 +35,8 @@ export function ThemeToggle({ className }: { className?: string }) {
     <button
       type="button"
       onClick={toggle}
-      aria-label={t.theme.toggle}
+      aria-label={dark ? t.theme.light : t.theme.dark}
+      aria-pressed={dark}
       title={dark ? t.theme.light : t.theme.dark}
       className={cn(
         "border-border text-text hover:bg-hover inline-flex size-8 items-center justify-center rounded-[var(--radius-control)] border transition-colors",

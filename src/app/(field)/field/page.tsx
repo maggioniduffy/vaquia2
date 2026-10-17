@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import Link from "next/link";
 import { FieldContent } from "@/components/shell/field-action-bar";
 import { SignOutButton } from "@/components/shell/sign-out-button";
@@ -36,32 +37,34 @@ function ChevronRight() {
 export default async function FieldHomePage() {
   const session = await getSession();
   const today = await getFieldToday(session.userId);
+  const themeCookie = (await cookies()).get("theme")?.value;
+  const theme = themeCookie === "light" || themeCookie === "dark" ? themeCookie : undefined;
   const canOffice = session.active && !["worker", "supervisor"].includes(session.active.role);
   return (
     <FieldContent>
       <section className="border-border bg-surface flex flex-col gap-1 rounded-[var(--radius-panel)] border p-4">
-        <span className="text-muted text-[13px]" data-testid="company-name">
+        <span className="text-muted text-field-sm" data-testid="company-name">
           {session.active?.name}
         </span>
         {today.crew ? (
           <>
-            <span className="text-[17px] font-medium">
+            <span className="text-field-lg font-medium">
               {today.crew.locationName
                 ? today.crew.locationField
                   ? t.field.fieldLocation(today.crew.locationField, today.crew.locationName)
                   : today.crew.locationName
                 : today.crew.name}
             </span>
-            <span className="text-muted text-[13px]">
+            <span className="text-muted text-field-sm">
               {t.field.crewLine(today.crew.name, today.crew.members)}
             </span>
           </>
         ) : (
-          <span className="text-muted text-[13px]">{t.field.noCrew}</span>
+          <span className="text-muted text-field-sm">{t.field.noCrew}</span>
         )}
       </section>
 
-      <h2 className="text-muted text-[13px] font-normal">{t.field.forToday}</h2>
+      <h2 className="text-muted text-field-sm font-normal">{t.field.forToday}</h2>
       <ul className="flex flex-col gap-3">
         {TASKS.map((task) => (
           <li key={task.title}>
@@ -71,7 +74,7 @@ export default async function FieldHomePage() {
             >
               <span className="flex flex-1 flex-col gap-0.5">
                 <span className="font-medium">{task.title}</span>
-                <span className="text-muted text-[13px]">{task.hint}</span>
+                <span className="text-muted text-field-sm">{task.hint}</span>
               </span>
               <ChevronRight />
             </Link>
@@ -84,19 +87,19 @@ export default async function FieldHomePage() {
           key={`${q.personaName}-${q.typeName}`}
           className="border-warning flex flex-col gap-0.5 border-l-2 py-0.5 pl-3"
         >
-          <span className="text-[15px] font-medium">
+          <span className="text-field-md font-medium">
             {t.field.expiringTitle(
               q.personaName,
               q.typeName,
               formatDateAr(q.expiresOn).slice(0, 5),
             )}
           </span>
-          <span className="text-muted text-[13px]">{t.field.expiringHint}</span>
+          <span className="text-muted text-field-sm">{t.field.expiringHint}</span>
         </div>
       ))}
 
       <div className="flex items-center justify-between pt-2">
-        <ThemeToggle className="size-12" />
+        <ThemeToggle className="size-12" initial={theme} />
         {canOffice ? (
           <SignOutButton className="text-muted hover:text-text min-h-12 px-2 text-sm" />
         ) : null}

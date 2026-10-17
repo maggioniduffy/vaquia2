@@ -53,7 +53,7 @@ export function QualificationSheet({
           <button
             type="button"
             aria-label={renewType ? `${q.renew}: ${renewType.name}` : q.add}
-            className="text-accent hover:text-accent-hover shrink-0 text-xs font-medium"
+            className="text-accent-strong hover:text-accent-hover shrink-0 text-xs font-medium"
           >
             {renewType ? q.renew : t.people.panel.add}
           </button>

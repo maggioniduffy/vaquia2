@@ -29,7 +29,10 @@ export function Tr({
       aria-selected={selected || undefined}
       className={cn(
         "border-border border-b transition-colors",
-        selected ? "bg-accent-subtle shadow-[inset_2px_0_0_var(--accent)]" : "hover:bg-hover",
+        "[&>td:first-child]:border-l-2 [&>td:first-child]:border-l-transparent",
+        selected
+          ? "bg-accent-subtle [&>td:first-child]:border-l-accent"
+          : "hover:bg-hover",
         draft && "text-muted",
         className,
       )}

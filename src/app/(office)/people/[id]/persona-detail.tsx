@@ -121,7 +121,7 @@ export async function PersonaDetail({
             <div className="flex shrink-0 items-center gap-3 self-start">
               <Link
                 href={`/people/${persona.id}`}
-                className="text-accent hover:text-accent-hover text-xs font-medium"
+                className="text-accent-strong hover:text-accent-hover text-xs font-medium"
               >
                 {panelT.openPage}
               </Link>

@@ -92,7 +92,6 @@ export const t = {
   },
   nav: {
     office: {
-      home: "Inicio",
       close: "Cierre mensual",
       exports: "Exportaciones",
       qualifications: "Habilitaciones",
@@ -101,14 +100,7 @@ export const t = {
       records: "Registros",
       people: "Personal",
       actions: "Acciones",
-      reports: "Informes",
       settings: "Configuración",
-    },
-    field: {
-      home: "Inicio",
-      capture: "Nuevo",
-      actions: "Mis acciones",
-      sync: "Sincronizar",
     },
     toField: "Vista campo",
     toOffice: "Vista oficina",
@@ -137,13 +129,10 @@ export const t = {
     evening: (name: string) => `Buenas noches, ${name}`,
   },
   empty: {
-    dashboard: "Todavía no hay datos para mostrar.",
     records: "Todavía no hay registros.",
     people: "Todavía no hay personal cargado.",
     actions: "No hay acciones abiertas.",
-    reports: "Todavía no hay informes mensuales.",
     settings: "Configuración de la empresa.",
-    fieldHome: "Sin tareas pendientes.",
     fieldCapture: "Elegir el tipo de registro.",
     fieldActions: "No hay acciones asignadas.",
     fieldSync: "Todo sincronizado.",
@@ -353,6 +342,8 @@ export const t = {
       capacitaciones:
         "Columnas: dni, capacitacion, emitida, vence (opcional). El DNI debe existir. Sin vencimiento se usa la vigencia estándar de la capacitación. Cada fila agrega una capacitación nueva; si ya existe con la misma emisión se omite.",
     },
+    previewLabel: "Vista previa",
+    sizeUnit: "KB",
     template: "Descargar plantilla",
     subtitle:
       "Las filas con error no se importan. Corregir el archivo y volver a subirlo, o importar solo las válidas.",
@@ -559,7 +550,7 @@ export const t = {
     },
     empty: {
       capture: "La captura de charlas y ATS llega en la fase 2.",
-      actions: "Las acciones asignadas llegan en la fase 5.",
+      actions: "Las acciones asignadas llegan en la fase 4.",
       sync: "La cola de envíos llega en la fase 2.",
     },
   },

@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ChevronDownIcon } from "@/components/ui/icons";
@@ -19,6 +20,8 @@ export async function OfficeShell({
 }) {
   const { active, companies } = session;
   const habilitaciones = await countHabilitaciones(session.userId);
+  const themeCookie = (await cookies()).get("theme")?.value;
+  const theme = themeCookie === "light" || themeCookie === "dark" ? themeCookie : undefined;
   const name = displayNameFromEmail(session.email);
 
   return (
@@ -58,7 +61,7 @@ export async function OfficeShell({
           )}
           <OfficeTitle />
           <div className="flex-1" />
-          <ThemeToggle />
+          <ThemeToggle initial={theme} />
           <div className="flex items-center gap-2">
             <span
               aria-hidden

@@ -21,7 +21,8 @@ export async function listAttention(userId: string, days = 7): Promise<Attention
       expires_on: string;
       status: "expired" | "expiring";
     }>(
-      `select distinct on (qs.persona_id, qs.qualification_type_id)
+      `select * from (
+       select distinct on (qs.persona_id, qs.qualification_type_id)
               p.id as persona_id, p.full_name, c.name as crew_name,
               qt.name as qualification_name, to_char(qs.expires_on, 'YYYY-MM-DD') as expires_on,
               qs.status
@@ -30,7 +31,9 @@ export async function listAttention(userId: string, days = 7): Promise<Attention
          join public.qualification_types qt on qt.id = qs.qualification_type_id
          left join public.crews c on c.company_id = p.company_id and c.id = p.crew_id
         where qs.status = 'expired' or (qs.status = 'expiring' and qs.days_left <= $1)
-        order by qs.persona_id, qs.qualification_type_id`,
+        order by qs.persona_id, qs.qualification_type_id) a
+        order by expires_on, full_name
+        limit 50`,
       [days],
     );
     return res.rows
@@ -49,7 +52,7 @@ export async function listAttention(userId: string, days = 7): Promise<Attention
   });
 }
 
-/** Active personas with at least one required qualification expired or expiring (30 days). */
+/** Personas with at least one qualification whose status is expired or expiring (as defined by the qualification_status view). */
 export async function countHabilitaciones(userId: string): Promise<number> {
   return withUser(userId, async (db) => {
     const res = await db.query<{ n: number }>(

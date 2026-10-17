@@ -5,7 +5,7 @@ export function Input({ className, ...props }: ComponentProps<"input">) {
   return (
     <input
       className={cn(
-        "border-border bg-surface text-text placeholder:text-muted aria-invalid:border-danger disabled:bg-hover disabled:text-muted h-9 w-full rounded-[var(--radius-control)] border px-3 text-sm",
+        "focus-visible:border-accent focus-visible:shadow-[0_0_0_3px_var(--accent-subtle)] focus-visible:outline-none border-border bg-surface text-text placeholder:text-muted aria-invalid:border-danger disabled:bg-hover disabled:text-muted h-9 w-full rounded-[var(--radius-control)] border px-3 text-sm",
         className,
       )}
       {...props}
@@ -22,7 +22,7 @@ export function Textarea({ className, ...props }: ComponentProps<"textarea">) {
   return (
     <textarea
       className={cn(
-        "border-border bg-surface text-text placeholder:text-muted aria-invalid:border-danger disabled:bg-hover disabled:text-muted min-h-[72px] w-full rounded-[var(--radius-control)] border px-3 py-2 text-sm",
+        "focus-visible:border-accent focus-visible:shadow-[0_0_0_3px_var(--accent-subtle)] focus-visible:outline-none border-border bg-surface text-text placeholder:text-muted aria-invalid:border-danger disabled:bg-hover disabled:text-muted min-h-[72px] w-full rounded-[var(--radius-control)] border px-3 py-2 text-sm",
         className,
       )}
       {...props}

@@ -7,7 +7,7 @@ type Size = "md" | "sm" | "touch";
 
 const variants: Record<Variant, string> = {
   primary:
-    "border-accent bg-accent text-accent-text hover:bg-accent-hover hover:border-accent-hover",
+    "border-accent-strong bg-accent-strong text-accent-text hover:bg-accent-hover hover:border-accent-hover",
   secondary: "border-border bg-surface text-text hover:bg-hover",
   ghost: "border-transparent bg-transparent text-text hover:bg-hover",
   // Text red on surface; never a red fill.
@@ -40,7 +40,7 @@ export function Button({
     <Comp
       type={asChild ? undefined : (type ?? "button")}
       className={cn(
-        "disabled:border-border disabled:bg-hover disabled:text-muted inline-flex items-center justify-center gap-2 rounded-[var(--radius-control)] border font-medium whitespace-nowrap transition-colors disabled:pointer-events-none",
+        "focus-visible:border-accent focus-visible:shadow-[0_0_0_3px_var(--accent-subtle)] focus-visible:outline-none disabled:border-border disabled:bg-hover disabled:text-muted inline-flex items-center justify-center gap-2 rounded-[var(--radius-control)] border font-medium whitespace-nowrap transition-colors disabled:pointer-events-none",
         variants[variant],
         sizes[size],
         className,

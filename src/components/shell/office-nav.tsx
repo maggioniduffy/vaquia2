@@ -24,7 +24,7 @@ export function OfficeNav({ counts }: { counts: Partial<Record<string, number>> 
             className={cn(
               "flex h-8 shrink-0 items-center justify-between gap-3 rounded-[var(--radius-control)] px-2.5 whitespace-nowrap",
               isActive
-                ? "bg-accent-subtle text-accent font-medium"
+                ? "bg-accent-subtle text-accent-strong font-medium"
                 : "text-muted hover:bg-hover hover:text-text",
             )}
           >

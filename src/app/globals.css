@@ -8,7 +8,8 @@
   --text: #18181b;
   --text-muted: #71717a;
   --accent: #0e9f9a;
-  --accent-hover: #0b807c;
+  --accent-strong: #0a7671;
+  --accent-hover: #08605c;
   --accent-subtle: rgba(14, 159, 154, 0.1);
   --accent-text: #ffffff;
   --danger: #dc2626;
@@ -27,6 +28,7 @@
     --text: #f4f4f5;
     --text-muted: #a1a1aa;
     --accent: #2dd4bf;
+    --accent-strong: #2dd4bf;
     --accent-hover: #5eead4;
     --accent-subtle: rgba(45, 212, 191, 0.12);
     --accent-text: #0b2a27;
@@ -46,6 +48,7 @@
   --text: #f4f4f5;
   --text-muted: #a1a1aa;
   --accent: #2dd4bf;
+  --accent-strong: #2dd4bf;
   --accent-hover: #5eead4;
   --accent-subtle: rgba(45, 212, 191, 0.12);
   --accent-text: #0b2a27;
@@ -64,6 +67,7 @@
   --color-text: var(--text);
   --color-muted: var(--text-muted);
   --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
   --color-accent-hover: var(--accent-hover);
   --color-accent-subtle: var(--accent-subtle);
   --color-accent-text: var(--accent-text);
@@ -81,6 +85,10 @@
   --text-base: 16px;
   --text-lg: 20px;
   --text-xl: 28px;
+  /* Field-only sizes (390px mobile) */
+  --text-field-sm: 13px;
+  --text-field-md: 15px;
+  --text-field-lg: 17px;
 
   --radius-control: 6px;
   --radius-panel: 8px;
@@ -103,14 +111,13 @@
     -webkit-font-smoothing: antialiased;
   }
   a {
-    color: var(--accent);
+    color: var(--accent-strong);
   }
   a:hover {
     color: var(--accent-hover);
   }
   :focus-visible {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-subtle);
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 }

@@ -31,9 +31,9 @@ export function FieldHeader({ homeSubtitle, end }: { homeSubtitle: string; end: 
         </Link>
       )}
       <div className="flex min-w-0 flex-1 flex-col">
-        <h1 className="truncate text-[17px] leading-tight font-medium">{title}</h1>
+        <h1 className="truncate text-field-lg leading-tight font-medium">{title}</h1>
         {home ? (
-          <p className="text-muted truncate text-[13px] leading-tight">{homeSubtitle}</p>
+          <p className="text-muted truncate text-field-sm leading-tight">{homeSubtitle}</p>
         ) : null}
       </div>
       {/* Real sync state arrives with the offline engine (phase 2). */}

@@ -130,7 +130,7 @@ export function ImportForm() {
             <a
               href={`/people/import/template/${kind}`}
               download
-              className="text-accent hover:text-accent-hover w-fit text-sm font-medium"
+              className="text-accent-strong hover:text-accent-hover w-fit text-sm font-medium"
             >
               {t.import.template}
             </a>
@@ -145,6 +145,7 @@ export function ImportForm() {
               type="file"
               accept=".csv,text/csv"
               disabled={pending}
+              tabIndex={-1}
               className="sr-only"
               onChange={(e) => {
                 setFile(e.target.files?.[0] ?? null);
@@ -284,7 +285,7 @@ function PreviewView({
   return (
     <>
       <section
-        aria-label="preview"
+        aria-label={t.import.previewLabel}
         className="bg-surface border-border flex flex-wrap items-center gap-x-4 gap-y-3 rounded-[var(--radius-panel)] border px-4 py-3"
       >
         <FileIcon size={20} className="text-muted shrink-0" />
@@ -295,7 +296,7 @@ function PreviewView({
             {file ? (
               <>
                 {" · "}
-                <Mono>{Math.max(1, Math.round(file.size / 1024))} KB</Mono>
+                <Mono>{Math.max(1, Math.round(file.size / 1024))} {t.import.sizeUnit}</Mono>
               </>
             ) : null}
             {" · "}
@@ -331,7 +332,7 @@ function PreviewView({
         <button
           type="button"
           onClick={onChangeFile}
-          className="text-accent hover:text-accent-hover text-sm font-medium"
+          className="text-accent-strong hover:text-accent-hover text-sm font-medium"
         >
           {t.import.changeFile}
         </button>
@@ -351,7 +352,7 @@ function PreviewView({
         <a
           href={`/people/import/template/${kind}`}
           download
-          className="text-accent hover:text-accent-hover text-sm"
+          className="text-accent-strong hover:text-accent-hover text-sm"
         >
           {t.import.template}
         </a>

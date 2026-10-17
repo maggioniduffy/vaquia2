@@ -81,11 +81,14 @@ export async function listPersonas(userId: string, filters: PersonaFilters): Pro
 
   const sql = `
     select p.id, p.full_name, p.dni, p.crew_id, c.name as crew_name, p.active,
-      (select count(*)::int from public.persona_task_fitness f
-        where f.persona_id = p.id and not f.apto) as unfit_tasks,
-      (select count(distinct qs.qualification_type_id)::int from public.qualification_status qs
-        where qs.persona_id = p.id and qs.status = 'expiring') as expiring_count
+      coalesce(uf.n, 0)::int as unfit_tasks,
+      coalesce(ex.n, 0)::int as expiring_count
     from public.personas p
+    left join (select persona_id, count(*) as n from public.persona_task_fitness
+      where not apto group by persona_id) uf on uf.persona_id = p.id
+    left join (select persona_id, count(distinct qualification_type_id) as n
+      from public.qualification_status where status = 'expiring' group by persona_id) ex
+      on ex.persona_id = p.id
     left join public.crews c on c.company_id = p.company_id and c.id = p.crew_id
     ${where.length ? `where ${where.join(" and ")}` : ""}
     order by lower(p.full_name), p.id

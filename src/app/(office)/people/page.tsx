@@ -106,7 +106,7 @@ export default async function PeoplePage({ searchParams }: { searchParams: Searc
 
       <form method="get" role="search" className="flex flex-wrap items-center gap-2">
         {selectedId ? <input type="hidden" name="persona" value={selectedId} /> : null}
-        <label className="bg-surface border-border text-muted focus-within:border-accent flex h-8 w-full items-center gap-2 rounded-[var(--radius-control)] border px-2.5 sm:w-60">
+        <label className="bg-surface border-border text-muted focus-within:border-accent focus-within:shadow-[0_0_0_3px_var(--accent-subtle)] flex h-8 w-full items-center gap-2 rounded-[var(--radius-control)] border px-2.5 sm:w-60">
           <SearchIcon size={14} />
           <input
             name="q"
@@ -135,7 +135,7 @@ export default async function PeoplePage({ searchParams }: { searchParams: Searc
           {t.people.search}
         </button>
         {filtered ? (
-          <Link href="/people" className="text-accent hover:text-accent-hover text-sm font-medium">
+          <Link href="/people" className="text-accent-strong hover:text-accent-hover text-sm font-medium">
             {t.people.clearFilters}
           </Link>
         ) : null}
