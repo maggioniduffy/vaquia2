@@ -1,5 +1,16 @@
 import path from "node:path";
 import { defineConfig, devices } from "@playwright/test";
+import { assertLocalOrCi } from "./scripts/db-target.mjs";
+
+// The local server reads .env.local; specs create users and companies, so that database must be local.
+if (!process.env.E2E_BASE_URL) {
+  try {
+    process.loadEnvFile(".env.local");
+  } catch {
+    // CI provides DATABASE_URL directly.
+  }
+  assertLocalOrCi("run e2e against the local server");
+}
 
 const baseURL = process.env.E2E_BASE_URL ?? "http://localhost:3000";
 

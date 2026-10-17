@@ -1,11 +1,15 @@
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
+import { assertLocalOrCi } from "./scripts/db-target.mjs";
 
 try {
   process.loadEnvFile(".env.local");
 } catch {
   // CI provides DATABASE_URL directly.
 }
+
+// DB tests write rows: never against Neon (production) from a dev machine.
+assertLocalOrCi("run DB tests");
 
 // DB tests: RLS and append-only rules against a migrated Postgres (local, CI service, or Neon branch).
 // The `@` alias and the `server-only` stub let DB tests import pure modules from src/lib (e.g. import-db).

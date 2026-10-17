@@ -1,5 +1,6 @@
 // Runs dbmate with our defaults, loading .env.local when present (CI and Neon pass DATABASE_URL directly).
 import { spawnSync } from "node:child_process";
+import { assertLocalOrCi } from "./db-target.mjs";
 
 try {
   process.loadEnvFile(".env.local");
@@ -15,6 +16,11 @@ if (process.env.DATABASE_URL) {
     "?",
   ).replace(/[&?]channel_binding=[^&]*/, "");
 }
+
+// Commands that change a database run only against local Postgres (or in GitHub Actions).
+const MUTATING = new Set(["up", "migrate", "rollback", "down", "drop", "create", "load"]);
+const command = process.argv.slice(2).find((arg) => !arg.startsWith("-"));
+if (MUTATING.has(command)) assertLocalOrCi(`run dbmate ${command}`);
 
 const result = spawnSync(
   "dbmate",
