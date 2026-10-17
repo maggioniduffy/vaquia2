@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { Input, Label } from "@/components/ui/input";
 import { t } from "@/i18n/es-AR";
-import { parseCoords } from "@/lib/geo/parse-coords";
+import { isShortMapsLink, parseCoords, round6 } from "@/lib/geo/parse-coords";
 import { controlClass, Field } from "./entity-sheet";
 
 const LocationMap = dynamic(() => import("./location-map"), {
@@ -73,6 +73,7 @@ export function LocationPicker({
   const [searchFailed, setSearchFailed] = useState(false);
   const [paste, setPaste] = useState("");
   const [pasteInvalid, setPasteInvalid] = useState(false);
+  const [pasteShort, setPasteShort] = useState(false);
   const abort = useRef<AbortController | null>(null);
 
   const la = toNum(lat);
@@ -80,8 +81,8 @@ export function LocationPicker({
   const point = la !== null && ln !== null && Math.abs(la) <= 90 ? { lat: la, lng: ln } : null;
 
   function setPoint(a: number, b: number) {
-    setLat(String(a));
-    setLng(String(b));
+    setLat(String(round6(a)));
+    setLng(String(round6(b)));
   }
 
   useEffect(() => {
@@ -115,10 +116,12 @@ export function LocationPicker({
     setPaste(value);
     if (!value.trim()) {
       setPasteInvalid(false);
+      setPasteShort(false);
       return;
     }
     const c = parseCoords(value);
     setPasteInvalid(!c);
+    setPasteShort(!c && isShortMapsLink(value));
     if (c) setPoint(c.lat, c.lng);
   }
 
@@ -183,7 +186,7 @@ export function LocationPicker({
         />
         {pasteInvalid ? (
           <p role="alert" className="text-danger text-xs">
-            {picker.pasteInvalid}
+            {pasteShort ? picker.pasteShortLink : picker.pasteInvalid}
           </p>
         ) : null}
       </div>

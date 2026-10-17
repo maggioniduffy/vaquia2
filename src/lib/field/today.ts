@@ -11,7 +11,12 @@ export type ExpiringQualification = {
 
 export type FieldToday = {
   personaName: string | null;
-  crew: { name: string; members: number; locationName: string | null; locationField: string | null } | null;
+  crew: {
+    name: string;
+    members: number;
+    locationName: string | null;
+    locationField: string | null;
+  } | null;
   expiring: ExpiringQualification[];
 };
 
@@ -72,7 +77,12 @@ export const getFieldToday = cache(async (userId: string): Promise<FieldToday> =
 
     return {
       personaName: ctx.persona_name,
-      crew: { name: ctx.crew_name, members: ctx.members ?? 0, locationName: ctx.location_name, locationField: ctx.location_field },
+      crew: {
+        name: ctx.crew_name,
+        members: ctx.members ?? 0,
+        locationName: ctx.location_name,
+        locationField: ctx.location_field,
+      },
       expiring: expiring.map((r) => ({
         personaName: r.persona_name,
         typeName: r.type_name,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseCoords } from "./parse-coords";
+import { isShortMapsLink, parseCoords, round6 } from "./parse-coords";
 
 const nqn = { lat: -38.95, lng: -68.06 };
 
@@ -34,5 +34,25 @@ describe("parseCoords", () => {
     expect(parseCoords("91, 10")).toBeNull();
     expect(parseCoords("10, 181")).toBeNull();
     expect(parseCoords("https://maps.google.com/?q=-95,-68")).toBeNull();
+  });
+});
+
+describe("isShortMapsLink", () => {
+  it("detects Google Maps short links", () => {
+    expect(isShortMapsLink("https://maps.app.goo.gl/AbC123")).toBe(true);
+    expect(isShortMapsLink("goo.gl/maps/xyz")).toBe(true);
+    expect(isShortMapsLink("https://goo.gl/maps/xyz")).toBe(true);
+  });
+  it("ignores other input", () => {
+    expect(isShortMapsLink("https://www.google.com/maps/@-38,-68,15z")).toBe(false);
+    expect(isShortMapsLink("-38.95, -68.06")).toBe(false);
+    expect(isShortMapsLink("https://example.com/goo.gl/maps")).toBe(false);
+  });
+});
+
+describe("round6", () => {
+  it("rounds to 6 decimals", () => {
+    expect(round6(-38.95123456789)).toBe(-38.951235);
+    expect(round6(-68.06)).toBe(-68.06);
   });
 });

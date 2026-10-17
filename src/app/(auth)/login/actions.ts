@@ -103,7 +103,11 @@ export async function signInWithGoogle(next: string): Promise<void> {
     redirect("/login");
   }
   const { url } = await auth.api.signInSocial({
-    body: { provider: "google", callbackURL: safeNextPath(next) },
+    body: {
+      provider: "google",
+      callbackURL: safeNextPath(next),
+      errorCallbackURL: "/login?error=google",
+    },
     headers: await headers(),
   });
   if (!url) redirect("/login");

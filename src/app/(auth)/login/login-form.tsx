@@ -56,11 +56,13 @@ export function LoginForm({
   guestEnabled,
   googleEnabled,
   mode = "login",
+  initialError,
 }: {
   next: string;
   guestEnabled: boolean;
   googleEnabled: boolean;
   mode?: "login" | "signup";
+  initialError?: string;
 }) {
   const signup = mode === "signup";
   const [state, action, pending] = useActionState<LoginState, FormData>(codeFlow, {});
@@ -113,9 +115,9 @@ export function LoginForm({
           </div>
         )}
 
-        {state.error ? (
+        {(state.error ?? (state.step || state.info ? undefined : initialError)) ? (
           <p role="alert" className="border-danger border-l-2 pl-3 text-sm">
-            {state.error}
+            {state.error ?? initialError}
           </p>
         ) : null}
         {state.info ? (

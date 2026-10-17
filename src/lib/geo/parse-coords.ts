@@ -38,3 +38,13 @@ export function parseCoords(input: string): Coords | null {
 
   return fromMatch(text.match(new RegExp(String.raw`^${PAIR}$`)));
 }
+
+/** Google Maps short links carry no coordinates (they redirect), so they can't be parsed offline. */
+export function isShortMapsLink(input: string): boolean {
+  return /^(?:https?:\/\/)?(?:maps\.app\.goo\.gl|goo\.gl\/maps)(?:[/?#]|$)/i.test(input.trim());
+}
+
+/** Rounds to 6 decimals (~0.1 m), the precision stored for locations. */
+export function round6(n: number): number {
+  return Math.round(n * 1e6) / 1e6;
+}
