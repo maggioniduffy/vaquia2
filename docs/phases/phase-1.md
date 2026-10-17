@@ -11,7 +11,7 @@
 - [x] **1.5** (implementer) CSV import for personas and qualifications: preview, row-level errors, commit. Template CSV downloadable.
 - [x] **1.6** (implementer) "Personal apto / no apto" screen: filter by crew, location, task type; status dots.
 - [x] **1.7** (implementer) Link persona ↔ membership (invite user from persona).
-- [ ] **1.8** (tester) RLS tests for all new tables; unit tests for status view edge cases (expires today, no expiry, renewed); import fixture with 200 rows incl. bad rows.
+- [x] **1.8** (tester) RLS tests for all new tables; unit tests for status view edge cases (expires today, no expiry, renewed); import fixture with 200 rows incl. bad rows.
 
 ## Acceptance
 - Import 200 personas + qualifications from CSV with clear errors for bad rows.

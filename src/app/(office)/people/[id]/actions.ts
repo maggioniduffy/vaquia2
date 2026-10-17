@@ -5,6 +5,7 @@ import { z } from "zod";
 import { t } from "@/i18n/es-AR";
 import { withUser } from "@/lib/db";
 import { parseDateInput } from "@/lib/dates";
+import { validDateRange } from "@/lib/people/import";
 import { getSession } from "@/lib/session";
 import { getStorage } from "@/lib/storage";
 import {
@@ -27,7 +28,7 @@ const e = t.qualifications.errors;
 const isoDate = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, e.invalidDate)
-  .refine((v) => parseDateInput(v) === v, e.invalidDate);
+  .refine((v) => parseDateInput(v) === v && validDateRange(v), e.invalidDate);
 
 const schema = z
   .object({
@@ -92,6 +93,9 @@ export async function addQualification(formData: FormData): Promise<AddQualifica
   let bytes: Uint8Array | null = null;
   let contentType = "";
   if (file) {
+    if (session.isGuest) {
+      return { ok: false, error: e.guestUpload, fieldErrors: { file: e.guestUpload } };
+    }
     if (!getStorage().isAvailable) return { ok: false, error: t.storage.unavailable };
     if (file.size > MAX_FILE_BYTES) {
       return { ok: false, error: e.fileTooLarge, fieldErrors: { file: e.fileTooLarge } };
@@ -131,6 +135,7 @@ export async function addQualification(formData: FormData): Promise<AddQualifica
         [id, companyId, input.personaId, input.typeId, input.issuedOn, input.expiresOn, key],
       );
 
+      // Uploaded before COMMIT: if the commit fails an orphan object may remain (cleanup is future work).
       if (key && bytes) {
         try {
           await getStorage().put(key, bytes, contentType);

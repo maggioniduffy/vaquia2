@@ -26,7 +26,7 @@ export function PeopleTabs() {
           href={tab.href}
           exact={tab.exact}
           activeClassName="text-text border-accent font-medium"
-          className="-mb-px inline-flex min-h-12 border-b-2 border-transparent items-center whitespace-nowrap md:min-h-10"
+          className="-mb-px inline-flex min-h-12 items-center border-b-2 border-transparent whitespace-nowrap md:min-h-10"
         >
           {tab.label}
         </NavLink>

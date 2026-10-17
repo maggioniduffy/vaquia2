@@ -15,6 +15,11 @@ export async function getPersonaAccess(
   personaId: string,
 ): Promise<PersonaAccess | null> {
   const row = await withUser(userId, async (db) => {
+    // Admin only: the login email is not shown to other roles.
+    const admin = await db.query<{ ok: boolean }>(
+      "select public.has_role(array['admin']::public.member_role[]) as ok",
+    );
+    if (admin.rows[0]?.ok !== true) return null;
     const result = await db.query<{ id: string; user_id: string; role: Role }>(
       `select id, user_id, role from public.memberships
         where company_id = public.current_company_id() and persona_id = $1`,
