@@ -16,6 +16,7 @@ export default async function Home() {
   const raw = await auth.api.getSession({ headers: await headers() });
   if (raw) {
     const session = await getSession();
+    if (!session.active && !session.isGuest) redirect("/onboarding");
     redirect(homePathFor(session.active?.role));
   }
   return <LandingPage />;
