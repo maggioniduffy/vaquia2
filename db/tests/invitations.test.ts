@@ -499,11 +499,23 @@ describe("invitations: decline and pending state", () => {
 });
 
 describe("invitations: trial and grants", () => {
-  it("an expired trial blocks creating invitations (VQ001) and revoking them", () =>
+  it("on an expired trial, withdrawing works; creating, accepting and other edits stay VQ001", () =>
     withRollback(async (db) => {
       await setup(db);
-      await invite(db, adminA, { companyId: ids.companyA, personaId: personaA });
-      const id = await pendingId(db, ids.companyA);
+      const p2 = "dddddddd-0000-7000-8000-0000000000c5";
+      const p3 = "dddddddd-0000-7000-8000-0000000000c6";
+      const p4 = "dddddddd-0000-7000-8000-0000000000c7";
+      await db.query(
+        `insert into personas (id, company_id, full_name, dni) values
+           ($1, $4, 'P Dos', '30222001'), ($2, $4, 'P Tres', '30222002'), ($3, $4, 'P Cuatro', '30222003')`,
+        [p2, p3, p4, ids.companyA],
+      );
+      await invite(db, adminA, { companyId: ids.companyA, personaId: personaA }); // invitee@
+      await invite(db, adminA, { companyId: ids.companyA, personaId: p2, email: "r1@test.local" });
+      await invite(db, adminA, { companyId: ids.companyA, personaId: p3, email: "r2@test.local" });
+      const inviteeInv = await pendingId(db, ids.companyA);
+      const toRevoke = await pendingId(db, ids.companyA, "r1@test.local");
+      const toEdit = await pendingId(db, ids.companyA, "r2@test.local");
 
       await db.as(null);
       await db.query(
@@ -511,19 +523,41 @@ describe("invitations: trial and grants", () => {
         [ids.companyA],
       );
 
+      // create is blocked
       expect(
-        await invite(db, adminA, {
-          companyId: ids.companyA,
-          personaId: personaA,
-          email: "new@test.local",
-        }),
+        await invite(db, adminA, { companyId: ids.companyA, personaId: p4, email: "new@test.local" }),
       ).toBe(READ_ONLY);
 
+      // admin revoke succeeds
       await db.as(adminA);
       expect(
-        await db.errorCode("update invitations set status = 'revoked' where id = $1", [id]),
+        await db.errorCode(
+          "update invitations set status = 'revoked', responded_at = now() where id = $1",
+          [toRevoke],
+        ),
+      ).toBeNull();
+      expect(await statusOf(db, toRevoke)).toBe("revoked");
+
+      // changing status + role is blocked
+      expect(
+        await db.errorCode(
+          "update invitations set status = 'revoked', role = 'admin' where id = $1",
+          [toEdit],
+        ),
       ).toBe(READ_ONLY);
-      expect(await statusOf(db, id)).toBe("pending");
+      expect(await statusOf(db, toEdit)).toBe("pending");
+
+      // accept is blocked (membership insert)
+      await db.as(invitee);
+      expect(await db.errorCode("select public.accept_invitation($1)", [inviteeInv])).toBe(
+        READ_ONLY,
+      );
+      expect(await statusOf(db, inviteeInv)).toBe("pending");
+
+      // invitee decline succeeds (re-assert identity: the failed accept rolled back to a savepoint)
+      await db.as(invitee);
+      expect(await db.errorCode("select public.decline_invitation($1)", [inviteeInv])).toBeNull();
+      expect(await statusOf(db, inviteeInv)).toBe("declined");
     }));
 
   it("grants are explicit: authenticated only, no PUBLIC privileges, no default ACL", () =>
