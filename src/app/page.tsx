@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { LandingPage } from "@/components/landing/landing-page";
 import { t } from "@/i18n/es-AR";
 import { auth } from "@/lib/auth";
+import { noCompanyPath } from "@/lib/invitations";
 import { homePathFor, getSession } from "@/lib/session";
 
 export const metadata: Metadata = {
@@ -16,7 +17,7 @@ export default async function Home() {
   const raw = await auth.api.getSession({ headers: await headers() });
   if (raw) {
     const session = await getSession();
-    if (!session.active && !session.isGuest) redirect("/onboarding");
+    if (!session.active && !session.isGuest) redirect(await noCompanyPath(session));
     redirect(homePathFor(session.active?.role));
   }
   return <LandingPage />;

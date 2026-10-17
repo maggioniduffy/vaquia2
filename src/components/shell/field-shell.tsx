@@ -5,6 +5,7 @@ import { weekdayDayMonth } from "@/lib/field/format";
 import { getFieldToday } from "@/lib/field/today";
 import type { Session } from "@/lib/session";
 import { FieldHeader } from "./field-header";
+import { InvitationsNotice } from "./invitations-notice";
 import { TrialBanner } from "./trial-banner";
 import { SignOutButton } from "./sign-out-button";
 
@@ -26,6 +27,7 @@ export async function FieldShell({ session, children }: { session: Session; chil
   return (
     <div className="flex min-h-dvh flex-col text-base">
       <TrialBanner userId={session.userId} />
+      <InvitationsNotice userId={session.userId} isGuest={session.isGuest} />
       <FieldHeader homeSubtitle={`${weekdayDayMonth()} · ${who}`} end={end} />
       <main className="flex flex-1 flex-col">{children}</main>
     </div>

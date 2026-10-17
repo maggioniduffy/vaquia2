@@ -9,6 +9,7 @@ import { displayNameFromEmail, initials } from "@/lib/office/greeting";
 import { countHabilitaciones } from "@/lib/office/queries";
 import type { Session } from "@/lib/session";
 import pkg from "../../../package.json";
+import { InvitationsNotice } from "./invitations-notice";
 import { TrialBanner } from "./trial-banner";
 import { CompanySwitcher } from "./company-switcher";
 import { MobileMenu } from "./mobile-menu";
@@ -53,6 +54,7 @@ export async function OfficeShell({
 
       <div className="flex min-w-0 flex-1 flex-col">
         <TrialBanner userId={session.userId} />
+        <InvitationsNotice userId={session.userId} isGuest={session.isGuest} />
         <header className="border-border bg-bg sticky top-0 z-10 flex h-16 shrink-0 items-center gap-3 border-b px-4 md:static md:z-auto md:gap-4 md:bg-transparent md:px-6">
           <div className="flex min-w-0 flex-1 items-center gap-3 md:hidden">
             <MobileMenu

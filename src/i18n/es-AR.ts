@@ -78,7 +78,7 @@ export const t = {
     grant: "Dar acceso",
     grantTitle: "Dar acceso a Vaquia",
     grantDescription:
-      "Se envía una invitación por correo. El ingreso es con un código de 6 dígitos.",
+      "Se envía una invitación por correo. La persona la acepta al ingresar con ese correo.",
     emailLabel: "Correo electrónico",
     roleLabel: "Rol",
     submit: "Dar acceso",
@@ -92,8 +92,12 @@ export const t = {
       `${name} ya no podrá ingresar a esta empresa. La persona y sus registros se conservan.`,
     removeSubmit: "Quitar acceso",
     cancel: "Cancelar",
-    granted: "Acceso otorgado. Se envió la invitación.",
-    grantedNoEmail: "Acceso otorgado, pero no se pudo enviar la invitación por correo.",
+    granted: "Invitación enviada.",
+    grantedNoEmail: "Invitación creada, pero no se pudo enviar el correo.",
+    pendingTitle: "Invitación pendiente",
+    pendingLine: (email: string, role: string) => `${email} · ${role}`,
+    revoke: "Revocar",
+    revoked: "Invitación revocada.",
     roleChanged: "Rol actualizado.",
     removed: "Acceso quitado.",
     errors: {
@@ -104,6 +108,8 @@ export const t = {
       guestEmail: "Ese correo no se puede usar.",
       personaLinked: "Esta persona ya tiene acceso a Vaquia.",
       userLinkedOther: "Ese correo ya tiene acceso y está vinculado a otra persona.",
+      invitationPending: "Ya hay una invitación pendiente para esta persona o ese correo.",
+      emailIsMember: "Ese correo ya tiene acceso a esta empresa.",
       notFound: "No se encontró el acceso.",
       removeSelf: "No se puede quitar el propio acceso.",
       lastAdmin:
@@ -113,8 +119,24 @@ export const t = {
     },
     invite: {
       subject: (company: string) => `Invitación a Vaquia - ${company}`,
-      body: (name: string, company: string, loginUrl: string) =>
-        `Hola ${name},\n\nSe otorgó acceso a Vaquia para la empresa ${company}.\n\nPara ingresar, abrir ${loginUrl}, escribir este correo electrónico y pedir el código. Al ingresar, se envía por correo un código de 6 dígitos.\n`,
+      body: (name: string, company: string, signupUrl: string) =>
+        `Hola,\n\nSe invitó a ${name} a Vaquia para la empresa ${company}.\n\nIngresar o crear la cuenta con este correo para aceptar la invitación: ${signupUrl}\n`,
+    },
+  },
+  invitations: {
+    title: "Invitaciones",
+    description: (email: string) => `Invitaciones pendientes para ${email}.`,
+    roleLine: (role: string, date: string) => `Rol: ${role} · ${date}`,
+    accept: "Aceptar",
+    decline: "Rechazar",
+    createOwn: "Crear mi propia empresa",
+    notice: (count: number) =>
+      count === 1 ? "Hay una invitación pendiente." : `Hay ${count} invitaciones pendientes.`,
+    noticeLink: "Ver invitaciones",
+    errors: {
+      generic: "No se pudo completar la operación. Intentar de nuevo.",
+      notFound: "La invitación ya no está disponible.",
+      alreadyMember: "Ya se pertenece a esa empresa.",
     },
   },
   company: {
@@ -618,8 +640,7 @@ export const t = {
     soonExports: "Las exportaciones llegan con la fase 8.",
   },
   trial: {
-    daysLeft: (n: number) =>
-      `Prueba gratuita: ${n === 1 ? "queda 1 día" : `quedan ${n} días`}`,
+    daysLeft: (n: number) => `Prueba gratuita: ${n === 1 ? "queda 1 día" : `quedan ${n} días`}`,
     expired: "La prueba terminó. La cuenta está en modo solo lectura.",
     contact: "Activar la cuenta",
     readOnly: "La prueba terminó: la cuenta está en modo solo lectura.",
@@ -706,7 +727,10 @@ export const t = {
       title: "En la oficina, nada se cierra sin revisión.",
       body: "Cada registro recorre el mismo camino, con responsable y fecha en cada paso. Lo que se aprueba queda trazado para la auditoría.",
       steps: [
-        { title: "Registro", body: "Llega desde campo con foto, ubicación y firma de la cuadrilla." },
+        {
+          title: "Registro",
+          body: "Llega desde campo con foto, ubicación y firma de la cuadrilla.",
+        },
         { title: "Validación", body: "HSE revisa la evidencia y marca observaciones puntuales." },
         { title: "Acción correctiva", body: "Cada desvío tiene responsable, plazo y aprobación." },
         { title: "Cierre mensual", body: "Revisión HSE, aprobación de gerencia y exportación." },
