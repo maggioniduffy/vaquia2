@@ -1,4 +1,4 @@
-const PUBLIC_PATHS = ["/login", "/manifest.webmanifest", "/icon.svg"];
+const PUBLIC_PATHS = ["/", "/login", "/manifest.webmanifest", "/icon.svg"];
 const PUBLIC_PREFIXES = ["/api/auth/", "/pwa-icon/", "/apple-icon"];
 
 export function isPublicPath(pathname: string): boolean {

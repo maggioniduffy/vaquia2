@@ -67,6 +67,7 @@ Source: `docs/design/landing` (handoff). `VaquiaMark` / `VaquiaWordmark` (`src/c
 ## Copy
 - Spanish (es-AR), "vos" not used in UI — neutral imperative ("Firmar", "Guardar borrador").
 - All strings in `src/i18n/es-AR.ts`.
+- Exception: the public landing page (`t.landing`) uses voseo; see `landing.md`.
 - Alert copy always states *what* and *why*: "Juan Pérez no puede firmar: Trabajo en altura vencido el 02/10."
 
 ## Do / don't
