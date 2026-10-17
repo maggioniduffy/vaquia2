@@ -19,23 +19,23 @@ test("unauthenticated users are sent to login", async ({ page }) => {
 test("HSE logs in and sees the office shell of their company", async ({ page }, info) => {
   await login(page, "hse@petrosur.test");
   await expect(page).toHaveURL(/\/dashboard$/);
-  await expect(page.getByRole("heading", { name: "Tablero" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^(Buen día|Buenas tardes|Buenas noches), / })).toBeVisible();
   await expect(page.getByTestId("company-name")).toHaveText("Petrosur Servicios SRL");
   await expect(page.getByRole("link", { name: "Registros" })).toBeVisible();
 
   const dark = info.project.name.endsWith("dark");
   await expect(page.locator("body")).toHaveCSS(
     "background-color",
-    rgb(dark ? "#0a0a0a" : "#ffffff"),
+    rgb(dark ? "#1c1c1f" : "#f2f2f3"),
   );
 });
 
-test("supervisor lands on the field shell with a bottom bar", async ({ page }) => {
+test("supervisor lands on the field Hoy hub with glove-size task links", async ({ page }) => {
   await login(page, "supervisor@petrosur.test");
   await expect(page).toHaveURL(/\/field$/);
-  const bar = page.getByRole("navigation");
-  await expect(bar.getByRole("link")).toHaveCount(4);
-  const box = await bar.getByRole("link", { name: "Nuevo" }).boundingBox();
+  await expect(page.getByRole("heading", { name: "Hoy", exact: true })).toBeVisible();
+  await expect(page.getByTestId("company-name")).toHaveText("Petrosur Servicios SRL");
+  const box = await page.getByRole("link", { name: /Mis acciones/ }).boundingBox();
   expect(box?.height ?? 0).toBeGreaterThanOrEqual(48);
 });
 

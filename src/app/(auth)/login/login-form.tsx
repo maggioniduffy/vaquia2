@@ -35,7 +35,7 @@ export function LoginForm({ next, guestEnabled }: { next: string; guestEnabled: 
           <>
             <input type="hidden" name="email" value={state.email ?? ""} />
             <p className="text-muted text-sm">{state.email}</p>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1.5">
               <Label htmlFor="code">{t.auth.code}</Label>
               <Input
                 id="code"
@@ -45,12 +45,12 @@ export function LoginForm({ next, guestEnabled }: { next: string; guestEnabled: 
                 pattern="\d{6}"
                 maxLength={6}
                 required
-                className="h-12 md:h-9"
+                className="h-12 text-base md:h-9 md:text-sm"
               />
             </div>
           </>
         ) : (
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1.5">
             <Label htmlFor="email">{t.auth.email}</Label>
             <Input
               id="email"
@@ -58,7 +58,7 @@ export function LoginForm({ next, guestEnabled }: { next: string; guestEnabled: 
               type="email"
               autoComplete="email"
               required
-              className="h-12 md:h-9"
+              className="h-12 text-base md:h-9 md:text-sm"
             />
           </div>
         )}
@@ -69,7 +69,7 @@ export function LoginForm({ next, guestEnabled }: { next: string; guestEnabled: 
           </p>
         ) : null}
         {state.info ? (
-          <p role="status" className="border-success border-l-2 pl-3 text-sm">
+          <p role="status" className="border-accent border-l-2 pl-3 text-sm">
             {state.info}
           </p>
         ) : null}
@@ -81,7 +81,7 @@ export function LoginForm({ next, guestEnabled }: { next: string; guestEnabled: 
           disabled={pending}
           name="intent"
           value={codeStep ? "verify" : "send"}
-          className="md:h-9 md:text-sm"
+          className="w-full md:h-9 md:text-sm"
         >
           {codeStep ? t.auth.signIn : t.auth.sendCode}
         </Button>
@@ -123,7 +123,7 @@ export function LoginForm({ next, guestEnabled }: { next: string; guestEnabled: 
           ) : null}
           <Button
             type="submit"
-            variant="ghost"
+            variant="secondary"
             size="touch"
             disabled={guestPending}
             className="w-full md:h-9 md:text-sm"

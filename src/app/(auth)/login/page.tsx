@@ -16,10 +16,17 @@ export default async function LoginPage({
   const { next } = await searchParams;
   if (session) redirect(safeNextPath(next));
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-center px-4 py-12">
-      <p className="text-muted text-sm">{t.app.name}</p>
-      <h1 className="mt-1 mb-8 text-xl font-medium">{t.auth.title}</h1>
-      <LoginForm next={safeNextPath(next)} guestEnabled={env.guestLoginEnabled} />
+    <main className="mx-auto flex min-h-dvh w-full max-w-[360px] flex-col justify-center px-4 py-12">
+      <div className="border-border bg-surface flex flex-col gap-6 rounded-[var(--radius-panel)] border p-6">
+        <div className="flex flex-col gap-4">
+          <p className="flex items-baseline gap-2">
+            <span className="text-base font-medium lowercase">{t.app.name}</span>
+            <span className="text-muted font-mono text-xs">{t.auth.tagline}</span>
+          </p>
+          <h1 className="text-xl font-medium">{t.auth.title}</h1>
+        </div>
+        <LoginForm next={safeNextPath(next)} guestEnabled={env.guestLoginEnabled} />
+      </div>
     </main>
   );
 }
