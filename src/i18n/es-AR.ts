@@ -19,6 +19,8 @@ export const t = {
     codeExpired: "El código venció. Pedir uno nuevo.",
     codeTooManyAttempts: "Demasiados intentos. Pedir un código nuevo.",
     genericError: "No se pudo ingresar. Intentar de nuevo.",
+    googleError:
+      "No se pudo ingresar con Google. Verificar que el email de la cuenta esté verificado o usar el código por email.",
     rateLimited: "Demasiados intentos. Esperar unos minutos e intentar de nuevo.",
     googleSignIn: "Continuar con Google",
     or: "o",
@@ -138,6 +140,7 @@ export const t = {
       generic: "No se pudo completar la operación. Intentar de nuevo.",
       notFound: "La invitación ya no está disponible.",
       alreadyMember: "Ya se pertenece a esa empresa.",
+      personaTaken: "Esa persona ya está vinculada a otra cuenta. Consultar con la empresa.",
     },
   },
   company: {
@@ -380,6 +383,8 @@ export const t = {
       paste: "Pegar link o coordenadas",
       pastePlaceholder: "Link de Google Maps o -38.95, -68.06",
       pasteInvalid: "No se encontraron coordenadas válidas.",
+      pasteShortLink:
+        "Los links cortos no incluyen coordenadas: abrir el link y copiar la URL completa.",
       mapLabel: "Mapa para elegir la ubicación",
       mapError: "No se pudo cargar el mapa. Usar las coordenadas manuales.",
       mapLoading: "Cargando mapa…",

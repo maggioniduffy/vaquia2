@@ -9,7 +9,7 @@
 - Wizard: my persona (name, DNI) → company (name, CUIT with check digit). Duplicate CUIT is blocked with a "ask your admin" message that does not reveal the admin.
 - Plan `trial | paid | demo`, `trial_ends_at`. Expired trial = read-only, enforced in the DB (trigger, SQLSTATE `VQ001`). Payment out of scope: `paid` is set manually via script until phase 1c (tiers + Mercado Pago, spec/billing.md).
 - Guest/demo stays; landing gets "Crear cuenta" as primary CTA.
-- Review outcomes: access grants are **pending invitations** accepted by the invitee after sign-in (no pre-created users; pending invites never block creating one's own company). Google links to an existing user only when Google verified the email. CUIT squatting is an accepted risk: the duplicate message shows a support contact and ops resolves it manually; ownership verification comes with billing (1c). Revoking access (membership DELETE) works on expired trials.
+- Review outcomes: access grants are **pending invitations** accepted by the invitee after sign-in (no pre-created users; pending invites never block creating one's own company). Google links to an existing user only when Google verified the email. CUIT squatting is an accepted risk (the duplicate error tells the caller the CUIT is registered, never who the admin is): the duplicate message shows a support contact and ops resolves it manually; ownership verification comes with billing (1c). Revoking access (membership DELETE) works on expired trials.
 
 ## Tasks
 - [x] **1b.1** (implementer) `[test-now]` Migration: `plan` check + `trial_ends_at`, `company_writable()`, `app.assert_company_writable()` trigger on every business tenant table (append-only system tables exempt).
@@ -27,7 +27,7 @@
 - A new email (OTP) or Google account with no membership lands on `/onboarding`, creates company + persona, becomes admin on a 30-day trial.
 - Invalid CUIT blocked client and server; duplicate CUIT shows the "pedile acceso" message.
 - A user with a membership, or a guest, cannot call `create_company`.
-- An invited user signing in with Google with the invited email gets their existing membership.
+- An invited user signing in (OTP, or Google with a Google-verified email) with the invited email sees the pending invitation on `/invitations` and, on accepting, gets the membership. Unverified emails see no invitations; Google sign-ins with unverified emails are rejected.
 - With `trial_ends_at` in the past every business write fails with `VQ001`, the UI shows the read-only message, reads still work; `paid`/`demo` unaffected.
 - The checklist ticks itself as data is added and can be hidden.
 - A location's coordinates can be set by clicking the map, choosing a search result, or pasting a Google Maps link / `lat, lng`; the saved point shows on reopening; works on phone width and in dark theme.

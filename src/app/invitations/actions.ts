@@ -23,7 +23,10 @@ async function respond(
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (error) {
-    const code = (error as { code?: string } | null)?.code;
+    const { code, message } = (error as { code?: string; message?: string } | null) ?? {};
+    if (code === "P0001" && message === "persona_taken") {
+      return { ok: false, error: t.invitations.errors.personaTaken };
+    }
     if (code === "P0002") return { ok: false, error: t.invitations.errors.notFound };
     if (code === "23505") return { ok: false, error: t.invitations.errors.alreadyMember };
     if (code === "VQ001") return { ok: false, error: t.trial.readOnly };

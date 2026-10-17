@@ -276,11 +276,8 @@ function writes(f: Fx): Write[] {
       sql: "delete from qualifications where id = $1",
       params: [f.qualDel],
     },
-    {
-      label: "memberships insert",
-      sql: "insert into memberships (company_id, user_id, role) values ($1, $2, 'worker')",
-      params: [companyT, newMember],
-    },
+    // No "memberships insert": authenticated cannot insert memberships at all (create_company /
+    // accept_invitation are security definer; covered in invitations and tenancy tests).
     {
       label: "memberships update",
       sql: "update memberships set role = 'supervisor' where id = $1",

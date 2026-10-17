@@ -270,6 +270,40 @@ describe("invitations: reads (RLS)", () => {
     }));
 });
 
+describe("invitations: unverified email", () => {
+  it("an unverified email sees nothing and cannot accept or decline (P0002)", () =>
+    withRollback(async (db) => {
+      await setup(db);
+      await invite(db, ids.userB, { companyId: ids.companyB, personaId: personaB });
+      const id = await pendingId(db, ids.companyB);
+      // Non-vacuous: visible while verified.
+      await db.as(invitee);
+      expect(await db.query("select * from public.my_invitations()")).toHaveLength(1);
+
+      await db.as(null);
+      await db.query("update users set email_verified = false where id = $1", [invitee]);
+      await db.as(invitee);
+      expect(await db.query("select * from public.my_invitations()")).toHaveLength(0);
+      expect(await db.errorCode("select public.accept_invitation($1)", [id])).toBe(NOT_FOUND);
+      expect(await db.errorCode("select public.decline_invitation($1)", [id])).toBe(NOT_FOUND);
+      expect(await statusOf(db, id)).toBe("pending");
+    }));
+
+  it("accepting a persona already linked to another login fails with P0001 persona_taken", () =>
+    withRollback(async (db) => {
+      await setup(db);
+      await invite(db, ids.userB, { companyId: ids.companyB, personaId: personaB });
+      const id = await pendingId(db, ids.companyB);
+      await db.query(
+        "insert into memberships (company_id, user_id, role, persona_id) values ($1, $2, 'worker', $3)",
+        [ids.companyB, stranger, personaB],
+      );
+      await db.as(invitee);
+      expect(await db.errorCode("select public.accept_invitation($1)", [id])).toBe("P0001");
+      expect(await statusOf(db, id)).toBe("pending");
+    }));
+});
+
 describe("invitations: invitee side (my_invitations)", () => {
   it("lists only pending invitations addressed to the caller's email, with name and role only", () =>
     withRollback(async (db) => {
