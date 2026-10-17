@@ -17,6 +17,8 @@ export type CompanyMembership = {
 export type Session = {
   userId: string;
   email: string;
+  /** Temporary demo guest (anonymous Better Auth session). */
+  isGuest: boolean;
   companies: CompanyMembership[];
   active: CompanyMembership | null;
 };
@@ -24,15 +26,18 @@ export type Session = {
 type CompanyRow = { company_id: string; name: string; role: Role; is_active: boolean };
 
 // Validated session (cookie → sessions table). Redirects to /login if missing or expired.
-export const getUserId = cache(async (): Promise<{ userId: string; email: string }> => {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) redirect("/login");
-  return { userId: session.user.id, email: session.user.email };
-});
+export const getUserId = cache(
+  async (): Promise<{ userId: string; email: string; isGuest: boolean }> => {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) redirect("/login");
+    const isGuest = (session.user as { isAnonymous?: boolean | null }).isAnonymous === true;
+    return { userId: session.user.id, email: session.user.email, isGuest };
+  },
+);
 
 // One lookup per request.
 export const getSession = cache(async (): Promise<Session> => {
-  const { userId, email } = await getUserId();
+  const { userId, email, isGuest } = await getUserId();
   const rows = await withUser(userId, async (db) => {
     const result = await db.query<CompanyRow>(
       "select company_id, name, role, is_active from public.my_companies()",
@@ -50,6 +55,7 @@ export const getSession = cache(async (): Promise<Session> => {
   return {
     userId,
     email,
+    isGuest,
     companies,
     active: companies.find((c) => c.isActive) ?? null,
   };

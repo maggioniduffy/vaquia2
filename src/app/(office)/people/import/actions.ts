@@ -49,6 +49,7 @@ async function authorize(): Promise<{ userId: string } | { error: string }> {
   const session = await getSession();
   const role = session.active?.role;
   if (role !== "hse" && role !== "admin") return { error: t.import.forbidden };
+  if (session.isGuest) return { error: t.import.guest };
   return { userId: session.userId };
 }
 
@@ -61,7 +62,8 @@ export async function previewAction(formData: FormData): Promise<ImportActionSta
   try {
     const preview = await withUser(auth.userId, (db) => previewImport(db, input.kind, input.text));
     return toClient(preview);
-  } catch {
+  } catch (error) {
+    console.error("previewAction failed", error);
     return { ok: false, error: t.import.genericError };
   }
 }
@@ -79,7 +81,8 @@ export async function commitAction(formData: FormData): Promise<ImportActionStat
     const result = await withUser(auth.userId, (db) => commitImport(db, input.kind, input.text));
     revalidatePath("/people");
     return toClient(result);
-  } catch {
+  } catch (error) {
+    console.error("commitAction failed", error);
     return { ok: false, error: t.import.commitError };
   }
 }

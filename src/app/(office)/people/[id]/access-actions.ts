@@ -60,6 +60,19 @@ function mapError(error: unknown): AccessResult {
   return fail(e.generic);
 }
 
+/** Deletes a user created by this call if it ended up without any membership (no orphan users). */
+async function cleanupCreatedUser(userId: string | null) {
+  if (!userId) return;
+  try {
+    await pool.query(
+      "delete from users where id = $1 and not exists (select 1 from memberships where user_id = $1)",
+      [userId],
+    );
+  } catch (error) {
+    console.error("orphan user cleanup failed", error);
+  }
+}
+
 export async function grantAccess(formData: FormData): Promise<AccessResult> {
   const parsed = grantSchema.safeParse({
     personaId: formData.get("personaId"),
@@ -108,6 +121,7 @@ export async function grantAccess(formData: FormData): Promise<AccessResult> {
       email,
     ]);
     let targetId = found.rows[0]?.id;
+    let createdUserId: string | null = null;
     if (!targetId) {
       const created = await pool.query<{ id: string }>(
         `insert into users (name, email, email_verified) values ($1, $2, true)
@@ -115,35 +129,43 @@ export async function grantAccess(formData: FormData): Promise<AccessResult> {
         [fullName, email],
       );
       targetId = created.rows[0]!.id;
+      createdUserId = targetId;
     }
     const userId = targetId;
 
     // 3. Membership as the admin (RLS).
-    const outcome = await withUser(session.userId, async (db) => {
-      const existing = await db.query<{ id: string; persona_id: string | null; role: string }>(
-        "select id, persona_id, role from public.memberships where company_id = public.current_company_id() and user_id = $1",
-        [userId],
-      );
-      const row = existing.rows[0];
-      if (row) {
-        if (row.persona_id && row.persona_id !== personaId) return "userLinkedOther" as const;
-        if (row.role === "admin" && role !== "admin" && (await lockAndCountAdmins(db)) <= 1) {
-          return "lastAdmin" as const;
+    let outcome: "ok" | "userLinkedOther" | "lastAdmin";
+    try {
+      outcome = await withUser(session.userId, async (db) => {
+        const existing = await db.query<{ id: string; persona_id: string | null; role: string }>(
+          "select id, persona_id, role from public.memberships where company_id = public.current_company_id() and user_id = $1",
+          [userId],
+        );
+        const row = existing.rows[0];
+        if (row) {
+          if (row.persona_id && row.persona_id !== personaId) return "userLinkedOther" as const;
+          if (row.role === "admin" && role !== "admin" && (await lockAndCountAdmins(db)) <= 1) {
+            return "lastAdmin" as const;
+          }
+          await db.query("update public.memberships set persona_id = $1, role = $2 where id = $3", [
+            personaId,
+            role,
+            row.id,
+          ]);
+          return "ok" as const;
         }
-        await db.query("update public.memberships set persona_id = $1, role = $2 where id = $3", [
-          personaId,
-          role,
-          row.id,
-        ]);
-        return "ok" as const;
-      }
-      await db.query(
-        `insert into public.memberships (company_id, user_id, role, persona_id)
+        await db.query(
+          `insert into public.memberships (company_id, user_id, role, persona_id)
          values (public.current_company_id(), $1, $2, $3)`,
-        [userId, role, personaId],
-      );
-      return "ok" as const;
-    });
+          [userId, role, personaId],
+        );
+        return "ok" as const;
+      });
+    } catch (error) {
+      await cleanupCreatedUser(createdUserId);
+      throw error;
+    }
+    if (outcome !== "ok") await cleanupCreatedUser(createdUserId);
     if (outcome === "userLinkedOther") {
       return { ok: false, error: e.userLinkedOther, fieldErrors: { email: e.userLinkedOther } };
     }

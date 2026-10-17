@@ -44,7 +44,9 @@ describe("parse: headers and layout", () => {
 
   it("reports an empty file and an oversized file", () => {
     expect(parse("   \n  ", "personas").headerErrors).toEqual(["El archivo está vacío."]);
-    expect(parse("x".repeat(MAX_BYTES + 1), "personas").headerErrors).toEqual(["El archivo supera 2 MB."]);
+    expect(parse("x".repeat(MAX_BYTES + 1), "personas").headerErrors).toEqual([
+      "El archivo supera 2 MB.",
+    ]);
   });
 
   it("matches headers case-insensitively and without accents", () => {
@@ -107,15 +109,20 @@ describe("validatePersonas: row errors with line numbers", () => {
 });
 
 describe("validateQualifications: row errors and expiry defaults", () => {
-  const personas = validatePersonas(parse(fixture("personas-200.csv"), "personas").rows, { crewsByName });
+  const personas = validatePersonas(parse(fixture("personas-200.csv"), "personas").rows, {
+    crewsByName,
+  });
   const personaIdsByDni = new Map(
     personas.filter((r) => r.data).map((r) => [r.data!.dni, `pid-${r.data!.dni}`]),
   );
   const typesByName = new Map(TYPES.map((t) => [normalizeName(t.name), t]));
-  const results = validateQualifications(parse(fixture("capacitaciones-200.csv"), "capacitaciones").rows, {
-    personaIdsByDni,
-    typesByName,
-  });
+  const results = validateQualifications(
+    parse(fixture("capacitaciones-200.csv"), "capacitaciones").rows,
+    {
+      personaIdsByDni,
+      typesByName,
+    },
+  );
 
   it("flags the eight bad rows by line and skips the in-file duplicate", () => {
     const invalid = results.filter((r) => r.action === "invalid").map((r) => r.line);
@@ -129,7 +136,9 @@ describe("validateQualifications: row errors and expiry defaults", () => {
   it("explains each bad row with its line and value", () => {
     const message = (line: number) => results.find((r) => r.line === line)?.errors.join(" | ");
     expect(message(5)).toBe("Fila 5: falta el DNI");
-    expect(message(12)).toBe("Fila 12: no existe una persona con DNI '99999999'. Importar el personal primero");
+    expect(message(12)).toBe(
+      "Fila 12: no existe una persona con DNI '99999999'. Importar el personal primero",
+    );
     expect(message(18)).toBe("Fila 18: la capacitación 'Curso de cocina' no existe");
     expect(message(25)).toContain("Fila 25: la fecha de emisión '31/02/2025' no es válida");
     expect(message(26)).toContain("Fila 26: la fecha de vencimiento '2025-13-01' no es válida");

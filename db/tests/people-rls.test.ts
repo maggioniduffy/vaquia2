@@ -11,6 +11,7 @@ const supA = "aaaaaaaa-0000-7000-8000-000000000003"; // supervisor in A
 const adminA = "aaaaaaaa-0000-7000-8000-000000000004"; // admin in A
 const memberX = "aaaaaaaa-0000-7000-8000-000000000005"; // worker in A, linked to persona p1
 const memberY = "aaaaaaaa-0000-7000-8000-000000000006"; // worker in A, used for the 23505 test
+const managerA = "aaaaaaaa-0000-7000-8000-000000000007"; // manager in A (read-only), created per test
 const OPERATOR_YPF = "90000000-0000-7000-8000-000000000101";
 const QTYPE_GLOBAL = "90000000-0000-7000-8000-000000000201";
 const TTYPE_GLOBAL = "90000000-0000-7000-8000-000000000301";
@@ -153,6 +154,15 @@ const TENANT_TABLES: TenantSpec[] = [
   },
 ];
 
+// The seed has no manager: created inside each test that needs one (never in the seed).
+async function addManagerA(db: TestDb) {
+  await createUser(db, managerA, "a-manager@test.local");
+  await db.query("insert into memberships (company_id, user_id, role) values ($1, $2, 'manager')", [
+    ids.companyA,
+    managerA,
+  ]);
+}
+
 // Owner-side count of the company B row of each table (to prove tenant A changed nothing).
 async function countB(db: TestDb, table: string): Promise<number> {
   await db.as(null);
@@ -193,10 +203,11 @@ describe("people RLS: tenant tables", () => {
           expect(await db.errorCode(sql, params)).toBeNull();
         }));
 
-      it("read-only roles (worker, supervisor) of company A cannot write", () =>
+      it("read-only roles (worker, supervisor, manager) of company A cannot write", () =>
         withRollback(async (db) => {
           const s = await seed(db);
-          for (const user of [ids.workerA, supA]) {
+          await addManagerA(db);
+          for (const user of [ids.workerA, supA, managerA]) {
             await db.as(user);
             const { sql, params } = spec.insert(ids.companyA, `ro_${user.slice(0, 8)}`, s);
             expect(await db.errorCode(sql, params)).toBe(INSUFFICIENT_PRIVILEGE);
@@ -380,4 +391,38 @@ describe("people RLS: memberships and persona link", () => {
         ),
       ).toHaveLength(1);
     }));
+});
+
+describe("people RLS: status views (security_invoker, cross-tenant)", () => {
+  const VIEWS = ["current_qualifications", "qualification_status", "persona_task_fitness"] as const;
+
+  for (const view of VIEWS) {
+    it(`${view}: company A users never see company B rows, but see their own`, () =>
+      withRollback(async (db) => {
+        const s = await seed(db);
+        const personaB = await db.one("select id from personas where company_id = $1", [ids.companyB]);
+        await addManagerA(db);
+
+        // Owner-side: company B has rows in the view, so the isolation check below is not vacuous.
+        await db.as(null);
+        expect(
+          (await db.one(`select count(*)::int as n from ${view} where company_id = $1`, [ids.companyB])).n,
+        ).toBeGreaterThan(0);
+
+        for (const user of [ids.userA, ids.workerA, managerA]) {
+          await db.as(user);
+          expect(
+            (await db.one(`select count(*)::int as n from ${view} where company_id = $1`, [ids.companyB])).n,
+          ).toBe(0);
+          expect(await db.query(`select 1 from ${view} where persona_id = $1`, [personaB.id])).toEqual([]);
+          expect(
+            await db.query(`select 1 from ${view} where company_id is not null and company_id <> $1`, [ids.companyA]),
+          ).toEqual([]);
+          // Own rows are visible (persona A is linked to a qualification and to every task type).
+          expect(
+            (await db.one(`select count(*)::int as n from ${view} where persona_id = $1`, [s.personaA])).n,
+          ).toBeGreaterThan(0);
+        }
+      }));
+  }
 });

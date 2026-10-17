@@ -220,7 +220,7 @@ export function qualificationKey(personaId: string, typeId: string, issuedOn: st
   return `${personaId}|${typeId}|${issuedOn}`;
 }
 
-function validDateRange(iso: string): boolean {
+export function validDateRange(iso: string): boolean {
   const year = Number(iso.slice(0, 4));
   return year >= 1950 && year <= 2100;
 }

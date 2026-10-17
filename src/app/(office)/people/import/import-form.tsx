@@ -296,7 +296,9 @@ function PreviewView({
             {file ? (
               <>
                 {" · "}
-                <Mono>{Math.max(1, Math.round(file.size / 1024))} {t.import.sizeUnit}</Mono>
+                <Mono>
+                  {Math.max(1, Math.round(file.size / 1024))} {t.import.sizeUnit}
+                </Mono>
               </>
             ) : null}
             {" · "}

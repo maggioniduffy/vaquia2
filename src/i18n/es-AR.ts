@@ -334,6 +334,7 @@ export const t = {
   import: {
     title: "Importar desde CSV",
     forbidden: "Solo HSE y administración pueden importar datos.",
+    guest: "En la demo no se puede importar.",
     kindLabel: "Qué importar",
     kinds: { personas: "Personal", capacitaciones: "Capacitaciones" },
     columnsHint: {
@@ -518,6 +519,7 @@ export const t = {
       fileType: "El archivo debe ser PDF, JPG o PNG.",
       uploadFailed: "No se pudo subir el archivo. No se guardó la capacitación; intentar de nuevo.",
       forbidden: "Solo HSE o administración pueden cargar capacitaciones.",
+      guestUpload: "En la demo no se pueden subir archivos.",
       personaNotFound: "No se encontró a la persona.",
       generic: "No se pudo guardar la capacitación. Intentar de nuevo.",
     },

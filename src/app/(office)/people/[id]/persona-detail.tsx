@@ -93,7 +93,8 @@ export async function PersonaDetail({
   const role = session.active?.role;
   const canWrite = role === "hse" || role === "admin";
   const isAdmin = role === "admin";
-  const access = await getPersonaAccess(session.userId, persona.id);
+  // The linked login email is only shown to admins.
+  const access = isAdmin ? await getPersonaAccess(session.userId, persona.id) : null;
   const storageAvailable = getStorage().isAvailable;
   const today = todayInArt();
   const sheetProps = { personaId: persona.id, types, storageAvailable, today };
@@ -256,36 +257,38 @@ export async function PersonaDetail({
         </section>
       ) : null}
 
-      <section aria-labelledby="access-title" className="border-border mt-2 border-t px-5 py-4">
-        <h3 id="access-title" className="text-muted mb-2 text-xs">
-          {acc.title}
-        </h3>
-        {access ? (
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <dl className="flex flex-wrap gap-x-8 gap-y-2 text-sm">
-              <div>
-                <dt className="text-muted text-xs">{acc.email}</dt>
-                <dd>{access.email}</dd>
-              </div>
-              <div>
-                <dt className="text-muted text-xs">{acc.role}</dt>
-                <dd>{t.roles[access.role]}</dd>
-              </div>
-            </dl>
-            {isAdmin ? (
-              <div className="flex flex-wrap gap-2">
-                <ChangeRoleSheet personaId={persona.id} currentRole={access.role} />
-                <RemoveAccessSheet personaId={persona.id} personaName={persona.full_name} />
-              </div>
-            ) : null}
-          </div>
-        ) : (
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <p className="text-muted text-sm">{acc.noAccess}</p>
-            {isAdmin ? <GrantAccessSheet personaId={persona.id} /> : null}
-          </div>
-        )}
-      </section>
+      {isAdmin ? (
+        <section aria-labelledby="access-title" className="border-border mt-2 border-t px-5 py-4">
+          <h3 id="access-title" className="text-muted mb-2 text-xs">
+            {acc.title}
+          </h3>
+          {access ? (
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <dl className="flex flex-wrap gap-x-8 gap-y-2 text-sm">
+                <div>
+                  <dt className="text-muted text-xs">{acc.email}</dt>
+                  <dd>{access.email}</dd>
+                </div>
+                <div>
+                  <dt className="text-muted text-xs">{acc.role}</dt>
+                  <dd>{t.roles[access.role]}</dd>
+                </div>
+              </dl>
+              {isAdmin ? (
+                <div className="flex flex-wrap gap-2">
+                  <ChangeRoleSheet personaId={persona.id} currentRole={access.role} />
+                  <RemoveAccessSheet personaId={persona.id} personaName={persona.full_name} />
+                </div>
+              ) : null}
+            </div>
+          ) : (
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <p className="text-muted text-sm">{acc.noAccess}</p>
+              {isAdmin ? <GrantAccessSheet personaId={persona.id} /> : null}
+            </div>
+          )}
+        </section>
+      ) : null}
     </article>
   );
 }
