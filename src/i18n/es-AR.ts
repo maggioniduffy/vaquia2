@@ -21,7 +21,7 @@ export const t = {
     genericError: "No se pudo ingresar. Intentar de nuevo.",
     rateLimited: "Demasiados intentos. Esperar unos minutos e intentar de nuevo.",
     guestSignIn: "Entrar como invitado",
-    signOut: "Salir",
+    signOut: "Cerrar sesión",
     noMembership: "Este usuario no pertenece a ninguna empresa. Contactar al administrador.",
   },
   email: {

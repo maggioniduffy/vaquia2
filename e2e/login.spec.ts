@@ -60,7 +60,7 @@ test("signing out ends the session", async ({ page }) => {
   await login(page, "hse@petrosur.test");
   await expect(page).toHaveURL(/\/dashboard$/);
   await page.getByRole("button", { name: "Menú de usuario" }).click();
-  await page.getByRole("button", { name: "Salir" }).click();
+  await page.getByRole("button", { name: "Cerrar sesión" }).click();
   await expect(page).toHaveURL(/\/login/);
   await page.goto("/dashboard");
   await expect(page).toHaveURL(/\/login\?next=%2Fdashboard/);

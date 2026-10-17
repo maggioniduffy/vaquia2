@@ -41,7 +41,7 @@ export default async function FieldHomePage() {
   const theme = themeCookie === "light" || themeCookie === "dark" ? themeCookie : undefined;
   const canOffice = session.active && !["worker", "supervisor"].includes(session.active.role);
   return (
-    <FieldContent>
+    <FieldContent className="flex-1">
       <section className="border-border bg-surface flex flex-col gap-1 rounded-[var(--radius-panel)] border p-4">
         <span className="text-muted text-field-sm" data-testid="company-name">
           {session.active?.name}
@@ -98,7 +98,7 @@ export default async function FieldHomePage() {
         </div>
       ))}
 
-      <div className="flex items-center justify-between pt-2">
+      <div className="mt-auto flex items-center justify-between pt-2">
         <ThemeToggle className="size-12" initial={theme} />
         {canOffice ? (
           <SignOutButton className="text-muted hover:text-text min-h-12 px-2 text-sm" />
