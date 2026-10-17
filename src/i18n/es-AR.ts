@@ -656,6 +656,7 @@ export const t = {
       product: "Producto",
       field: "Campo",
       office: "Oficina",
+      pricing: "Precios",
       contractors: "Contratistas",
       login: "Ingresar",
       signup: "Crear cuenta",
@@ -708,6 +709,35 @@ export const t = {
         { title: "Cierre mensual", body: "Revisión HSE, aprobación de gerencia y exportación." },
       ],
       screenshotAlt: "Pantalla de acciones correctivas del panel de oficina de Vaquia",
+    },
+    pricing: {
+      eyebrow: "PRECIOS",
+      title: "Un plan según el tamaño de tu operación.",
+      labels: {
+        group: "Frecuencia de facturación",
+        monthly: "Mensual",
+        annual: "Anual",
+        twoFree: "2 meses gratis",
+        perMonth: "/mes",
+        billedAnnually: "facturado anualmente",
+        popular: "Más elegido",
+        cta: "Probar 30 días gratis",
+        features:
+          "Todos los módulos: captura offline, vencimientos, cierre mensual y export a operadora.",
+      },
+      tiers: {
+        base: { name: "Base", limit: "Hasta 25 personas de campo", extras: [] as string[] },
+        pro: { name: "Pro", limit: "Hasta 100 personas de campo", extras: [] as string[] },
+        premium: {
+          name: "Premium",
+          limit: "Personal ilimitado",
+          extras: ["Voz + IA (próximamente)", "Soporte prioritario"],
+        },
+      },
+      trialNote:
+        "Durante la prueba podés cambiar de plan cuando quieras. Los 30 días son de tu empresa, no del plan.",
+      footnote:
+        "Precios de referencia en ARS, sin IVA. Sin tarjeta para la prueba. Pagos con Mercado Pago.",
     },
     footer: {
       cta: "Llevá Vaquia a tu próxima operación.",

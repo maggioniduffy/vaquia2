@@ -8,7 +8,7 @@ Public marketing page at `/`. Source: handoff in `docs/design/landing/` (README 
 - Components: `src/components/landing/` (server components, except `ascii-canvas.tsx` and the shared `ThemeToggle variant="round"`).
 
 ## Sections
-Nav (76px) · Hero · ASCII landscape + "Inicio" dashboard · Pillars (`#producto`) · Campo (`#campo`, three phones) · Oficina (`#oficina`, 4 steps + "Acciones" screenshot) · Footer (glows, giant wordmark, bottom row). Desktop artboard max 1440px; section padding 80, nav/footer 40.
+Nav (76px) · Hero · ASCII landscape + "Inicio" dashboard · Pillars (`#producto`) · Campo (`#campo`, three phones) · Oficina (`#oficina`, 4 steps + "Acciones" screenshot) · Precios (`#precios`, 3 tier cards + Mensual/Anual toggle) · Footer (glows, giant wordmark, bottom row). Desktop artboard max 1440px; section padding 80, nav/footer 40.
 - Breakpoints: `min-[68.75rem]:` (>=1100px) is the desktop layout. Below: grids stack, pillars get bottom dividers, phones scroll horizontally with snap, steps 2x2, dashboard in-flow at ~92% width. `<640`: h1 44px, screenshots full-bleed, nav center links hidden, nav sign-up button hidden (hero has it), footer wordmark scales with `vw`. Center links also hidden below 900px.
 
 ## Tokens
@@ -26,6 +26,12 @@ Landing-only tokens live in `globals.css` under `.landing` (`--l-muted`, `--l-pi
 - Secondary "Ver demo" (hero) -> guest sign-in via a form posting `guestDemo` (`components/landing/actions.ts`, wraps `signInAsGuest`); only when `env.guestLoginEnabled`, otherwise falls back to the "Ver cómo funciona" anchor (`#oficina`).
 - "Solicitar demo" -> `mailto:hola@vaquia.com?subject=Demo%20Vaquia`, footer only (swap for a demo form later).
 - "Ingresar" -> `/login`. "Ver cómo funciona" -> `#oficina`. "Contratistas" -> `#campo`.
+
+- "Probar 30 días gratis" (pricing cards) -> `/signup?plan=<base|pro|premium>`. The `plan` param is ignored until phase 1c.
+- Nav center link "Precios" -> `#precios`.
+
+## Pricing
+Plans and prices come from `src/lib/billing/tiers.ts` (single source, reused by billing later). Prices are illustrative (ARS, + IVA); annual = 10x monthly (2 months free). `pricing-toggle.tsx` is the only client piece (Mensual/Anual, `aria-pressed`, default Mensual). Cards: 3 columns at `min-[68.75rem]:`, stacked below.
 
 ## Copy
 All strings in `t.landing`. Marketing copy uses voseo ("Llevá", "Registrá"); this is the only exception to the no-vos rule in `design.md`.

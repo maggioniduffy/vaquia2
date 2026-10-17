@@ -6,6 +6,7 @@ import { t } from "@/i18n/es-AR";
 import { env } from "@/lib/env";
 import { guestDemo } from "./actions";
 import { AsciiCanvas } from "./ascii-canvas";
+import { PricingSection } from "./pricing-section";
 import { ThemedImage } from "./themed-image";
 
 const L = t.landing;
@@ -32,6 +33,9 @@ function Nav() {
         </a>
         <a href="#oficina" className={link}>
           {L.nav.office}
+        </a>
+        <a href="#precios" className={link}>
+          {L.nav.pricing}
         </a>
         <a href="#campo" className={link}>
           {L.nav.contractors}
@@ -323,6 +327,7 @@ export function LandingPage() {
         <Pillars />
         <Field />
         <Office />
+        <PricingSection />
       </main>
       <Footer />
     </div>
