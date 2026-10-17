@@ -242,3 +242,67 @@ html:has(.landing) {
 .landing .lp-scroller::-webkit-scrollbar {
   display: none;
 }
+
+/* Auth/onboarding shell tokens (docs/spec/design.md "Auth/onboarding shell"). Scoped to .auth-shell; bg/text/accent reuse app tokens. */
+.auth-shell {
+  --a-mu: #4a5d6e;
+  --a-lab: #5e7387;
+  --a-bd: #c9d3dc;
+  --a-inp: rgba(255, 255, 255, 0.65);
+  --a-sc1: rgba(245, 247, 250, 0.9);
+  --a-sc2: rgba(245, 247, 250, 0.7);
+  --a-g2: rgba(140, 160, 179, 0.55);
+  --a-ring: rgba(14, 159, 154, 0.2);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .auth-shell {
+    --a-mu: #b4c2cf;
+    --a-lab: #8ca0b3;
+    --a-bd: #2b3a47;
+    --a-inp: rgba(13, 24, 32, 0.55);
+    --a-sc1: rgba(13, 24, 32, 0.88);
+    --a-sc2: rgba(13, 24, 32, 0.7);
+    --a-g2: rgba(140, 160, 179, 0.45);
+    --a-ring: rgba(0, 209, 199, 0.18);
+  }
+}
+:root[data-theme="dark"] .auth-shell {
+  --a-mu: #b4c2cf;
+  --a-lab: #8ca0b3;
+  --a-bd: #2b3a47;
+  --a-inp: rgba(13, 24, 32, 0.55);
+  --a-sc1: rgba(13, 24, 32, 0.88);
+  --a-sc2: rgba(13, 24, 32, 0.7);
+  --a-g2: rgba(140, 160, 179, 0.45);
+  --a-ring: rgba(0, 209, 199, 0.18);
+}
+.auth-shell .auth-glow {
+  background:
+    radial-gradient(ellipse 40% 45% at 22% -5%, rgba(0, 209, 199, 0.3), transparent 70%),
+    radial-gradient(ellipse 45% 40% at 72% -8%, var(--a-g2), transparent 70%);
+}
+.auth-shell .auth-ascii {
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 45%, #000 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 45%, #000 100%);
+}
+.auth-shell .auth-scrim {
+  background: radial-gradient(
+    ellipse 50% 50% at 50% 50%,
+    var(--a-sc1) 0%,
+    var(--a-sc2) 55%,
+    transparent 100%
+  );
+}
+.auth-shell .auth-cursor {
+  animation: auth-blink 1s steps(1) infinite;
+}
+@keyframes auth-blink {
+  50% {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .auth-shell .auth-cursor {
+    animation: none;
+  }
+}

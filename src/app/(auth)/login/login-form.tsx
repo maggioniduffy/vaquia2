@@ -2,6 +2,14 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
+import {
+  authGhost,
+  authHelp,
+  authInput,
+  authLabel,
+  authPrimary,
+  authSecondary,
+} from "@/components/auth/brand-shell";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { t } from "@/i18n/es-AR";
@@ -66,13 +74,17 @@ export function LoginForm({
     <div className="flex flex-col gap-4">
       <form action={action} className="flex flex-col gap-4">
         <input type="hidden" name="next" value={next} />
-        {signup && !codeStep ? <p className="text-muted text-sm">{t.auth.signUpHint}</p> : null}
+        {signup && !codeStep ? (
+          <p className="text-sm text-[color:var(--a-mu)]">{t.auth.signUpHint}</p>
+        ) : null}
         {codeStep ? (
           <>
             <input type="hidden" name="email" value={state.email ?? ""} />
-            <p className="text-muted text-sm">{state.email}</p>
+            <p className="text-sm text-[color:var(--a-mu)]">{state.email}</p>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="code">{t.auth.code}</Label>
+              <Label htmlFor="code" className={authLabel}>
+                {t.auth.code}
+              </Label>
               <Input
                 id="code"
                 name="code"
@@ -81,20 +93,22 @@ export function LoginForm({
                 pattern="\d{6}"
                 maxLength={6}
                 required
-                className="h-12 text-base md:h-9 md:text-sm"
+                className={authInput}
               />
             </div>
           </>
         ) : (
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="email">{t.auth.email}</Label>
+            <Label htmlFor="email" className={authLabel}>
+              {t.auth.email}
+            </Label>
             <Input
               id="email"
               name="email"
               type="email"
               autoComplete="email"
               required
-              className="h-12 text-base md:h-9 md:text-sm"
+              className={authInput}
             />
           </div>
         )}
@@ -113,11 +127,11 @@ export function LoginForm({
         <Button
           type="submit"
           variant="primary"
-          size="touch"
+          size="md"
           disabled={pending}
           name="intent"
           value={codeStep ? "verify" : "send"}
-          className="w-full md:h-9 md:text-sm"
+          className={authPrimary}
         >
           {codeStep ? (signup ? t.auth.signUpSubmit : t.auth.signIn) : t.auth.sendCode}
         </Button>
@@ -126,24 +140,24 @@ export function LoginForm({
             <Button
               type="submit"
               variant="ghost"
-              size="touch"
+              size="md"
               disabled={pending}
               name="intent"
               value="send"
               formNoValidate
-              className="md:h-9 md:text-sm"
+              className={authGhost}
             >
               {t.auth.resendCode}
             </Button>
             <Button
               type="submit"
               variant="ghost"
-              size="touch"
+              size="md"
               disabled={pending}
               name="intent"
               value="reset"
               formNoValidate
-              className="md:h-9 md:text-sm"
+              className={authGhost}
             >
               {t.auth.changeEmail}
             </Button>
@@ -152,13 +166,13 @@ export function LoginForm({
       </form>
       {googleEnabled && !codeStep ? (
         <>
-          <p className="text-muted text-center text-xs">{t.auth.or}</p>
+          <p className={`${authHelp} text-center`}>{t.auth.or}</p>
           <form action={signInWithGoogle.bind(null, next)}>
             <Button
               type="submit"
               variant="secondary"
-              size="touch"
-              className="w-full gap-2 md:h-9 md:text-sm"
+              size="md"
+              className={`${authSecondary} gap-2`}
             >
               <GoogleMark />
               {t.auth.googleSignIn}
@@ -176,16 +190,16 @@ export function LoginForm({
           <Button
             type="submit"
             variant="secondary"
-            size="touch"
+            size="md"
             disabled={guestPending}
-            className="w-full md:h-9 md:text-sm"
+            className={authSecondary}
           >
             {t.auth.guestSignIn}
           </Button>
         </form>
       ) : null}
       {!codeStep ? (
-        <p className="text-muted text-center text-sm">
+        <p className="text-center text-sm text-[color:var(--a-mu)]">
           {signup ? t.auth.haveAccount : t.auth.noAccountYet}{" "}
           <Link
             href={signup ? "/login" : "/signup"}

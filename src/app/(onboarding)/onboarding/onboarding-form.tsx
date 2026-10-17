@@ -1,13 +1,20 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import {
+  authGhost,
+  authHelp,
+  authInput,
+  authLabel,
+  authPrimary,
+} from "@/components/auth/brand-shell";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { t } from "@/i18n/es-AR";
 import { formatCuit, isValidCuit, normalizeCuit } from "@/lib/cuit";
 import { createCompany, type OnboardingState } from "@/lib/onboarding/actions";
 
-const inputClass = "h-12 text-base md:h-9 md:text-sm";
+const inputClass = authInput;
 
 function FieldError({ id, message }: { id: string; message?: string }) {
   if (!message) return null;
@@ -59,18 +66,20 @@ export function OnboardingForm() {
   const cuitMessage = fe.cuit ?? (cuitBad ? e.invalidCuit : undefined);
 
   return (
-    <form action={action} className="flex flex-col gap-4">
-      <div className="flex items-center gap-2 text-xs">
+    <form action={action} className="flex flex-col gap-5">
+      <div className="flex items-center gap-2 text-[13px]">
         <span className="bg-accent size-1.5 rounded-full" aria-hidden="true" />
-        <span className="font-medium">{t.onboarding.stepOf(step, 2)}</span>
-        <span className="text-muted">
+        <span className="font-semibold">{t.onboarding.stepOf(step, 2)}</span>
+        <span className="text-[color:var(--a-mu)]">
           {step === 1 ? t.onboarding.stepPerson : t.onboarding.stepCompany}
         </span>
       </div>
 
-      <div hidden={step !== 1} className="flex flex-col gap-4">
+      <div hidden={step !== 1} className={step === 1 ? "flex flex-col gap-4" : "hidden"}>
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="fullName">{t.onboarding.fullName}</Label>
+          <Label htmlFor="fullName" className={authLabel}>
+            {t.onboarding.fullName}
+          </Label>
           <Input
             id="fullName"
             name="fullName"
@@ -83,7 +92,9 @@ export function OnboardingForm() {
           <FieldError id="fullName-error" message={fe.fullName} />
         </div>
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="dni">{t.onboarding.dni}</Label>
+          <Label htmlFor="dni" className={authLabel}>
+            {t.onboarding.dni}
+          </Label>
           <Input
             id="dni"
             name="dni"
@@ -94,24 +105,20 @@ export function OnboardingForm() {
             aria-invalid={Boolean(fe.dni)}
             className={inputClass}
           />
-          <p className="text-muted text-xs">{t.onboarding.dniHint}</p>
+          <p className={authHelp}>{t.onboarding.dniHint}</p>
           <FieldError id="dni-error" message={fe.dni} />
         </div>
         {stepError ? <FieldError id="step-error" message={stepError} /> : null}
-        <Button
-          type="button"
-          variant="primary"
-          size="touch"
-          onClick={next}
-          className="w-full md:h-9 md:text-sm"
-        >
+        <Button type="button" variant="primary" size="md" onClick={next} className={authPrimary}>
           {t.onboarding.next}
         </Button>
       </div>
 
-      <div hidden={step !== 2} className="flex flex-col gap-4">
+      <div hidden={step !== 2} className={step === 2 ? "flex flex-col gap-4" : "hidden"}>
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="companyName">{t.onboarding.companyName}</Label>
+          <Label htmlFor="companyName" className={authLabel}>
+            {t.onboarding.companyName}
+          </Label>
           <Input
             id="companyName"
             name="companyName"
@@ -124,7 +131,9 @@ export function OnboardingForm() {
           <FieldError id="companyName-error" message={fe.companyName} />
         </div>
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="cuit">{t.onboarding.cuit}</Label>
+          <Label htmlFor="cuit" className={authLabel}>
+            {t.onboarding.cuit}
+          </Label>
           <Input
             id="cuit"
             name="cuit"
@@ -138,7 +147,7 @@ export function OnboardingForm() {
             aria-invalid={Boolean(cuitMessage)}
             className={`${inputClass} font-mono`}
           />
-          <p className="text-muted text-xs">{t.onboarding.cuitHint}</p>
+          <p className={authHelp}>{t.onboarding.cuitHint}</p>
           <FieldError id="cuit-error" message={cuitMessage} />
         </div>
         {state.error ? (
@@ -154,23 +163,25 @@ export function OnboardingForm() {
             ) : null}
           </p>
         ) : null}
-        <p className="text-muted text-xs">{t.onboarding.trialNote}</p>
+        <p className="text-[13px] leading-normal text-[color:var(--a-mu)]">
+          {t.onboarding.trialNote}
+        </p>
         <Button
           type="submit"
           variant="primary"
-          size="touch"
+          size="md"
           disabled={pending || cuitBad || !cuitFilled}
-          className="w-full md:h-9 md:text-sm"
+          className={authPrimary}
         >
           {t.onboarding.submit}
         </Button>
         <Button
           type="button"
           variant="ghost"
-          size="touch"
+          size="md"
           disabled={pending}
           onClick={() => setStep(1)}
-          className="md:h-9 md:text-sm"
+          className={authGhost}
         >
           {t.onboarding.back}
         </Button>

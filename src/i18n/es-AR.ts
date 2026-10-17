@@ -36,6 +36,7 @@ export const t = {
   },
   onboarding: {
     title: "Crear la empresa",
+    welcome: "Bienvenido a Vaquia",
     stepOf: (current: number, total: number) => `Paso ${current} de ${total}`,
     stepPerson: "Tus datos",
     stepCompany: "La empresa",
