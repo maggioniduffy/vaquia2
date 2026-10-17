@@ -26,7 +26,11 @@ export default async function LoginPage({
           </p>
           <h1 className="text-xl font-medium">{t.auth.title}</h1>
         </div>
-        <LoginForm next={safeNextPath(next)} guestEnabled={env.guestLoginEnabled} />
+        <LoginForm
+          next={safeNextPath(next)}
+          guestEnabled={env.guestLoginEnabled}
+          googleEnabled={env.googleEnabled}
+        />
       </div>
     </main>
   );

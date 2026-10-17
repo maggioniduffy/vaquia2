@@ -25,6 +25,18 @@ export const auth = betterAuth({
   secret: env.authSecret,
   baseURL: env.siteUrl,
   trustedOrigins,
+  // Invited users are pre-created (email_verified = true); signing in with Google links to them.
+  account: {
+    ...authOptions.account,
+    accountLinking: { enabled: true, trustedProviders: ["google"] },
+  },
+  ...(env.googleEnabled
+    ? {
+        socialProviders: {
+          google: { clientId: env.googleClientId!, clientSecret: env.googleClientSecret! },
+        },
+      }
+    : {}),
   databaseHooks: {
     user: {
       create: {
@@ -44,9 +56,9 @@ export const auth = betterAuth({
   },
   plugins: [
     emailOTP({
-      // Invite-only: accounts are created by an admin. With sign-up disabled the plugin
-      // silently skips unknown emails, so the caller sees the same response either way.
-      disableSignUp: true,
+      // Open sign-up: an unknown email gets a code and the user is created on verification.
+      // The login action answers the same whether or not the email exists.
+      disableSignUp: false,
       otpLength: 6,
       expiresIn: 300,
       allowedAttempts: 3,

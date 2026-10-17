@@ -1,10 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { t } from "@/i18n/es-AR";
-import { sendCode, signInAsGuest, verifyCode, type LoginState } from "./actions";
+import { sendCode, signInAsGuest, signInWithGoogle, verifyCode, type LoginState } from "./actions";
 
 // Several submit buttons share one form; `intent` tells the reducer which one fired.
 async function codeFlow(prev: LoginState, formData: FormData): Promise<LoginState> {
@@ -19,7 +20,41 @@ async function codeFlow(prev: LoginState, formData: FormData): Promise<LoginStat
 }
 
 // Email → 6-digit code sent by email → signed in. No passwords.
-export function LoginForm({ next, guestEnabled }: { next: string; guestEnabled: boolean }) {
+function GoogleMark() {
+  return (
+    <svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true">
+      <path
+        fill="#4285F4"
+        d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z"
+      />
+      <path
+        fill="#34A853"
+        d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.33-1.58-5.04-3.7H.96v2.33A9 9 0 0 0 9 18z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M3.96 10.72A5.4 5.4 0 0 1 3.68 9c0-.6.1-1.18.28-1.72V4.95H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.05l3-2.33z"
+      />
+      <path
+        fill="#EA4335"
+        d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58A9 9 0 0 0 .96 4.95l3 2.33C4.67 5.16 6.66 3.58 9 3.58z"
+      />
+    </svg>
+  );
+}
+
+export function LoginForm({
+  next,
+  guestEnabled,
+  googleEnabled,
+  mode = "login",
+}: {
+  next: string;
+  guestEnabled: boolean;
+  googleEnabled: boolean;
+  mode?: "login" | "signup";
+}) {
+  const signup = mode === "signup";
   const [state, action, pending] = useActionState<LoginState, FormData>(codeFlow, {});
   const [guestState, guestAction, guestPending] = useActionState<LoginState, FormData>(
     signInAsGuest,
@@ -31,6 +66,7 @@ export function LoginForm({ next, guestEnabled }: { next: string; guestEnabled: 
     <div className="flex flex-col gap-4">
       <form action={action} className="flex flex-col gap-4">
         <input type="hidden" name="next" value={next} />
+        {signup && !codeStep ? <p className="text-muted text-sm">{t.auth.signUpHint}</p> : null}
         {codeStep ? (
           <>
             <input type="hidden" name="email" value={state.email ?? ""} />
@@ -83,7 +119,7 @@ export function LoginForm({ next, guestEnabled }: { next: string; guestEnabled: 
           value={codeStep ? "verify" : "send"}
           className="w-full md:h-9 md:text-sm"
         >
-          {codeStep ? t.auth.signIn : t.auth.sendCode}
+          {codeStep ? (signup ? t.auth.signUpSubmit : t.auth.signIn) : t.auth.sendCode}
         </Button>
         {codeStep ? (
           <>
@@ -114,6 +150,22 @@ export function LoginForm({ next, guestEnabled }: { next: string; guestEnabled: 
           </>
         ) : null}
       </form>
+      {googleEnabled && !codeStep ? (
+        <>
+          <p className="text-muted text-center text-xs">{t.auth.or}</p>
+          <form action={signInWithGoogle.bind(null, next)}>
+            <Button
+              type="submit"
+              variant="secondary"
+              size="touch"
+              className="w-full gap-2 md:h-9 md:text-sm"
+            >
+              <GoogleMark />
+              {t.auth.googleSignIn}
+            </Button>
+          </form>
+        </>
+      ) : null}
       {guestEnabled && !codeStep ? (
         <form action={guestAction} className="flex flex-col gap-4">
           {guestState.error ? (
@@ -131,6 +183,17 @@ export function LoginForm({ next, guestEnabled }: { next: string; guestEnabled: 
             {t.auth.guestSignIn}
           </Button>
         </form>
+      ) : null}
+      {!codeStep ? (
+        <p className="text-muted text-center text-sm">
+          {signup ? t.auth.haveAccount : t.auth.noAccountYet}{" "}
+          <Link
+            href={signup ? "/login" : "/signup"}
+            className="text-accent underline-offset-2 hover:underline"
+          >
+            {signup ? t.auth.goToLogin : t.auth.goToSignUp}
+          </Link>
+        </p>
       ) : null}
     </div>
   );
