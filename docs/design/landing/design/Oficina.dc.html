@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc><helmet><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap"><style>body{margin:0;-webkit-font-smoothing:antialiased;--base:#F2F2F3;--surf:#FAFAFA;--bd:#E4E4E7;--tx:#18181B;--mu:#71717A;--ac:#0E9F9A;--acs:rgba(14,159,154,.10);--onac:#FFFFFF;--dg:#DC2626;--wn:#D97706;--hov:#F1F1F2;--scrim:rgba(24,24,27,.10)}a{color:#0E9F9A}a:hover{color:#0B807C}</style></helmet>
+
+<div style="width:1440px;height:960px;display:flex;background-color:var(--base);background-image:var(--grain);color:var(--tx);font-family:'Geist',sans-serif;font-size:14px;position:relative;overflow:hidden">
+  <aside style="width:224px;flex:none;border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:16px 12px">
+    <div style="height:40px;display:flex;align-items:center;gap:8px;padding:0 8px 0 10px;margin-bottom:16px">
+      <span style="font-size:16px;font-weight:500;letter-spacing:-0.02em">vaquia</span>
+      <span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">HSE</span>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:2px">
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="9">
+        <div style="height:32px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;border-radius:6px;color:{{ n.c }};font-weight:{{ n.w }};background:{{ n.bg }}">
+          <span>{{ n.label }}</span><span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">{{ n.count }}</span>
+        </div>
+      </sc-for>
+    </nav>
+    <div style="margin-top:auto;padding:12px 10px;border-top:1px solid var(--bd);display:flex;flex-direction:column;gap:4px;font-size:12px">
+      <span style="color:var(--mu)">Cierre en curso</span>
+      <span>Septiembre 2026 · <span style="color:var(--mu)">{{ cierreLabel }}</span></span>
+    </div>
+  </aside>
+
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <header style="height:56px;flex:none;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:16px;padding:0 24px">
+      <div style="height:32px;display:flex;align-items:center;gap:8px;padding:0 10px;border:1px solid var(--bd);border-radius:6px;background:var(--surf)">
+        <span style="width:18px;height:18px;border-radius:4px;background:var(--tx);color:var(--base);font:600 10px 'Geist Mono',monospace;display:flex;align-items:center;justify-content:center">PW</span>
+        <span style="font-weight:500">Patagonia Well Services</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+      </div>
+      <div style="color:var(--mu);display:flex;align-items:center;gap:8px"><span>/</span><span style="color:var(--tx)">{{ title }}</span></div>
+      <div style="flex:1"></div>
+      <div style="width:320px;height:32px;display:flex;align-items:center;gap:8px;padding:0 10px;border:1px solid var(--bd);border-radius:6px;background:var(--surf);color:var(--mu)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <span style="flex:1">Buscar registros, personas, locaciones</span>
+        <span style="font:400 12px 'Geist Mono',monospace;border:1px solid var(--bd);border-radius:4px;padding:0 4px">⌘K</span>
+      </div>
+      <div style="position:relative;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:{{ bellBg }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--tx)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+        <span style="position:absolute;top:2px;right:0;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--tx);color:var(--base);font:500 10px/16px 'Geist Mono',monospace;text-align:center">4</span>
+      </div>
+      <div style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:6px;border:1px solid var(--bd)">
+        <sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+        <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--tx)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg></sc-if>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="width:32px;height:32px;border-radius:50%;border:1px solid var(--bd);background:var(--surf);display:flex;align-items:center;justify-content:center;font:500 12px 'Geist',sans-serif">CM</span>
+        <span style="display:flex;flex-direction:column;line-height:1.2"><span style="font-weight:500">Carolina Méndez</span><span style="font-size:12px;color:var(--mu)">{{ role }}</span></span>
+      </div>
+    </header>
+
+    <main style="flex:1;min-height:0;position:relative;overflow:hidden">
+
+      <sc-if value="{{ is.inicio }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 32px;display:flex;flex-direction:column;gap:24px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end">
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:20px;font-weight:500;letter-spacing:-0.01em">Buen día, Carolina</span><span style="color:var(--mu)">Viernes 16 de octubre de 2026 · 5 cuadrillas activas en 4 locaciones</span></div>
+            <div style="height:32px;display:flex;align-items:center;gap:8px;padding:0 10px;border:1px solid var(--bd);border-radius:6px;background:var(--surf)"><span style="color:var(--mu)">Período</span><span>Septiembre 2026</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px">
+            <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="5">
+              <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:8px">
+                <span style="font-size:12px;color:var(--mu)">{{ k.label }}</span>
+                <span style="display:flex;align-items:center;gap:8px;font:600 28px 'Geist Mono',monospace;font-variant-numeric:tabular-nums;letter-spacing:-0.02em">{{ k.v }}<span style="width:6px;height:6px;border-radius:50%;background:{{ k.dot }}"></span></span>
+                <span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">{{ k.delta }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:start">
+            <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px">
+              <div style="padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bd)"><span style="font-size:16px;font-weight:500">Requiere tu atención</span><span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">8</span></div>
+              <sc-for list="{{ attention }}" as="g" hint-placeholder-count="3">
+                <div style="display:flex;flex-direction:column">
+                  <div style="padding:12px 20px 4px;font-size:12px;color:var(--mu);display:flex;gap:8px"><span>{{ g.title }}</span><span style="font-family:'Geist Mono',monospace">{{ g.n }}</span></div>
+                  <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="2">
+                    <div style="padding:10px 20px;display:grid;grid-template-columns:12px 1fr auto 16px;gap:12px;align-items:center;border-bottom:1px solid var(--bd)">
+                      <span style="width:6px;height:6px;border-radius:50%;background:{{ it.d }};border:{{ it.b }};box-sizing:border-box"></span>
+                      <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span>{{ it.t }}</span><span style="font-size:12px;color:var(--mu)">{{ it.m }}</span></span>
+                      <span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">{{ it.r }}</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:24px">
+              <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:16px;font-weight:500">TRIR · 12 meses</span><span style="display:flex;gap:12px;font-size:12px;color:var(--mu)"><span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:2px;background:var(--ac)"></span>2025–26</span><span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:0;border-top:1.5px dashed var(--mu)"></span>Año anterior</span></span></div>
+                <svg width="100%" height="180" viewBox="0 0 440 180" preserveAspectRatio="none" style="display:block">
+                  <path d="M0 30H440M0 80H440M0 130H440" stroke="var(--bd)" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+                  <polyline points="{{ chartPrev }}" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"></polyline>
+                  <polyline points="{{ chartCur }}" fill="none" stroke="var(--ac)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"></polyline>
+                  <circle cx="440" cy="{{ chartLastY }}" r="3.5" fill="var(--ac)"></circle>
+                </svg>
+                <div style="display:flex;justify-content:space-between;font:400 12px 'Geist Mono',monospace;color:var(--mu)"><sc-for list="{{ months }}" as="m" hint-placeholder-count="12"><span>{{ m }}</span></sc-for></div>
+              </div>
+              <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:16px;font-weight:500">Cierre Septiembre 2026</span><span style="color:var(--mu);font-size:12px">Revisión HSE</span></div>
+                <div style="display:flex;gap:4px"><span style="flex:1;height:4px;border-radius:2px;background:var(--ac)"></span><span style="flex:1;height:4px;border-radius:2px;background:var(--ac)"></span><span style="flex:1;height:4px;border-radius:2px;background:var(--bd)"></span><span style="flex:1;height:4px;border-radius:2px;background:var(--bd)"></span><span style="flex:1;height:4px;border-radius:2px;background:var(--bd)"></span></div>
+                <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--mu)">2 ítems de completitud pendientes</span><a href="#" style="color:var(--ac);text-decoration:none;font-weight:500">Continuar cierre</a></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is.notif }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;top:4px;right:196px;width:420px;background:var(--surf);border:1px solid var(--bd);border-radius:8px;box-shadow:0 16px 40px rgba(0,0,0,.16);display:flex;flex-direction:column;z-index:5">
+          <div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bd)"><span style="font-size:16px;font-weight:500">Notificaciones</span><a href="#" style="color:var(--ac);text-decoration:none;font-size:12px;font-weight:500">Marcar todo como leído</a></div>
+          <div style="display:flex;gap:16px;padding:0 16px;border-bottom:1px solid var(--bd);font-size:12px"><span style="padding:10px 0;border-bottom:2px solid var(--ac);font-weight:500">No leídas · 4</span><span style="padding:10px 0;color:var(--mu)">Todas</span><span style="padding:10px 0;color:var(--mu)">Menciones</span></div>
+          <div style="padding:14px 16px;border-bottom:1px solid var(--bd);display:flex;gap:12px">
+            <span style="width:6px;height:6px;border-radius:50%;background:var(--tx);margin-top:7px;flex:none"></span>
+            <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--mu)">Resumen diario</span><span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">07:00</span></div>
+              <span style="font-weight:500">3 habilitaciones vencen esta semana</span>
+              <div style="border:1px solid var(--bd);border-radius:6px;display:flex;flex-direction:column">
+                <sc-for list="{{ digest }}" as="d" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:1fr auto;padding:8px 10px;font-size:12px;border-bottom:1px solid var(--bd)"><span><span style="font-weight:500">{{ d.n }}</span><span style="color:var(--mu)"> · {{ d.q }}</span></span><span style="font-family:'Geist Mono',monospace;color:var(--wn)">{{ d.f }}</span></div></sc-for>
+                <div style="padding:8px 10px;font-size:12px;color:var(--mu)">Además: 2 acciones vencen el lunes · 1 registro bloqueado sin resolver</div>
+              </div>
+              <a href="#" style="color:var(--ac);text-decoration:none;font-size:12px;font-weight:500">Ver en Habilitaciones</a>
+            </div>
+          </div>
+          <sc-for list="{{ notifs }}" as="nt" hint-placeholder-count="4">
+            <div style="padding:12px 16px;border-bottom:1px solid var(--bd);display:flex;gap:12px">
+              <span style="width:6px;height:6px;border-radius:50%;background:{{ nt.dot }};margin-top:7px;flex:none"></span>
+              <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="color:{{ nt.c }}">{{ nt.t }}</span><span style="font-size:12px;color:var(--mu)">{{ nt.m }}</span></div>
+              <span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">{{ nt.r }}</span>
+            </div>
+          </sc-for>
+          <div style="padding:12px 16px;font-size:12px"><a href="#" style="color:var(--ac);text-decoration:none">Configurar resumen diario</a></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is.registros }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 32px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end">
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:20px;font-weight:500;letter-spacing:-0.01em">Registros</span><span style="color:var(--mu)"><span style="font-family:'Geist Mono',monospace">1.284</span> registros · octubre 2026</span></div>
+            <div style="display:flex;gap:8px"><button style="height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);font:500 14px 'Geist',sans-serif">Exportar CSV</button><button style="height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--ac);background:var(--ac);color:var(--onac);font:500 14px 'Geist',sans-serif">Nuevo registro</button></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="width:240px;height:32px;display:flex;align-items:center;gap:8px;padding:0 10px;border:1px solid var(--bd);border-radius:6px;background:var(--surf);color:var(--mu)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>Buscar por ID o autor</div>
+            <sc-for list="{{ regFilters }}" as="f" hint-placeholder-count="5"><div style="height:32px;display:flex;align-items:center;gap:6px;padding:0 10px;border:1px solid {{ f.bc }};border-radius:6px;background:var(--surf)"><span style="color:var(--mu)">{{ f.k }}</span><span>{{ f.v }}</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></div></sc-for>
+            <a href="#" style="color:var(--ac);text-decoration:none;margin-left:4px">Limpiar</a>
+          </div>
+          <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:96px 128px 112px 1.1fr 1.4fr 1fr 130px 64px;gap:12px;padding:0 16px;height:36px;align-items:center;font-size:12px;color:var(--mu);border-bottom:1px solid var(--bd)"><span>Tipo</span><span>ID</span><span>Fecha</span><span>Cuadrilla</span><span>Locación</span><span>Autor</span><span>Estado</span><span style="text-align:right">Firmas</span></div>
+            <sc-for list="{{ registros }}" as="r" hint-placeholder-count="14">
+              <div style="display:grid;grid-template-columns:96px 128px 112px 1.1fr 1.4fr 1fr 130px 64px;gap:12px;padding:0 16px 0 {{ r.pl }};height:40px;align-items:center;border-bottom:1px solid var(--bd);background:{{ r.bg }};border-left:{{ r.bl }};white-space:nowrap">
+                <span>{{ r.tipo }}</span>
+                <span style="font:400 12px 'Geist Mono',monospace">{{ r.id }}</span>
+                <span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">{{ r.fecha }}</span>
+                <span style="overflow:hidden;text-overflow:ellipsis">{{ r.cuadrilla }}</span>
+                <span style="overflow:hidden;text-overflow:ellipsis;color:var(--mu)">{{ r.loc }}</span>
+                <span>{{ r.autor }}</span>
+                <span>
+                  <sc-if value="{{ r.s.ok }}" hint-placeholder-val="{{ true }}"><span style="display:flex;align-items:center;gap:6px;color:var(--mu)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>{{ r.s.label }}</span></sc-if>
+                  <sc-if value="{{ r.s.nok }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:8px;color:{{ r.s.c }};font-weight:{{ r.s.w }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ r.s.d }};border:{{ r.s.b }};box-sizing:border-box;flex:none"></span>{{ r.s.label }}</span></sc-if>
+                </span>
+                <span style="font:400 12px 'Geist Mono',monospace;text-align:right;color:{{ r.fc }}">{{ r.firmas }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="position:absolute;top:0;right:0;bottom:0;width:520px;background:var(--surf);border-left:1px solid var(--bd);box-shadow:-16px 0 40px rgba(0,0,0,.10);display:flex;flex-direction:column">
+          <div style="padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">ATS-2026-0913</span><span style="display:flex;gap:12px;color:var(--mu)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></span></div>
+            <span style="font-size:20px;font-weight:500;letter-spacing:-0.01em">ATS · Montaje de equipo de pulling</span>
+            <span style="display:flex;align-items:center;gap:8px;color:var(--dg);font-weight:500"><span style="width:6px;height:6px;border-radius:50%;background:var(--dg)"></span>Bloqueado · 1 bloqueo, 1 advertencia</span>
+          </div>
+          <div style="flex:1;overflow:hidden;padding:16px 20px;display:flex;flex-direction:column;gap:16px">
+            <div style="display:grid;grid-template-columns:100px 1fr;gap:8px 12px;font-size:14px">
+              <span style="color:var(--mu)">Fecha</span><span style="font-family:'Geist Mono',monospace">16/10/2026 09:12</span>
+              <span style="color:var(--mu)">Cuadrilla</span><span>Cuadrilla Workover 3</span>
+              <span style="color:var(--mu)">Locación</span><span>Loma Campana – Locación LC-214 · YPF</span>
+              <span style="color:var(--mu)">Autor</span><span>Martín Sosa · Supervisor de campo</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <span style="font-size:12px;color:var(--mu)">Validaciones</span>
+              <div style="border-left:2px solid var(--dg);padding:4px 0 4px 12px;display:flex;flex-direction:column;gap:4px"><span style="font-weight:500">Juan Pérez no puede firmar: Trabajo en altura vencido el 02/10.</span><span style="font-size:12px;color:var(--mu);line-height:1.5">Regla HAB-01 · La tarea exige habilitación vigente de Trabajo en altura para cada participante a la fecha del registro.</span></div>
+              <div style="border-left:2px solid var(--wn);padding:4px 0 4px 12px;display:flex;flex-direction:column;gap:4px"><span style="font-weight:500">Viento de 46 km/h al inicio de la tarea.</span><span style="font-size:12px;color:var(--mu);line-height:1.5">Regla AMB-03 · Límite operativo para trabajo en altura: 40 km/h. Requiere reconocimiento del supervisor.</span></div>
+              <div style="display:flex;flex-direction:column;gap:6px;padding:4px 0 0 14px;font-size:12px;color:var(--mu)">
+                <span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>Permiso de trabajo PT-2026-0376 vinculado</span>
+                <span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>EPP completo para la tarea (6 de 6)</span>
+                <span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>Geolocalización dentro del polígono de LC-214</span>
+              </div>
+              <a href="#" style="color:var(--ac);text-decoration:none;font-size:12px;font-weight:500;padding-left:14px">Ver detalle de validaciones</a>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--mu)">Participantes y firmas</span><span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">5/6</span></div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+                <sc-for list="{{ firmas }}" as="p" hint-placeholder-count="6">
+                  <div style="border:1px solid {{ p.bc }};border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:6px">
+                    <div style="height:40px;display:flex;align-items:center;justify-content:center">
+                      <sc-if value="{{ p.signed }}" hint-placeholder-val="{{ true }}"><svg width="110" height="36" viewBox="0 0 220 70" fill="none" stroke="var(--tx)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="{{ p.sig }}"></path></svg></sc-if>
+                      <sc-if value="{{ p.unsigned }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:var(--dg)">Sin firma</span></sc-if>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:12px"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.n }}</span><span style="font-family:'Geist Mono',monospace;color:var(--mu)">{{ p.h }}</span></div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <span style="font-size:12px;color:var(--mu)">Geolocalización</span>
+              <div style="height:60px;border:1px solid var(--bd);border-radius:6px;background-image:repeating-linear-gradient(45deg,var(--hov) 0 1px,transparent 1px 10px);position:relative;display:flex;align-items:center;justify-content:center">
+                <span style="width:64px;height:36px;border:1px dashed var(--mu);border-radius:4px;display:flex;align-items:center;justify-content:center"><span style="width:8px;height:8px;border-radius:50%;background:var(--tx);box-shadow:0 0 0 4px var(--surf)"></span></span>
+                <span style="position:absolute;left:8px;bottom:6px;font-size:12px;color:var(--mu)">Mapa · polígono LC-214</span>
+              </div>
+              <span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">−38,2194, −68,7316 · ±8 m · 16/10/2026 09:12:44 ART</span>
+            </div>
+          </div>
+          <div style="padding:12px 20px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:8px">
+            <button style="height:36px;padding:0 14px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);font:500 14px 'Geist',sans-serif">Descargar PDF</button>
+            <button style="height:36px;padding:0 14px;border-radius:6px;border:1px solid var(--ac);background:var(--ac);color:var(--onac);font:500 14px 'Geist',sans-serif">Resolver validaciones</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is.validacion }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:20px 32px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <a href="#" style="color:var(--mu);text-decoration:none;font-size:12px;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"></path></svg>Registros</a>
+              <span style="font-size:20px;font-weight:500;letter-spacing:-0.01em">ATS · Montaje de equipo de pulling <span style="font:400 14px 'Geist Mono',monospace;color:var(--mu);margin-left:8px">ATS-2026-0913</span></span>
+              <span style="display:flex;align-items:center;gap:8px;color:var(--dg);font-weight:500"><span style="width:6px;height:6px;border-radius:50%;background:var(--dg)"></span>Bloqueado · no se puede cerrar hasta resolver 1 bloqueo y reconocer 1 advertencia</span>
+            </div>
+            <button style="height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);font:500 14px 'Geist',sans-serif">Descargar PDF</button>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 360px;gap:24px;align-items:start">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div style="background:var(--surf);border:1px solid var(--bd);border-left:2px solid var(--dg);border-radius:8px;padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;justify-content:space-between;align-items:center"><span style="display:flex;align-items:center;gap:8px;color:var(--dg);font-weight:500;font-size:12px"><span style="width:6px;height:6px;border-radius:50%;background:var(--dg)"></span>Bloqueo</span><span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">HAB-01 · Habilitación vencida</span></div>
+                <span style="font-size:20px;font-weight:500;letter-spacing:-0.01em;line-height:1.3">Juan Pérez no puede firmar: Trabajo en altura vencido el 02/10.</span>
+                <span style="color:var(--mu);line-height:1.5;max-width:680px">La tarea "Montaje de equipo de pulling" está clasificada como Trabajo en altura. Cada participante necesita la habilitación vigente a la fecha y hora del registro. La de Juan Pérez venció hace 14 días.</span>
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--bd);border-radius:6px">
+                  <div style="padding:10px 12px;display:flex;flex-direction:column;gap:4px;border-right:1px solid var(--bd)"><span style="font-size:12px;color:var(--mu)">Habilitación</span><span>Trabajo en altura</span></div>
+                  <div style="padding:10px 12px;display:flex;flex-direction:column;gap:4px;border-right:1px solid var(--bd)"><span style="font-size:12px;color:var(--mu)">Emitida</span><span style="font-family:'Geist Mono',monospace">02/10/2024</span></div>
+                  <div style="padding:10px 12px;display:flex;flex-direction:column;gap:4px;border-right:1px solid var(--bd)"><span style="font-size:12px;color:var(--mu)">Venció</span><span style="font-family:'Geist Mono',monospace;color:var(--dg)">02/10/2026</span></div>
+                  <div style="padding:10px 12px;display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;color:var(--mu)">Registro</span><span style="font-family:'Geist Mono',monospace">16/10/2026 09:12</span></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;color:var(--mu)">Cómo resolver</span><span>Quitá a Juan Pérez de la tarea, o cargá la renovación en su legajo si ya la tiene.</span></div>
+                <div style="display:flex;gap:8px;align-items:center">
+                  <button style="height:36px;padding:0 14px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);font:500 14px 'Geist',sans-serif">Quitar participante</button>
+                  <button style="height:36px;padding:0 14px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);font:500 14px 'Geist',sans-serif">Abrir legajo de Juan Pérez</button>
+                  <span style="flex:1"></span>
+                  <button style="height:36px;padding:0 14px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--mu);font:500 14px 'Geist',sans-serif">Marcar falso positivo</button>
+                </div>
+              </div>
+              <div style="background:var(--surf);border:1px solid var(--bd);border-left:2px solid var(--wn);border-radius:8px;padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;justify-content:space-between;align-items:center"><span style="display:flex;align-items:center;gap:8px;color:var(--wn);font-weight:500;font-size:12px"><span style="width:6px;height:6px;border-radius:50%;background:var(--wn)"></span>Advertencia · requiere reconocimiento</span><span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">AMB-03 · Viento sobre el límite</span></div>
+                <span style="font-size:16px;font-weight:500">Viento de 46 km/h al inicio de la tarea.</span>
+                <span style="color:var(--mu);line-height:1.5;max-width:680px">Estación Loma Campana Norte, 09:10. Límite para trabajo en altura: 40 km/h. Dejá asentados los controles aplicados.</span>
+                <div style="height:64px;border:1px solid var(--ac);box-shadow:0 0 0 3px var(--acs);border-radius:6px;padding:10px 12px;line-height:1.5">Se suspendió el montaje 40 min hasta bajar a 32 km/h; se agregó vigía en la base.<span style="display:inline-block;width:1px;height:14px;background:var(--tx);vertical-align:middle;margin-left:1px"></span></div>
+                <div style="display:flex;gap:8px;align-items:center">
+                  <button style="height:36px;padding:0 14px;border-radius:6px;border:1px solid var(--ac);background:var(--ac);color:var(--onac);font:500 14px 'Geist',sans-serif">Reconocer advertencia</button>
+                  <span style="flex:1"></span>
+                  <button style="height:36px;padding:0 14px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--mu);font:500 14px 'Geist',sans-serif">Marcar falso positivo</button>
+                </div>
+              </div>
+              <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:16px 20px;display:flex;flex-direction:column;gap:10px">
+                <span style="font-size:12px;color:var(--mu)">4 validaciones superadas</span>
+                <sc-for list="{{ superadas }}" as="v" hint-placeholder-count="4"><span style="display:flex;align-items:center;gap:8px;color:var(--mu)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>{{ v }}</span></sc-for>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:16px 20px;display:grid;grid-template-columns:96px 1fr;gap:10px 12px">
+                <span style="color:var(--mu)">Fecha</span><span style="font-family:'Geist Mono',monospace">16/10/2026 09:12</span>
+                <span style="color:var(--mu)">Cuadrilla</span><span>Cuadrilla Workover 3</span>
+                <span style="color:var(--mu)">Locación</span><span>Loma Campana – Locación LC-214</span>
+                <span style="color:var(--mu)">Operadora</span><span>YPF</span>
+                <span style="color:var(--mu)">Autor</span><span>Martín Sosa</span>
+                <span style="color:var(--mu)">Firmas</span><span style="font-family:'Geist Mono',monospace">5/6</span>
+              </div>
+              <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+                <span style="font-size:12px;color:var(--mu)">Historial</span>
+                <sc-for list="{{ historial }}" as="h" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:84px 1fr;gap:8px;font-size:12px;line-height:1.5"><span style="font-family:'Geist Mono',monospace;color:var(--mu)">{{ h.h }}</span><span style="color:{{ h.c }}">{{ h.t }}</span></div></sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is.acciones }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 32px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end">
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:20px;font-weight:500;letter-spacing:-0.01em">Acciones correctivas</span><span style="color:var(--mu)"><span style="font-family:'Geist Mono',monospace">42</span> abiertas · <span style="font-family:'Geist Mono',monospace;color:var(--dg)">7</span> vencidas · <span style="font-family:'Geist Mono',monospace">3</span> esperan tu aprobación</span></div>
+            <button style="height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--ac);background:var(--ac);color:var(--onac);font:500 14px 'Geist',sans-serif">Nueva acción</button>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="width:240px;height:32px;display:flex;align-items:center;gap:8px;padding:0 10px;border:1px solid var(--bd);border-radius:6px;background:var(--surf);color:var(--mu)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>Buscar acción</div>
+            <sc-for list="{{ acFilters }}" as="f" hint-placeholder-count="4"><div style="height:32px;display:flex;align-items:center;gap:6px;padding:0 10px;border:1px solid {{ f.bc }};border-radius:6px;background:var(--surf)"><span style="color:var(--mu)">{{ f.k }}</span><span>{{ f.v }}</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></div></sc-for>
+          </div>
+          <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:80px 1fr 128px 140px 104px 150px;gap:12px;padding:0 16px;height:36px;align-items:center;font-size:12px;color:var(--mu);border-bottom:1px solid var(--bd)"><span>ID</span><span>Acción</span><span>Origen</span><span>Responsable</span><span>Vence</span><span>Estado</span></div>
+            <sc-for list="{{ acciones }}" as="a" hint-placeholder-count="12">
+              <div style="display:grid;grid-template-columns:80px 1fr 128px 140px 104px 150px;gap:12px;padding:0 16px 0 {{ a.pl }};height:44px;align-items:center;border-bottom:1px solid var(--bd);background:{{ a.bg }};border-left:{{ a.bl }};white-space:nowrap">
+                <span style="font:400 12px 'Geist Mono',monospace">{{ a.id }}</span>
+                <span style="overflow:hidden;text-overflow:ellipsis">{{ a.t }}</span>
+                <span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">{{ a.origen }}</span>
+                <span>{{ a.resp }}</span>
+                <span style="font:400 12px 'Geist Mono',monospace;color:{{ a.vc }}">{{ a.vence }}</span>
+                <span style="display:flex;align-items:center;gap:8px;color:{{ a.s.c }};font-weight:{{ a.s.w }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ a.s.d }};border:{{ a.s.b }};box-sizing:border-box;flex:none"></span>{{ a.s.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="position:absolute;top:0;right:0;bottom:0;width:500px;background:var(--surf);border-left:1px solid var(--bd);box-shadow:-16px 0 40px rgba(0,0,0,.10);display:flex;flex-direction:column">
+          <div style="padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">AC-0318</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></div>
+            <span style="font-size:20px;font-weight:500;letter-spacing:-0.01em;line-height:1.3">Reemplazo de eslingas con desgaste en equipo de pulling</span>
+            <div style="display:flex;gap:16px;font-size:12px;color:var(--mu)"><span>Origen <span style="font-family:'Geist Mono',monospace;color:var(--ac)">INS-2026-0198</span></span><span>Responsable <span style="color:var(--tx)">Martín Sosa</span></span><span>Vence <span style="font-family:'Geist Mono',monospace;color:var(--tx)">18/10/2026</span></span></div>
+          </div>
+          <div style="flex:1;padding:16px 20px;display:flex;flex-direction:column;gap:20px;overflow:hidden">
+            <div style="display:flex;flex-direction:column">
+              <sc-for list="{{ timeline }}" as="t" hint-placeholder-count="4">
+                <div style="display:grid;grid-template-columns:16px 1fr auto;gap:12px">
+                  <div style="display:flex;flex-direction:column;align-items:center"><span style="width:12px;height:12px;border-radius:50%;border:1.5px solid {{ t.ring }};box-sizing:border-box;display:flex;align-items:center;justify-content:center;margin-top:3px"><span style="width:4px;height:4px;border-radius:50%;background:{{ t.fill }}"></span></span><span style="flex:1;width:1px;background:{{ t.line }};min-height:20px"></span></div>
+                  <div style="display:flex;flex-direction:column;gap:2px;padding-bottom:14px"><span style="font-weight:500;color:{{ t.tc }}">{{ t.t }}</span><span style="font-size:12px;color:var(--mu)">{{ t.m }}</span></div>
+                  <span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">{{ t.h }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <span style="font-size:12px;color:var(--mu)">Evidencia · 3 archivos</span>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+                <sc-for list="{{ fotos }}" as="f" hint-placeholder-count="3"><div style="display:flex;flex-direction:column;gap:6px"><div style="aspect-ratio:4/3;border:1px solid var(--bd);border-radius:6px;background-image:repeating-linear-gradient(45deg,var(--hov) 0 1px,transparent 1px 8px);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg></div><span style="font:400 12px 'Geist Mono',monospace;color:var(--mu);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ f }}</span></div></sc-for>
+              </div>
+              <span style="font-size:12px;color:var(--mu)">Tomadas el 15/10 16:41 en LC-214 · −38,2193, −68,7318</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:12px;color:var(--mu)">Comentario</span>
+              <div style="height:72px;border:1px solid var(--bd);border-radius:6px;padding:10px 12px;color:var(--mu)">Obligatorio si rechazás</div>
+            </div>
+          </div>
+          <div style="padding:12px 20px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:8px">
+            <button style="height:36px;padding:0 14px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--dg);font:500 14px 'Geist',sans-serif">Rechazar con comentario</button>
+            <button style="height:36px;padding:0 14px;border-radius:6px;border:1px solid var(--ac);background:var(--ac);color:var(--onac);font:500 14px 'Geist',sans-serif">Aprobar</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is.personal }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 32px;display:flex;flex-direction:column;gap:16px;height:100%;box-sizing:border-box">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end">
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:20px;font-weight:500;letter-spacing:-0.01em">Personal</span><span style="color:var(--mu)"><span style="font-family:'Geist Mono',monospace">86</span> personas · 5 cuadrillas · <span style="font-family:'Geist Mono',monospace;color:var(--dg)">3</span> no aptos para alguna tarea</span></div>
+            <div style="display:flex;gap:8px"><button style="height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);font:500 14px 'Geist',sans-serif">Importar CSV</button><button style="height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--ac);background:var(--ac);color:var(--onac);font:500 14px 'Geist',sans-serif">Agregar persona</button></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="width:240px;height:32px;display:flex;align-items:center;gap:8px;padding:0 10px;border:1px solid var(--bd);border-radius:6px;background:var(--surf);color:var(--mu)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>Nombre, DNI o legajo</div>
+            <sc-for list="{{ perFilters }}" as="f" hint-placeholder-count="3"><div style="height:32px;display:flex;align-items:center;gap:6px;padding:0 10px;border:1px solid {{ f.bc }};border-radius:6px;background:var(--surf)"><span style="color:var(--mu)">{{ f.k }}</span><span>{{ f.v }}</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></div></sc-for>
+          </div>
+          <div style="flex:1;min-height:0;display:grid;grid-template-columns:1fr 520px;gap:16px">
+            <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;overflow:hidden">
+              <div style="display:grid;grid-template-columns:1.2fr 1fr 1.2fr 56px 140px;gap:12px;padding:0 16px;height:36px;align-items:center;font-size:12px;color:var(--mu);border-bottom:1px solid var(--bd)"><span>Nombre</span><span>Cuadrilla</span><span>Puesto</span><span style="text-align:right">Vig.</span><span>Aptitud</span></div>
+              <sc-for list="{{ workers }}" as="w" hint-placeholder-count="15">
+                <div style="display:grid;grid-template-columns:1.2fr 1fr 1.2fr 56px 140px;gap:12px;padding:0 16px 0 {{ w.pl }};height:44px;align-items:center;border-bottom:1px solid var(--bd);background:{{ w.bg }};border-left:{{ w.bl }};white-space:nowrap">
+                  <span style="display:flex;flex-direction:column;line-height:1.3"><span>{{ w.n }}</span><span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">Leg. {{ w.leg }}</span></span>
+                  <span>{{ w.cu }}</span>
+                  <span style="color:var(--mu);overflow:hidden;text-overflow:ellipsis">{{ w.pu }}</span>
+                  <span style="font:400 12px 'Geist Mono',monospace;text-align:right;color:var(--mu)">{{ w.vig }}</span>
+                  <span>
+                    <sc-if value="{{ w.s.ok }}" hint-placeholder-val="{{ true }}"><span style="display:flex;align-items:center;gap:6px;color:var(--mu)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>{{ w.s.label }}</span></sc-if>
+                    <sc-if value="{{ w.s.nok }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:8px;color:{{ w.s.c }};font-weight:{{ w.s.w }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ w.s.d }};border:{{ w.s.b }};box-sizing:border-box;flex:none"></span>{{ w.s.label }}</span></sc-if>
+                  </span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;display:flex;flex-direction:column;overflow:hidden">
+              <div style="padding:20px;border-bottom:1px solid var(--bd);display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;gap:12px;align-items:center">
+                  <span style="width:44px;height:44px;border-radius:50%;border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-weight:500">JP</span>
+                  <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:20px;font-weight:500;letter-spacing:-0.01em">Juan Pérez</span><span style="color:var(--mu)">Enganchador · Cuadrilla Workover 3</span></div>
+                </div>
+                <div style="display:flex;gap:20px;font-size:12px;color:var(--mu)"><span>Legajo <span style="font-family:'Geist Mono',monospace;color:var(--tx)">0412</span></span><span>DNI <span style="font-family:'Geist Mono',monospace;color:var(--tx)">32.481.905</span></span><span>Ingreso <span style="font-family:'Geist Mono',monospace;color:var(--tx)">03/2021</span></span></div>
+                <div style="border-left:2px solid var(--dg);padding:2px 0 2px 12px;display:flex;flex-direction:column;gap:2px"><span style="color:var(--dg);font-weight:500">No apto para Trabajo en altura</span><span style="font-size:12px;color:var(--mu)">Apto para las otras 11 tareas de su puesto</span></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 20px 8px"><span style="font-size:12px;color:var(--mu)">Habilitaciones · 9</span><a href="#" style="color:var(--ac);text-decoration:none;font-size:12px;font-weight:500">Cargar habilitación</a></div>
+              <div style="display:grid;grid-template-columns:1.5fr 84px 84px 116px 24px;gap:8px;padding:0 20px 6px;font-size:12px;color:var(--mu);border-bottom:1px solid var(--bd)"><span>Habilitación</span><span>Emitida</span><span>Vence</span><span>Estado</span><span></span></div>
+              <sc-for list="{{ quals }}" as="q" hint-placeholder-count="9">
+                <div style="display:grid;grid-template-columns:1.5fr 84px 84px 116px 24px;gap:8px;padding:0 20px;height:44px;align-items:center;border-bottom:1px solid var(--bd);white-space:nowrap">
+                  <span style="overflow:hidden;text-overflow:ellipsis">{{ q.n }}</span>
+                  <span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">{{ q.em }}</span>
+                  <span style="font:400 12px 'Geist Mono',monospace">{{ q.ve }}</span>
+                  <span>
+                    <sc-if value="{{ q.s.ok }}" hint-placeholder-val="{{ true }}"><span style="display:flex;align-items:center;gap:6px;color:var(--mu)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>{{ q.s.label }}</span></sc-if>
+                    <sc-if value="{{ q.s.nok }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:8px;color:{{ q.s.c }};font-weight:{{ q.s.w }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ q.s.d }};border:{{ q.s.b }};box-sizing:border-box;flex:none"></span>{{ q.s.label }}</span></sc-if>
+                  </span>
+                  <sc-if value="{{ q.hasFile }}" hint-placeholder-val="{{ true }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><path d="M14 3v6h6"></path></svg></sc-if>
+                  <sc-if value="{{ q.noFile }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:var(--mu)">—</span></sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is.habilitaciones }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 32px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end">
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:20px;font-weight:500;letter-spacing:-0.01em">Personal apto / no apto</span><span style="color:var(--mu)">Habilitaciones requeridas por tipo de tarea, al <span style="font-family:'Geist Mono',monospace">16/10/2026</span></span></div>
+            <button style="height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);font:500 14px 'Geist',sans-serif">Exportar matriz</button>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="height:32px;display:flex;align-items:center;gap:6px;padding:0 10px;border:1px solid var(--ac);border-radius:6px;background:var(--surf)"><span style="color:var(--mu)">Tarea</span><span style="font-weight:500">Trabajo en altura</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></div>
+            <div style="height:32px;display:flex;align-items:center;gap:6px;padding:0 10px;border:1px solid var(--bd);border-radius:6px;background:var(--surf)"><span style="color:var(--mu)">Cuadrilla</span><span>Todas</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></div>
+            <div style="height:32px;display:flex;align-items:center;gap:6px;padding:0 10px;border:1px solid var(--bd);border-radius:6px;background:var(--surf)"><span style="color:var(--mu)">Locación</span><span>Todas</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></div>
+            <span style="flex:1"></span>
+            <span style="color:var(--mu)"><span style="font-family:'Geist Mono',monospace;color:var(--tx)">11</span> aptos · <span style="font-family:'Geist Mono',monospace;color:var(--dg)">3</span> no aptos</span>
+          </div>
+          <div style="background:var(--surf);border:1px solid var(--bd);border-left:2px solid var(--wn);border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:24px">
+            <span style="font-weight:500">Vencen pronto</span>
+            <span style="display:flex;gap:6px;align-items:baseline"><span style="font:600 20px 'Geist Mono',monospace;color:var(--wn)">3</span><span style="color:var(--mu)">en 7 días</span></span>
+            <span style="display:flex;gap:6px;align-items:baseline"><span style="font:600 20px 'Geist Mono',monospace">5</span><span style="color:var(--mu)">en 15 días</span></span>
+            <span style="display:flex;gap:6px;align-items:baseline"><span style="font:600 20px 'Geist Mono',monospace">9</span><span style="color:var(--mu)">en 30 días</span></span>
+            <span style="flex:1"></span>
+            <a href="#" style="color:var(--ac);text-decoration:none;font-weight:500">Avisar a supervisores</a>
+          </div>
+          <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:180px 130px repeat(6,1fr) 110px;gap:8px;padding:0 16px;height:44px;align-items:center;font-size:12px;color:var(--mu);border-bottom:1px solid var(--bd)"><span>Persona</span><span>Cuadrilla</span><sc-for list="{{ habCols }}" as="h" hint-placeholder-count="6"><span style="line-height:1.3">{{ h }}</span></sc-for><span>Resultado</span></div>
+            <sc-for list="{{ matrix }}" as="m" hint-placeholder-count="14">
+              <div style="display:grid;grid-template-columns:180px 130px repeat(6,1fr) 110px;gap:8px;padding:0 16px;height:40px;align-items:center;border-bottom:1px solid var(--bd);white-space:nowrap">
+                <span>{{ m.n }}</span>
+                <span style="color:var(--mu)">{{ m.cu }}</span>
+                <sc-for list="{{ m.cells }}" as="c" hint-placeholder-count="6">
+                  <span style="font:400 12px 'Geist Mono',monospace;color:{{ c.c }}">
+                    <sc-if value="{{ c.ok }}" hint-placeholder-val="{{ true }}"><span style="display:flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>{{ c.t }}</span></sc-if>
+                    <sc-if value="{{ c.nok }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:7px;font-weight:500"><span style="width:6px;height:6px;border-radius:50%;background:{{ c.d }};border:{{ c.b }};box-sizing:border-box"></span>{{ c.t }}</span></sc-if>
+                  </span>
+                </sc-for>
+                <span>
+                  <sc-if value="{{ m.apto }}" hint-placeholder-val="{{ true }}"><span style="display:flex;align-items:center;gap:6px;color:var(--mu)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>Apto</span></sc-if>
+                  <sc-if value="{{ m.napto }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:8px;color:var(--dg);font-weight:500"><span style="width:6px;height:6px;border-radius:50%;background:var(--dg)"></span>No apto</span></sc-if>
+                </span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is.importar }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 32px;display:flex;flex-direction:column;gap:16px;height:100%;box-sizing:border-box">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end">
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:20px;font-weight:500;letter-spacing:-0.01em">Importar habilitaciones desde CSV</span><span style="color:var(--mu)">Las filas con error no se importan. Corregí el archivo y volvé a subirlo, o importá solo las válidas.</span></div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px">
+              <span style="display:flex;align-items:center;gap:6px;color:var(--mu)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>Subir archivo</span>
+              <span style="width:32px;height:1px;background:var(--bd)"></span>
+              <span style="display:flex;align-items:center;gap:6px;font-weight:500"><span style="width:14px;height:14px;border-radius:50%;border:1.5px solid var(--ac);box-sizing:border-box;display:flex;align-items:center;justify-content:center"><span style="width:6px;height:6px;border-radius:50%;background:var(--ac)"></span></span>Revisar</span>
+              <span style="width:32px;height:1px;background:var(--bd)"></span>
+              <span style="display:flex;align-items:center;gap:6px;color:var(--mu)"><span style="width:14px;height:14px;border-radius:50%;border:1px solid var(--bd);box-sizing:border-box"></span>Confirmar</span>
+            </div>
+          </div>
+          <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:16px">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><path d="M14 3v6h6"></path></svg>
+            <div style="display:flex;flex-direction:column;gap:2px"><span style="font-family:'Geist Mono',monospace">habilitaciones_oct_2026.csv</span><span style="font-size:12px;color:var(--mu)">248 filas · 32 KB · + certificados.zip (231 PDF) · columnas: dni, nombre, habilitacion, emitida, vence, archivo</span></div>
+            <span style="flex:1"></span>
+            <span style="display:flex;gap:20px;align-items:baseline">
+              <span><span style="font:600 20px 'Geist Mono',monospace">236</span> <span style="color:var(--mu)">válidas</span></span>
+              <span><span style="font:600 20px 'Geist Mono',monospace;color:var(--dg)">9</span> <span style="color:var(--mu)">con error</span></span>
+              <span><span style="font:600 20px 'Geist Mono',monospace;color:var(--wn)">3</span> <span style="color:var(--mu)">advertencias</span></span>
+            </span>
+            <a href="#" style="color:var(--ac);text-decoration:none;font-weight:500;margin-left:8px">Cambiar archivo</a>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="width:32px;height:18px;border-radius:9px;background:var(--ac);position:relative"><span style="position:absolute;right:2px;top:2px;width:14px;height:14px;border-radius:50%;background:var(--onac)"></span></span>
+            <span>Mostrar solo filas con problemas</span>
+            <span style="flex:1"></span>
+            <a href="#" style="color:var(--ac);text-decoration:none">Descargar errores (CSV)</a>
+          </div>
+          <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:56px 112px 150px 160px 104px 104px 1fr;gap:12px;padding:0 16px;height:36px;align-items:center;font-size:12px;color:var(--mu);border-bottom:1px solid var(--bd)"><span>Fila</span><span>dni</span><span>nombre</span><span>habilitacion</span><span>emitida</span><span>vence</span><span>Problema</span></div>
+            <sc-for list="{{ impRows }}" as="e" hint-placeholder-count="12">
+              <div style="display:grid;grid-template-columns:56px 112px 150px 160px 104px 104px 1fr;gap:12px;padding:0 16px 0 14px;height:40px;align-items:center;border-bottom:1px solid var(--bd);border-left:{{ e.bl }};white-space:nowrap">
+                <span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">{{ e.fila }}</span>
+                <span style="font:400 12px 'Geist Mono',monospace;color:{{ e.cd }}">{{ e.dni }}</span>
+                <span style="color:{{ e.cn }};overflow:hidden;text-overflow:ellipsis">{{ e.nom }}</span>
+                <span style="color:{{ e.ch }};overflow:hidden;text-overflow:ellipsis">{{ e.hab }}</span>
+                <span style="font:400 12px 'Geist Mono',monospace;color:{{ e.ce }}">{{ e.em }}</span>
+                <span style="font:400 12px 'Geist Mono',monospace;color:{{ e.cv }}">{{ e.ve }}</span>
+                <span style="display:flex;gap:8px;overflow:hidden"><span style="color:{{ e.pc }};font-weight:500;font-size:12px">{{ e.tag }}</span><span style="overflow:hidden;text-overflow:ellipsis">{{ e.prob }}</span></span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid var(--bd)">
+            <span style="color:var(--mu)">Las 3 advertencias se importan igual y quedan marcadas en el legajo.</span>
+            <div style="display:flex;gap:8px"><button style="height:36px;padding:0 14px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);font:500 14px 'Geist',sans-serif">Volver</button><button style="height:36px;padding:0 14px;border-radius:6px;border:1px solid var(--ac);background:var(--ac);color:var(--onac);font:500 14px 'Geist',sans-serif">Importar 239 filas</button></div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is.indicadores }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 32px;display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end">
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:20px;font-weight:500;letter-spacing:-0.01em">Indicadores</span><span style="color:var(--mu)">Cada valor muestra su fórmula y los datos con que se calculó</span></div>
+            <div style="display:flex;gap:8px">
+              <div style="height:32px;display:flex;align-items:center;gap:8px;padding:0 10px;border:1px solid var(--bd);border-radius:6px;background:var(--surf)"><span style="color:var(--mu)">Período</span><span>Septiembre 2026</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></div>
+              <div style="height:32px;display:flex;align-items:center;gap:8px;padding:0 10px;border:1px solid var(--bd);border-radius:6px;background:var(--surf)"><span style="color:var(--mu)">Comparar con</span><span>Agosto 2026</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+            <sc-for list="{{ indKpis }}" as="k" hint-placeholder-count="6">
+              <div style="background:var(--surf);border:1px solid var(--bd);border-left:{{ k.bl }};border-radius:8px;padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:12px;color:var(--mu)">{{ k.label }}</span>
+                  <sc-if value="{{ k.inc }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:var(--wn);font-weight:500">Incompleto</span></sc-if>
+                  <sc-if value="{{ k.ninc }}" hint-placeholder-val="{{ true }}"><span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">{{ k.delta }}</span></sc-if>
+                </div>
+                <div style="display:flex;align-items:baseline;gap:8px"><span style="font:600 32px 'Geist Mono',monospace;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;color:{{ k.vc }}">{{ k.v }}</span><span style="font-size:12px;color:var(--mu)">{{ k.unit }}</span></div>
+                <div style="border-top:1px solid var(--bd);padding-top:10px;display:flex;flex-direction:column;gap:6px;font-size:12px">
+                  <span style="font-family:'Geist Mono',monospace;color:var(--mu)">{{ k.formula }}</span>
+                  <sc-for list="{{ k.inputs }}" as="i" hint-placeholder-count="2"><span style="display:flex;justify-content:space-between"><span style="color:var(--mu)">{{ i.k }}</span><span style="font-family:'Geist Mono',monospace">{{ i.v }}</span></span></sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;overflow:hidden">
+            <div style="padding:14px 16px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between"><span style="font-size:16px;font-weight:500">Por cuadrilla · Septiembre 2026</span><a href="#" style="color:var(--ac);text-decoration:none;font-weight:500">Pedir HH a Wireline 2</a></div>
+            <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1fr 1fr;gap:12px;padding:0 16px;height:36px;align-items:center;font-size:12px;color:var(--mu);border-bottom:1px solid var(--bd)"><span>Cuadrilla</span><span style="text-align:right">HH trabajadas</span><span style="text-align:right">Lesiones</span><span style="text-align:right">TRIR</span><span style="text-align:right">Charlas</span><span>Datos</span></div>
+            <sc-for list="{{ indMonthly }}" as="m" hint-placeholder-count="5">
+              <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1fr 1fr;gap:12px;padding:0 16px;height:40px;align-items:center;border-bottom:1px solid var(--bd);font-family:'Geist Mono',monospace;font-size:13px">
+                <span style="font-family:'Geist',sans-serif;font-size:14px">{{ m.c }}</span><span style="text-align:right;color:{{ m.hc }}">{{ m.hh }}</span><span style="text-align:right">{{ m.l }}</span><span style="text-align:right">{{ m.t }}</span><span style="text-align:right">{{ m.ch }}</span><span style="font-family:'Geist',sans-serif;font-size:12px;color:{{ m.nc }}">{{ m.n }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is.cierre }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 32px;display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end">
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:20px;font-weight:500;letter-spacing:-0.01em">Cierre mensual · Septiembre 2026</span><span style="color:var(--mu)">YPF y Pluspetrol · 5 cuadrillas · vence el 10/10 según contrato</span></div>
+            <sc-if value="{{ is.cierreHse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:8px"><button style="height:36px;padding:0 14px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);font:500 14px 'Geist',sans-serif">Vista previa del informe</button><button style="height:36px;padding:0 14px;border-radius:6px;border:1px solid var(--bd);background:var(--hov);color:var(--mu);font:500 14px 'Geist',sans-serif">Enviar a aprobación</button></div></sc-if>
+            <sc-if value="{{ is.cierreGer }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:8px"><button style="height:36px;padding:0 14px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--dg);font:500 14px 'Geist',sans-serif">Devolver a HSE</button><button style="height:36px;padding:0 14px;border-radius:6px;border:1px solid var(--ac);background:var(--ac);color:var(--onac);font:500 14px 'Geist',sans-serif">Aprobar y exportar</button></div></sc-if>
+            <sc-if value="{{ is.cierreOk }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:8px"><button style="height:36px;padding:0 14px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);font:500 14px 'Geist',sans-serif">Ver exportaciones</button><button style="height:36px;padding:0 14px;border-radius:6px;border:1px solid var(--ac);background:var(--ac);color:var(--onac);font:500 14px 'Geist',sans-serif">Descargar paquete</button></div></sc-if>
+          </div>
+          <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:16px 20px;display:flex;align-items:center;gap:12px">
+            <sc-for list="{{ steps }}" as="s" hint-placeholder-count="5">
+              <span style="display:flex;align-items:center;gap:8px;color:{{ s.tc }};font-weight:{{ s.w }};white-space:nowrap">
+                <sc-if value="{{ s.done }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>
+                <sc-if value="{{ s.cur }}" hint-placeholder-val="{{ false }}"><span style="width:14px;height:14px;border-radius:50%;border:1.5px solid var(--ac);box-sizing:border-box;display:flex;align-items:center;justify-content:center"><span style="width:6px;height:6px;border-radius:50%;background:var(--ac)"></span></span></sc-if>
+                <sc-if value="{{ s.todo }}" hint-placeholder-val="{{ true }}"><span style="width:14px;height:14px;border-radius:50%;border:1px solid var(--bd);box-sizing:border-box"></span></sc-if>
+                {{ s.t }}
+              </span>
+              <sc-if value="{{ s.nlast }}" hint-placeholder-val="{{ true }}"><span style="flex:1;height:1px;background:{{ s.line }}"></span></sc-if>
+            </sc-for>
+          </div>
+          <sc-if value="{{ is.cierreOk }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:20px;display:flex;gap:16px;align-items:center">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+              <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:16px;font-weight:500">Septiembre 2026 aprobado y exportado</span><span style="color:var(--mu)">El período quedó cerrado. Cualquier corrección se registra como enmienda con nueva versión.</span></div>
+              <span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">15/10/2026 10:06 · 2 archivos</span>
+            </div>
+          </sc-if>
+          <div style="display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start">
+            <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;overflow:hidden">
+              <div style="padding:14px 20px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between"><span style="font-size:16px;font-weight:500">Completitud</span><sc-if value="{{ is.cierreHse }}" hint-placeholder-val="{{ false }}"><span style="color:var(--mu)"><span style="font-family:'Geist Mono',monospace;color:var(--tx)">4</span> de 6 completos</span></sc-if><sc-if value="{{ is.cierreOpen }}" hint-placeholder-val="{{ true }}"><span></span></sc-if></div>
+              <sc-for list="{{ checks }}" as="c" hint-placeholder-count="6">
+                <div style="display:grid;grid-template-columns:1fr 130px;gap:12px;padding:12px 20px;border-bottom:1px solid var(--bd);align-items:center">
+                  <span style="display:flex;flex-direction:column;gap:2px"><span>{{ c.t }}</span><span style="font-size:12px;color:var(--mu)">{{ c.m }}</span></span>
+                  <span>
+                    <sc-if value="{{ c.s.ok }}" hint-placeholder-val="{{ true }}"><span style="display:flex;align-items:center;gap:6px;color:var(--mu)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>{{ c.s.label }}</span></sc-if>
+                    <sc-if value="{{ c.s.nok }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:8px;color:{{ c.s.c }};font-weight:{{ c.s.w }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ c.s.d }};border:{{ c.s.b }};box-sizing:border-box"></span>{{ c.s.label }}</span></sc-if>
+                  </span>
+                </div>
+              </sc-for>
+              <sc-if value="{{ is.cierreHse }}" hint-placeholder-val="{{ false }}"><div style="padding:12px 20px;color:var(--mu);font-size:12px">"Enviar a aprobación" se habilita cuando los 6 ítems estén completos.</div></sc-if>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:16px 20px;display:flex;flex-direction:column;gap:10px">
+                <span style="font-size:12px;color:var(--mu)">Resumen del período</span>
+                <sc-for list="{{ cierreKpis }}" as="k" hint-placeholder-count="5"><span style="display:flex;justify-content:space-between"><span>{{ k.l }}</span><span style="font-family:'Geist Mono',monospace">{{ k.v }}</span></span></sc-for>
+              </div>
+              <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+                <span style="font-size:12px;color:var(--mu)">Aprobaciones</span>
+                <sc-for list="{{ approvals }}" as="a" hint-placeholder-count="2">
+                  <div style="display:flex;gap:10px;align-items:center">
+                    <sc-if value="{{ a.done }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>
+                    <sc-if value="{{ a.nd }}" hint-placeholder-val="{{ true }}"><span style="width:14px;height:14px;border-radius:50%;border:1px solid var(--bd);box-sizing:border-box"></span></sc-if>
+                    <span style="flex:1;display:flex;flex-direction:column"><span>{{ a.n }}</span><span style="font-size:12px;color:var(--mu)">{{ a.r }}</span></span>
+                    <span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">{{ a.h }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <sc-if value="{{ is.cierreGer }}" hint-placeholder-val="{{ false }}">
+                <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:16px 20px;display:flex;flex-direction:column;gap:8px">
+                  <span style="font-size:12px;color:var(--mu)">Nota de Carolina Méndez</span>
+                  <span style="line-height:1.5">HH de Wireline 2 cargadas el 14/10 (45.160). LTIFR recalculado. Los 2 bloqueos se resolvieron quitando participantes.</span>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ is.exportaciones }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 32px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end">
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:20px;font-weight:500;letter-spacing:-0.01em">Exportaciones</span><span style="color:var(--mu)">Informes enviados a operadoras. Cada archivo tiene huella SHA-256 para verificar que no fue modificado.</span></div>
+            <button style="height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);font:500 14px 'Geist',sans-serif">Plantillas</button>
+          </div>
+          <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:1.2fr 1fr 90px 1.2fr 1.2fr 1fr 120px;gap:12px;padding:0 16px;height:36px;align-items:center;font-size:12px;color:var(--mu);border-bottom:1px solid var(--bd)"><span>Período</span><span>Operadora</span><span>Plantilla</span><span>Generado</span><span>Por</span><span>SHA-256</span><span></span></div>
+            <sc-for list="{{ exports }}" as="e" hint-placeholder-count="9">
+              <div style="display:grid;grid-template-columns:1.2fr 1fr 90px 1.2fr 1.2fr 1fr 120px;gap:12px;padding:0 16px;height:44px;align-items:center;border-bottom:1px solid var(--bd);background:{{ e.bg }}">
+                <span>{{ e.p }}</span><span>{{ e.op }}</span><span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">{{ e.tpl }}</span><span style="font:400 12px 'Geist Mono',monospace">{{ e.f }}</span><span style="color:var(--mu)">{{ e.u }}</span><span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">{{ e.h }}</span>
+                <span style="display:flex;gap:12px;justify-content:flex-end"><a href="#" style="color:var(--ac);text-decoration:none">XLSX</a><a href="#" style="color:var(--ac);text-decoration:none">PDF</a></span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const S = {
+  bloq:{label:'Bloqueado',c:'var(--dg)',d:'var(--dg)',b:'none',w:500},
+  adv:{label:'Advertencia',c:'var(--wn)',d:'var(--wn)',b:'none',w:500},
+  pronto:{label:'Vence pronto',c:'var(--wn)',d:'transparent',b:'1.5px solid var(--wn)',w:500},
+  venc:{label:'Vencido',c:'var(--dg)',d:'var(--dg)',b:'none',w:500},
+  ok:{label:'Válido',ok:true},
+  pend:{label:'Pend. sincronizar',c:'var(--mu)',d:'transparent',b:'1.5px dashed var(--mu)',w:400},
+  aprob:{label:'Pend. aprobación',c:'var(--tx)',d:'var(--mu)',b:'none',w:400},
+  abierta:{label:'Abierta',c:'var(--tx)',d:'transparent',b:'1.5px solid var(--mu)',w:400},
+  cerrada:{label:'Cerrada',ok:true},
+  falta:{label:'Falta',c:'var(--dg)',d:'var(--dg)',b:'none',w:500}
+};
+const st = (k, label) => { const s = Object.assign({}, S[k]); if (label) s.label = label; s.ok = !!s.ok; s.nok = !s.ok; return s; };
+window.__vqst = st;
+const SIGS = [
+  'M6 50c10-30 18-42 22-36s-8 40-2 42 14-30 22-30-4 24 4 24 10-18 18-18 2 16 10 14 12-22 20-22 0 20 10 18c12-2 22-14 40-16 14-2 30 4 40 2',
+  'M10 40c20-20 30-30 34-20s-14 30-6 30 20-40 30-36-6 30 4 30 24-28 34-24 6 20 16 18 30-20 50-18',
+  'M8 44c6-18 16-30 24-26 10 6-12 34 0 32s18-36 30-32c10 4-10 26 2 26 14 0 22-20 36-18 12 2 6 18 18 16 16-2 30-12 46-8',
+  'M14 30c30 0 30 30 10 30s10-40 30-40 10 40 30 30 20-30 40-26 0 26 20 22 30-16 50-14',
+  'M6 46c14-6 22-34 30-30 8 6-6 30 4 30s16-26 26-24-2 22 10 20 14-16 24-14 4 14 16 12c18-4 36-12 58-8'
+];
+const SCOPE = { inicio:'inicio', notificaciones:'inicio', registros:'registros', validacion:'registros', acciones:'acciones', personal:'personal', importar:'personal', habilitaciones:'habilitaciones', indicadores:'indicadores', cierre:'cierre', 'cierre-aprobacion':'cierre', 'cierre-aprobado':'cierre', exportaciones:'exportaciones' };
+const NAV = [['inicio','Inicio',''],['registros','Registros','2'],['acciones','Acciones','7'],['personal','Personal',''],['habilitaciones','Habilitaciones','3'],['indicadores','Indicadores',''],['cierre','Cierre mensual',''],['exportaciones','Exportaciones',''],['config','Configuración','']];
+const TITLES = { inicio:'Inicio', notificaciones:'Inicio', registros:'Registros', validacion:'Registros / ATS-2026-0913', acciones:'Acciones correctivas', personal:'Personal', importar:'Personal / Importar CSV', habilitaciones:'Habilitaciones', indicadores:'Indicadores', cierre:'Cierre mensual', 'cierre-aprobacion':'Cierre mensual', 'cierre-aprobado':'Cierre mensual', exportaciones:'Exportaciones' };
+function pts(vals, w, h, min, max) { return vals.map((v, i) => `${(i * w / (vals.length - 1)).toFixed(1)},${(h - (v - min) / (max - min) * h).toFixed(1)}`).join(' '); }
+
+class Component extends DCLogic {
+  renderVals() {
+    const screen = this.props.screen || 'inicio';
+    const scope = SCOPE[screen] || 'inicio';
+    const isDark = this.props.theme === 'dark';
+    const nav = NAV.map(([id, label, count]) => ({ label, count, c: id === scope ? 'var(--ac)' : 'var(--mu)', w: id === scope ? 500 : 400, bg: id === scope ? 'var(--acs)' : 'transparent' }));
+    const is = { inicio: scope === 'inicio', notif: screen === 'notificaciones', registros: screen === 'registros', validacion: screen === 'validacion', acciones: screen === 'acciones', personal: screen === 'personal', importar: screen === 'importar', habilitaciones: screen === 'habilitaciones', indicadores: screen === 'indicadores', cierre: scope === 'cierre', cierreHse: screen === 'cierre', cierreGer: screen === 'cierre-aprobacion', cierreOk: screen === 'cierre-aprobado', cierreOpen: screen !== 'cierre-aprobado', exportaciones: screen === 'exportaciones' };
+    const cur = [1.32,1.21,1.28,1.12,1.05,1.14,0.98,1.02,0.91,0.99,0.96,0.84];
+    const prev = [1.55,1.48,1.50,1.41,1.36,1.44,1.30,1.28,1.25,1.31,1.22,1.18];
+    const R = (tipo, id, fecha, cuadrilla, loc, autor, s, firmas, sel) => ({ tipo, id, fecha, cuadrilla, loc, autor, s, firmas, bg: sel ? 'var(--acs)' : 'transparent', bl: sel ? '2px solid var(--ac)' : '0', pl: sel ? '14px' : '16px', fc: firmas.split('/')[0] !== firmas.split('/')[1] ? 'var(--dg)' : 'var(--mu)' });
+    return {
+      is, isDark, isLight: !isDark, title: TITLES[screen],
+      role: screen === 'cierre-aprobacion' ? 'Gerencia de operaciones' : 'Líder HSE',
+      cierreLabel: screen === 'cierre-aprobado' ? 'Aprobado' : screen === 'cierre-aprobacion' ? 'Aprobación gerencia' : 'Revisión HSE',
+      bellBg: screen === 'notificaciones' ? 'var(--hov)' : 'transparent',
+      nav,
+      kpis: [
+        { label:'TRIR', v:'0,84', delta:'↓ 0,12 vs agosto', dot:'transparent' },
+        { label:'LTIFR', v:'0,31', delta:'= vs agosto', dot:'transparent' },
+        { label:'HH sin accidentes', v:'412.380', delta:'↑ 38.210 vs agosto', dot:'transparent' },
+        { label:'Cumplimiento de charlas', v:'94 %', delta:'↑ 3 pts vs agosto', dot:'transparent' },
+        { label:'Acciones vencidas', v:'7', delta:'↑ 2 vs agosto', dot:'var(--dg)' }
+      ],
+      attention: [
+        { title:'Registros bloqueados', n:'2', items:[
+          { d:'var(--dg)', b:'none', t:'Juan Pérez no puede firmar: Trabajo en altura vencido el 02/10.', m:'ATS-2026-0913 · Cuadrilla Workover 3 · LC-214', r:'hace 2 h' },
+          { d:'var(--dg)', b:'none', t:'Falta la firma del supervisor en el reporte de incidente.', m:'INC-2026-0031 · Cuadrilla Fractura 1 · BdP-07', r:'13/10' } ] },
+        { title:'Acciones pendientes de aprobación', n:'3', items:[
+          { d:'var(--mu)', b:'none', t:'Reemplazo de eslingas con desgaste en equipo de pulling', m:'AC-0318 · evidencia cargada por Martín Sosa', r:'15/10' },
+          { d:'var(--mu)', b:'none', t:'Señalización de zona de exclusión en boca de pozo', m:'AC-0322 · evidencia cargada por Lucía Benítez', r:'14/10' },
+          { d:'var(--mu)', b:'none', t:'Capacitación en bloqueo y etiquetado (LOTO)', m:'AC-0309 · evidencia cargada por Ana Gómez', r:'12/10' } ] },
+        { title:'Habilitaciones que vencen esta semana', n:'3', items:[
+          { d:'transparent', b:'1.5px solid var(--wn)', t:'Lucas Herrera · Manejo defensivo', m:'Cuadrilla Wireline 2', r:'18/10' },
+          { d:'transparent', b:'1.5px solid var(--wn)', t:'Ana Gómez · Trabajo en altura', m:'Cuadrilla Coiled Tubing 4', r:'19/10' },
+          { d:'transparent', b:'1.5px solid var(--wn)', t:'Pablo Díaz · Espacios confinados', m:'Cuadrilla Workover 3', r:'21/10' } ] }
+      ],
+      chartCur: pts(cur, 440, 180, 0.6, 1.7), chartPrev: pts(prev, 440, 180, 0.6, 1.7), chartLastY: (180 - (0.84 - 0.6) / 1.1 * 180).toFixed(1),
+      months: ['oct','nov','dic','ene','feb','mar','abr','may','jun','jul','ago','sep'],
+      digest: [ { n:'Lucas Herrera', q:'Manejo defensivo', f:'18/10' }, { n:'Ana Gómez', q:'Trabajo en altura', f:'19/10' }, { n:'Pablo Díaz', q:'Espacios confinados', f:'21/10' } ],
+      notifs: [
+        { dot:'var(--tx)', c:'var(--tx)', t:'ATS-2026-0913 quedó bloqueado', m:'Juan Pérez no puede firmar: Trabajo en altura vencido el 02/10.', r:'09:12' },
+        { dot:'var(--tx)', c:'var(--tx)', t:'Martín Sosa cargó evidencia en AC-0318', m:'3 fotos · pendiente de tu aprobación', r:'ayer' },
+        { dot:'var(--tx)', c:'var(--tx)', t:'Ricardo Funes comentó en Cierre Septiembre 2026', m:'"Revisar HH de Wireline 2 antes de aprobar."', r:'ayer' },
+        { dot:'transparent', c:'var(--mu)', t:'Exportación YPF · Agosto 2026 generada', m:'Plantilla v3.2 · SHA-256 9f2c…a41e', r:'08/10' }
+      ],
+      regFilters: [ { k:'Tipo', v:'Todos', bc:'var(--bd)' }, { k:'Cuadrilla', v:'Todas', bc:'var(--bd)' }, { k:'Locación', v:'Todas', bc:'var(--bd)' }, { k:'Estado', v:'Con alertas', bc:'var(--ac)' }, { k:'Fecha', v:'01/10 – 16/10', bc:'var(--bd)' } ],
+      registros: [
+        R('ATS','ATS-2026-0913','16/10 09:12','Cuadrilla Workover 3','Loma Campana – LC-214','Martín Sosa',st('bloq'),'5/6',true),
+        R('Charla','CH5-2026-1448','16/10 07:05','Cuadrilla Workover 3','Loma Campana – LC-214','Martín Sosa',st('ok'),'8/8'),
+        R('ATS','ATS-2026-0912','16/10 08:40','Cuadrilla Wireline 2','La Amarga Chica – LACh-118','Lucía Benítez',st('adv'),'4/4'),
+        R('Charla','CH5-2026-1447','16/10 06:55','Cuadrilla Fractura 1','Bajada del Palo – BdP-07','Diego Ramírez',st('ok'),'12/12'),
+        R('Permiso','PT-2026-0377','15/10 15:20','Cuadrilla Coiled Tubing 4','Lindero Atravesado – LA-22','Ana Gómez',st('ok'),'3/3'),
+        R('ATS','ATS-2026-0911','15/10 14:02','Cuadrilla Fractura 1','Bajada del Palo – BdP-07','Diego Ramírez',st('pend'),'6/6'),
+        R('Charla','CH5-2026-1446','15/10 07:10','Cuadrilla Wireline 2','La Amarga Chica – LACh-118','Lucía Benítez',st('ok'),'7/7'),
+        R('Inspección','INS-2026-0204','15/10 11:30','Cuadrilla Workover 3','Loma Campana – LC-214','Carolina Méndez',st('ok'),'1/1'),
+        R('ATS','ATS-2026-0910','14/10 10:48','Cuadrilla Coiled Tubing 4','Lindero Atravesado – LA-22','Ana Gómez',st('adv'),'5/5'),
+        R('Charla','CH5-2026-1445','14/10 07:02','Cuadrilla Workover 3','Loma Campana – LC-214','Martín Sosa',st('ok'),'8/8'),
+        R('Incidente','INC-2026-0031','13/10 16:25','Cuadrilla Fractura 1','Bajada del Palo – BdP-07','Diego Ramírez',st('bloq'),'2/3'),
+        R('Charla','CH5-2026-1444','13/10 06:58','Cuadrilla Fractura 1','Bajada del Palo – BdP-07','Diego Ramírez',st('ok'),'11/11'),
+        R('ATS','ATS-2026-0909','13/10 09:30','Cuadrilla Wireline 2','La Amarga Chica – LACh-118','Lucía Benítez',st('ok'),'4/4'),
+        R('Charla','CH5-2026-1443','12/10 07:15','Cuadrilla Coiled Tubing 4','Lindero Atravesado – LA-22','Ana Gómez',st('ok'),'6/6'),
+        R('ATS','ATS-2026-0908','12/10 13:40','Cuadrilla Workover 3','Loma Campana – LC-214','Martín Sosa',st('ok'),'6/6'),
+        R('Charla','CH5-2026-1442','11/10 07:00','Cuadrilla Wireline 2','La Amarga Chica – LACh-118','Lucía Benítez',st('ok'),'7/7'),
+        R('ATS','ATS-2026-0907','11/10 10:12','Cuadrilla Fractura 1','Bajada del Palo – BdP-07','Diego Ramírez',st('ok'),'9/9')
+      ],
+      firmas: [
+        { n:'Martín Sosa', h:'09:12', sig:SIGS[0], signed:true },
+        { n:'Juan Pérez', h:'—', sig:'', signed:false },
+        { n:'Pablo Díaz', h:'09:14', sig:SIGS[1], signed:true },
+        { n:'Hernán Quiroga', h:'09:14', sig:SIGS[2], signed:true },
+        { n:'Sergio Paredes', h:'09:15', sig:SIGS[3], signed:true },
+        { n:'Nahuel Catriel', h:'09:16', sig:SIGS[4], signed:true }
+      ].map(p => Object.assign(p, { unsigned: !p.signed, bc: p.signed ? 'var(--bd)' : 'var(--dg)' })),
+      ...this.moreVals(st, SIGS, pts)
+    };
+  }
+  moreVals(st, SIGS, pts) { return Object.assign({}, this.vA(st), this.vB(st), this.vC(st, pts), this.vD(st)); }
+  vA(st) {
+    const A = (id, t, origen, resp, vence, s, sel, over) => ({ id, t, origen, resp, vence, s, bg: sel ? 'var(--acs)' : 'transparent', bl: sel ? '2px solid var(--ac)' : '0', pl: sel ? '14px' : '16px', vc: over ? 'var(--dg)' : 'var(--mu)' });
+    return {
+      historial: [
+        { h:'16/10 09:12', t:'Creado por Martín Sosa en el móvil, sin conexión', c:'var(--mu)' },
+        { h:'16/10 09:31', t:'Sincronizado desde dispositivo SM-A15 · 3G', c:'var(--mu)' },
+        { h:'16/10 09:31', t:'HAB-01 bloqueó la firma de Juan Pérez', c:'var(--dg)' },
+        { h:'16/10 09:31', t:'AMB-03 generó una advertencia de viento', c:'var(--wn)' },
+        { h:'16/10 10:05', t:'Carolina Méndez abrió las validaciones', c:'var(--mu)' }
+      ],
+      superadas: ['Permiso de trabajo PT-2026-0376 vinculado','EPP completo para la tarea (6 de 6)','Geolocalización dentro del polígono de LC-214','Charla de 5 minutos del día registrada (CH5-2026-1448)'],
+      acFilters: [ { k:'Estado', v:'Abiertas', bc:'var(--ac)' }, { k:'Responsable', v:'Todos', bc:'var(--bd)' }, { k:'Origen', v:'Todos', bc:'var(--bd)' }, { k:'Vence', v:'Cualquier fecha', bc:'var(--bd)' } ],
+      acciones: [
+        A('AC-0318','Reemplazo de eslingas con desgaste en equipo de pulling','INS-2026-0198','Martín Sosa','18/10/2026',st('aprob'),true),
+        A('AC-0322','Señalización de zona de exclusión en boca de pozo','ATS-2026-0889','Lucía Benítez','20/10/2026',st('aprob')),
+        A('AC-0309','Capacitación en bloqueo y etiquetado (LOTO)','INC-2026-0027','Ana Gómez','22/10/2026',st('aprob')),
+        A('AC-0297','Reparar baranda de plataforma de trabajo','INS-2026-0181','Diego Ramírez','09/10/2026',st('venc','Vencida'),false,true),
+        A('AC-0301','Kit antiderrame en camión de Wireline 2','INS-2026-0185','Lucía Benítez','11/10/2026',st('venc','Vencida'),false,true),
+        A('AC-0304','Recalibrar detector multigás DM-14','OBS-2026-0412','Pablo Díaz','12/10/2026',st('venc','Vencida'),false,true),
+        A('AC-0311','Actualizar procedimiento de izaje en locación','INC-2026-0028','Carolina Méndez','14/10/2026',st('venc','Vencida'),false,true),
+        A('AC-0325','Revisión de extintores en tráiler de cuadrilla','INS-2026-0201','Hernán Quiroga','24/10/2026',st('abierta')),
+        A('AC-0326','Demarcar tránsito peatonal en BdP-07','OBS-2026-0430','Diego Ramírez','28/10/2026',st('abierta')),
+        A('AC-0327','Reponer botiquín en camioneta AF 312 KJ','OBS-2026-0433','Sergio Paredes','30/10/2026',st('abierta')),
+        A('AC-0329','Inspección de arneses Cuadrilla Workover 3','ATS-2026-0913','Martín Sosa','31/10/2026',st('abierta')),
+        A('AC-0330','Charla sobre viento y trabajo en altura','ATS-2026-0913','Carolina Méndez','31/10/2026',st('abierta'))
+      ],
+      timeline: [
+        { t:'Creada', m:'Carolina Méndez · desde INS-2026-0198', h:'02/10 11:20', ring:'var(--mu)', fill:'var(--mu)', line:'var(--bd)', tc:'var(--tx)' },
+        { t:'Asignada', m:'A Martín Sosa · vence 18/10', h:'02/10 11:22', ring:'var(--mu)', fill:'var(--mu)', line:'var(--bd)', tc:'var(--tx)' },
+        { t:'Evidencia cargada', m:'3 fotos · "Se reemplazaron 4 eslingas, remito 0045-1182"', h:'15/10 16:48', ring:'var(--mu)', fill:'var(--mu)', line:'var(--bd)', tc:'var(--tx)' },
+        { t:'Pendiente de aprobación', m:'Esperando a Carolina Méndez', h:'ahora', ring:'var(--ac)', fill:'var(--ac)', line:'transparent', tc:'var(--tx)' }
+      ],
+      fotos: ['eslinga_nueva_01.jpg','eslinga_nueva_02.jpg','remito_0045-1182.jpg']
+    };
+  }
+  vB(st) {
+    const W = (n, leg, cu, pu, vig, s, next, sel) => ({ n, leg, cu, pu, vig, s, next, bg: sel ? 'var(--acs)' : 'transparent', bl: sel ? '2px solid var(--ac)' : '0', pl: sel ? '14px' : '16px' });
+    const Q = (n, em, ve, s, file) => ({ n, em, ve, s, file, hasFile: !!file, noFile: !file });
+    const cell = (code, t) => {
+      if (code === 'v') return { ok: true, nok: false, t, c: 'var(--mu)' };
+      const m = { p: ['var(--wn)', 'transparent', '1.5px solid var(--wn)'], x: ['var(--dg)', 'var(--dg)', 'none'], f: ['var(--dg)', 'var(--dg)', 'none'] }[code];
+      return { ok: false, nok: true, t: code === 'f' ? 'Falta' : t, c: m[0], d: m[1], b: m[2] };
+    };
+    const M = (n, cu, codes, dates) => { const cells = codes.split('').map((c, i) => cell(c, dates[i])); const apto = !codes.match(/[xf]/); return { n, cu, cells, apto, napto: !apto, rc: apto ? 'var(--mu)' : 'var(--dg)' }; };
+    const D = ['14/03/27','10/03/27','05/01/27','22/06/27','14/03/27','11/11/26'];
+    const E = (fila, dni, nom, hab, em, ve, prob, bad, warn) => {
+      const col = k => k === bad ? (warn ? 'var(--wn)' : 'var(--dg)') : 'var(--tx)';
+      return { fila, dni, nom, hab, em, ve, prob, cd: col('dni'), cn: col('nom'), ch: col('hab'), ce: col('em'), cv: col('ve'), bl: warn ? '2px solid var(--wn)' : '2px solid var(--dg)', pc: warn ? 'var(--wn)' : 'var(--dg)', tag: warn ? 'Advertencia' : 'Error' };
+    };
+    return {
+      perFilters: [ { k:'Cuadrilla', v:'Todas', bc:'var(--bd)' }, { k:'Aptitud', v:'Todas', bc:'var(--bd)' }, { k:'Puesto', v:'Todos', bc:'var(--bd)' } ],
+      workers: [
+        W('Juan Pérez','0412','Workover 3','Enganchador','7/9',st('venc','No apto · altura'),'18/10/2026',true),
+        W('Martín Sosa','0188','Workover 3','Supervisor de campo','9/9',st('ok','Apto'),'14/01/2027'),
+        W('Pablo Díaz','0377','Workover 3','Operador boca de pozo','9/9',st('pronto'),'21/10/2026'),
+        W('Hernán Quiroga','0291','Workover 3','Maquinista','9/9',st('ok','Apto'),'03/12/2026'),
+        W('Sergio Paredes','0455','Workover 3','Ayudante','9/9',st('ok','Apto'),'27/02/2027'),
+        W('Nahuel Catriel','0468','Workover 3','Ayudante','9/9',st('ok','Apto'),'09/01/2027'),
+        W('Lucía Benítez','0203','Wireline 2','Supervisora','9/9',st('ok','Apto'),'30/11/2026'),
+        W('Lucas Herrera','0331','Wireline 2','Operador wireline','9/9',st('pronto'),'18/10/2026'),
+        W('Matías Villalba','0402','Wireline 2','Chofer','8/9',st('venc','No apto · médico'),'30/09/2026'),
+        W('Ana Gómez','0219','Coiled Tubing 4','Supervisora','9/9',st('pronto'),'19/10/2026'),
+        W('Diego Ramírez','0156','Fractura 1','Supervisor','9/9',st('ok','Apto'),'12/12/2026'),
+        W('Gustavo Ñancucheo','0349','Fractura 1','Operador de bombeo','9/9',st('ok','Apto'),'05/02/2027'),
+        W('Rodrigo Aguirre','0361','Fractura 1','Operador de blender','9/9',st('ok','Apto'),'22/01/2027'),
+        W('Florencia Ortiz','0390','Fractura 1','Técnica HSE','9/9',st('ok','Apto'),'17/03/2027'),
+        W('Kevin Molina','0471','Coiled Tubing 4','Ayudante','9/9',st('ok','Apto'),'08/04/2027')
+      ],
+      quals: [
+        Q('Trabajo en altura','02/10/2024','02/10/2026',st('venc'),'cert_altura_2024.pdf'),
+        Q('Manejo defensivo','20/10/2024','18/10/2026',st('pronto'),'manejo_def_JP.pdf'),
+        Q('Apto médico anual','10/03/2026','10/03/2027',st('ok'),'apto_medico_2026.pdf'),
+        Q('Inducción HSE Vaca Muerta','05/01/2026','05/01/2027',st('ok'),'induccion_2026.pdf'),
+        Q('Espacios confinados','14/05/2025','14/05/2027',st('ok'),'esp_conf_2025.pdf'),
+        Q('H2S · ácido sulfhídrico','01/08/2026','01/08/2027',st('ok'),'h2s_2026.pdf'),
+        Q('Primeros auxilios y RCP','11/11/2025','11/11/2026',st('ok'),'rcp_2025.pdf'),
+        Q('Uso de extintores','03/04/2026','03/04/2027',st('ok'),''),
+        Q('Control de pozo IWCF','18/06/2025','18/06/2027',st('ok'),'iwcf_nivel2.pdf')
+      ],
+      habCols: ['Trabajo en altura','Apto médico','Inducción HSE','Rescate en altura','Uso de arnés','Primeros auxilios'],
+      matrix: [
+        M('Juan Pérez','Workover 3','xvvvvv',['02/10/26',...D.slice(1)]),
+        M('Martín Sosa','Workover 3','vvvvvv',D),
+        M('Pablo Díaz','Workover 3','vvvpvv',[D[0],D[1],D[2],'08/11/26',D[4],D[5]]),
+        M('Hernán Quiroga','Workover 3','vvvvvv',D),
+        M('Sergio Paredes','Workover 3','vvvvvp',[D[0],D[1],D[2],D[3],D[4],'27/10/26']),
+        M('Nahuel Catriel','Workover 3','vvvfvv',D),
+        M('Lucía Benítez','Wireline 2','vvvvvv',D),
+        M('Lucas Herrera','Wireline 2','vvvvvv',D),
+        M('Matías Villalba','Wireline 2','vxvvvv',[D[0],'30/09/26',D[2],D[3],D[4],D[5]]),
+        M('Ana Gómez','Coiled Tubing 4','pvvvvv',['19/10/26',D[1],D[2],D[3],D[4],D[5]]),
+        M('Kevin Molina','Coiled Tubing 4','vvvvpv',[D[0],D[1],D[2],D[3],'02/11/26',D[5]]),
+        M('Diego Ramírez','Fractura 1','vvvvvv',D),
+        M('Gustavo Ñancucheo','Fractura 1','vvvvvv',D),
+        M('Rodrigo Aguirre','Fractura 1','vvpvvv',[D[0],D[1],'12/11/26',D[3],D[4],D[5]])
+      ],
+      impRows: [
+        E('14','3011245','Lucas Herrera','Manejo defensivo','18/10/2024','18/10/2026','DNI con formato inválido: tiene 7 dígitos','dni'),
+        E('27','28.904.331','Matías Villalba','Apto médico anual','30/09/2025','30/09/2026','Ya vencida a la fecha de importación','ve',true),
+        E('41','35.667.120','Rocío Fernández','Trabajo en altura','12/08/2026','12/08/2025','Vence antes de la fecha de emisión','ve'),
+        E('58','33.201.776','Kevin Molina','Espacio confinado','04/04/2026','04/04/2028','Habilitación desconocida. ¿Quisiste decir "Espacios confinados"?','hab'),
+        E('63','31.450.982','—','Inducción HSE','05/01/2026','05/01/2027','DNI no encontrado en el padrón de personal','nom'),
+        E('77','29.874.003','Gastón Sepúlveda','H2S','03/03/2026','31/02/2027','Fecha inválida','ve'),
+        E('102','34.118.649','Brenda Cayupán','Rescate en altura','19/07/2026','19/07/2028','Duplicada: ya existe con la misma emisión','hab',true),
+        E('118','27.990.214','Oscar Lefiñir','Trabajo en altura','','15/09/2028','Falta la fecha de emisión','em'),
+        E('131','36.003.587','Julieta Painemal','Primeros auxilios','11/11/2025','11/11/2026','El archivo "rcp_jp.pdf" no está en el ZIP adjunto','hab',true),
+        E('160','32.776.410','Ezequiel Soria','Uso de arnés','2026-03-14','2027-03-14','Formato de fecha no admitido; usar DD/MM/AAAA','em'),
+        E('207','30.558.129','Damián Toledo','Apto médico anual','01/02/2026','01/02/2027','Persona dada de baja el 30/06/2026','nom'),
+        E('231','33.840.772','Micaela Huenchul','Control de pozo','15/06/2025','15/06/2027','Falta indicar nivel (1 o 2)','hab')
+      ]
+    };
+  }
+  vC(st, pts) {
+    const K = (label, v, unit, delta, formula, inputs, inc) => ({ label, v, unit, delta, formula, inputs: inputs.map(x => ({ k: x[0], v: x[1] })), inc: !!inc, ninc: !inc, bl: inc ? '2px solid var(--wn)' : '1px solid var(--bd)', vc: inc ? 'var(--mu)' : 'var(--tx)' });
+    return {
+      indKpis: [
+        K('TRIR','0,84','por 200.000 HH','↓ 0,12 vs agosto','(Lesiones registrables × 200.000) ÷ HH trabajadas',[['Lesiones registrables','2'],['HH trabajadas','476.190']]),
+        K('LTIFR','—','por 1.000.000 HH','Falta dato','(Lesiones con días perdidos × 1.000.000) ÷ HH trabajadas',[['Lesiones con días perdidos','1'],['HH trabajadas','Falta HH de Wireline 2']],true),
+        K('Índice de frecuencia','4,20','por 1.000.000 HH','↓ 0,61 vs agosto','(Accidentes × 1.000.000) ÷ HH trabajadas',[['Accidentes','2'],['HH trabajadas','476.190']]),
+        K('Cumplimiento de charlas','94 %','charlas realizadas','↑ 3 pts vs agosto','Charlas registradas ÷ charlas programadas',[['Registradas','141'],['Programadas','150']]),
+        K('Cierre de acciones','81 %','en plazo','↓ 4 pts vs agosto','Acciones cerradas en plazo ÷ acciones con vencimiento en el período',[['Cerradas en plazo','29'],['Con vencimiento','36']]),
+        K('HH sin accidentes','412.380','horas hombre','↑ 38.210 vs agosto','HH acumuladas desde el último accidente con días perdidos',[['Último accidente','11/07/2026'],['HH desde entonces','412.380']])
+      ],
+      indMonthly: [
+        ['Cuadrilla Workover 3','118.400','0','0,00','100 %','—'],
+        ['Cuadrilla Wireline 2','—','1','—','92 %','Falta HH'],
+        ['Cuadrilla Fractura 1','164.220','1','1,22','96 %','—'],
+        ['Cuadrilla Coiled Tubing 4','96.310','0','0,00','90 %','—'],
+        ['Cuadrilla Mantenimiento','45.160','0','0,00','88 %','—']
+      ].map(r => ({ c:r[0], hh:r[1], l:r[2], t:r[3], ch:r[4], n:r[5], hc: r[1] === '—' ? 'var(--wn)' : 'var(--tx)', nc: r[5] === '—' ? 'var(--mu)' : 'var(--wn)' }))
+    };
+  }
+  vD(st) {
+    const screen = this.props.screen || 'inicio';
+    const idx = screen === 'cierre' ? 2 : screen === 'cierre-aprobacion' ? 3 : 5;
+    const steps = ['Recolección','Completitud','Revisión HSE','Aprobación gerencia','Exportado'].map((t, i) => ({ t, done: i < idx, cur: i === idx, todo: i > idx, tc: i === idx ? 'var(--tx)' : 'var(--mu)', w: i === idx ? 500 : 400, line: i < idx ? 'var(--ac)' : 'var(--bd)', last: i === 4, nlast: i !== 4 }));
+    const C = (t, m, s) => ({ t, m, s });
+    return {
+      steps,
+      checks: [
+        C('Todas las charlas de 5 minutos registradas','141 de 150 programadas · 9 justificadas por parada de equipo', st('ok','Completo')),
+        C('HH reportadas por cuadrilla','Falta el dato de Cuadrilla Wireline 2', st(idx > 2 ? 'ok' : 'falta', idx > 2 ? 'Completo' : 'Falta')),
+        C('Registros bloqueados resueltos','2 bloqueos abiertos al 30/09', st(idx > 2 ? 'ok' : 'bloq', idx > 2 ? 'Completo' : '2 abiertos')),
+        C('Incidentes investigados','2 incidentes con informe y causa raíz', st('ok','Completo')),
+        C('Acciones vencidas con justificación','7 vencidas · 7 justificadas', st('ok','Completo')),
+        C('Plantilla de la operadora vigente','YPF · Informe mensual HSE contratistas v3.2', st('ok','Completo'))
+      ],
+      cierreKpis: [['TRIR','0,84'],['LTIFR', idx > 2 ? '0,42' : '—'],['HH trabajadas', idx > 2 ? '521.350' : '476.190'],['Charlas','94 %'],['Acciones en plazo','81 %']].map(k => ({ l:k[0], v:k[1] })),
+      approvals: [
+        { n:'Carolina Méndez', r:'Líder HSE', h: idx > 2 ? '14/10/2026 17:42' : 'En curso', done: idx > 2 },
+        { n:'Ricardo Funes', r:'Gerente de operaciones', h: idx > 3 ? '15/10/2026 10:05' : 'Pendiente', done: idx > 3 }
+      ].map(a => Object.assign(a, { nd: !a.done })),
+      exports: [
+        { p:'Septiembre 2026', op:'YPF', tpl:'v3.2', f:'15/10/2026 10:06', u:'Ricardo Funes', h:'4b7e…d90c', fresh:true },
+        { p:'Septiembre 2026', op:'Pluspetrol', tpl:'v1.8', f:'15/10/2026 10:06', u:'Ricardo Funes', h:'e21a…77f3', fresh:true },
+        { p:'Agosto 2026', op:'YPF', tpl:'v3.2', f:'08/09/2026 11:30', u:'Ricardo Funes', h:'9f2c…a41e' },
+        { p:'Agosto 2026', op:'Pluspetrol', tpl:'v1.8', f:'08/09/2026 11:31', u:'Ricardo Funes', h:'0c55…b218' },
+        { p:'Julio 2026', op:'YPF', tpl:'v3.1', f:'07/08/2026 09:12', u:'Ricardo Funes', h:'71d0…3ce9' },
+        { p:'Julio 2026', op:'Pluspetrol', tpl:'v1.8', f:'07/08/2026 09:14', u:'Ricardo Funes', h:'a6f3…1e04' },
+        { p:'Junio 2026', op:'YPF', tpl:'v3.1', f:'08/07/2026 15:40', u:'Ricardo Funes', h:'5e88…c7a2' },
+        { p:'Junio 2026', op:'Pluspetrol', tpl:'v1.7', f:'08/07/2026 15:42', u:'Ricardo Funes', h:'d3b9…20fa' },
+        { p:'Mayo 2026', op:'YPF', tpl:'v3.1', f:'06/06/2026 10:20', u:'Ricardo Funes', h:'8a41…f6d3' }
+      ].map(e => Object.assign({ fresh:false }, e, { bg: e.fresh ? 'var(--acs)' : 'transparent' }))
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -587,6 +587,81 @@ export const t = {
     kpis: "Indicadores",
     kpisSoon: "Los indicadores llegan con la fase 6.",
   },
+  // Marketing copy (public landing) is the exception to the no-vos rule: it uses voseo. See docs/spec/landing.md.
+  landing: {
+    meta: {
+      title: "Vaquia — HSE para operaciones en Vaca Muerta",
+      description:
+        "Registrá charlas, ATS y firmas en el yacimiento, aun sin señal, y convertilas en validaciones, acciones correctivas y cierres mensuales listos para auditar.",
+    },
+    nav: {
+      label: "Navegación",
+      product: "Producto",
+      field: "Campo",
+      office: "Oficina",
+      contractors: "Contratistas",
+      login: "Ingresar",
+      demo: "Solicitar demo →",
+      toggleTheme: "Cambiar tema",
+    },
+    demoHref: "mailto:hola@vaquia.com?subject=Demo%20Vaquia",
+    hero: {
+      eyebrow: "HSE PARA OPERACIONES EN VACA MUERTA",
+      titleLine1: "Menos planillas.",
+      titleLine2: "Más tiempo en el campo.",
+      lead: "Vaquia registra charlas, ATS y firmas en el yacimiento —aun sin señal— y las convierte en validaciones, acciones correctivas y cierres mensuales listos para auditar.",
+      primary: "Solicitar demo →",
+      secondary: "Ver cómo funciona",
+      dashboardAlt: "Pantalla de inicio del panel de oficina de Vaquia",
+    },
+    pillars: [
+      {
+        label: "MEJORES DECISIONES",
+        body: "Indicadores calculados con fórmulas visibles, sobre datos que llegaron firmados desde el campo.",
+      },
+      {
+        label: "MÁS BIENESTAR",
+        body: "Nadie entra a la locación sin aptitud médica, capacitación y EPP al día. El sistema lo bloquea antes.",
+      },
+      {
+        label: "MAYOR EFICIENCIA",
+        body: "Lo que se firma en el pozo llega a la oficina listo para validar. Sin transcribir, sin papeles perdidos.",
+      },
+    ],
+    field: {
+      eyebrow: "CAMPO · APP MÓVIL",
+      title: "En el yacimiento, funciona sin señal.",
+      body: "Charla de 5 minutos, ATS y firma de la cuadrilla desde el celular del supervisor. Todo queda en cola y se sincroniza al volver la conexión.",
+      chips: ["Charla 5 min", "ATS", "Firma en pantalla", "Cola offline"],
+      phones: {
+        hoy: "Pantalla Hoy de la app de campo",
+        charla: "Pantalla de charla de 5 minutos de la app de campo",
+        firma: "Pantalla de firma de la app de campo",
+      },
+    },
+    office: {
+      eyebrow: "OFICINA · PANEL HSE",
+      title: "En la oficina, nada se cierra sin revisión.",
+      body: "Cada registro recorre el mismo camino, con responsable y fecha en cada paso. Lo que se aprueba queda trazado para la auditoría.",
+      steps: [
+        { title: "Registro", body: "Llega desde campo con foto, ubicación y firma de la cuadrilla." },
+        { title: "Validación", body: "HSE revisa la evidencia y marca observaciones puntuales." },
+        { title: "Acción correctiva", body: "Cada desvío tiene responsable, plazo y aprobación." },
+        { title: "Cierre mensual", body: "Revisión HSE, aprobación de gerencia y exportación." },
+      ],
+      screenshotAlt: "Pantalla de acciones correctivas del panel de oficina de Vaquia",
+    },
+    footer: {
+      cta: "Llevá Vaquia a tu próxima operación.",
+      demo: "Solicitar demo →",
+      productLabel: "Producto",
+      contactLabel: "Contacto",
+      email: "hola@vaquia.com",
+      location: "Neuquén, Argentina",
+      tagline: "Tecnología que impulsa la salud",
+      copyright: "© 2026 Vaquia",
+    },
+  },
 } as const;
 
 export type Dictionary = typeof t;
