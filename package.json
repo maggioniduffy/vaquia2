@@ -25,7 +25,7 @@
     "db:rollback": "node scripts/dbmate.mjs rollback",
     "db:new": "node scripts/dbmate.mjs new",
     "db:reset": "node scripts/dbmate.mjs drop && node scripts/dbmate.mjs up && pnpm db:seed",
-    "db:verify": "docker compose up -d --wait && export DATABASE_URL='postgres://postgres:postgres@localhost:5432/vaquia?sslmode=disable' && node scripts/dbmate.mjs drop && node scripts/dbmate.mjs --wait up && node scripts/dbmate.mjs rollback && node scripts/dbmate.mjs up && vitest run --config vitest.db.config.ts --testTimeout=60000",
+    "db:verify": "docker compose up -d --wait && export DATABASE_URL='postgres://postgres:postgres@localhost:5432/vaquia_test?sslmode=disable' && node scripts/dbmate.mjs drop && node scripts/dbmate.mjs --wait up && node scripts/dbmate.mjs rollback && node scripts/dbmate.mjs up && vitest run --config vitest.db.config.ts --testTimeout=60000",
     "db:auth-schema": "node --env-file-if-exists=.env.local scripts/print-auth-schema.mjs \"$PWD/src/lib/auth-options.ts\""
   },
   "dependencies": {
