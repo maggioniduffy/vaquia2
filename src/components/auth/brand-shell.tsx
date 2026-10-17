@@ -10,7 +10,7 @@ export const authInput =
   "h-10 rounded-lg border-[color:var(--a-bd)] bg-[var(--a-inp)] px-3 text-[15px] backdrop-blur-[6px] focus-visible:border-accent focus-visible:shadow-[0_0_0_3px_var(--a-ring)]";
 export const authHelp = "text-xs text-[color:var(--a-lab)]";
 export const authPrimary =
-  "h-10 w-full rounded-lg border-accent bg-accent px-4 text-[15px] font-medium text-accent-text hover:border-accent hover:bg-accent hover:brightness-95";
+  "h-10 w-full rounded-lg border-accent-strong bg-accent-strong px-4 text-[15px] font-medium text-accent-text hover:border-accent-hover hover:bg-accent-hover";
 export const authSecondary =
   "h-10 w-full rounded-lg border-[color:var(--a-bd)] bg-[var(--a-inp)] px-4 text-[15px] font-medium text-text backdrop-blur-[6px] hover:bg-[var(--a-inp)] hover:brightness-95";
 export const authGhost = "h-9 w-full rounded-lg px-4 text-sm font-medium";
