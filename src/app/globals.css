@@ -297,3 +297,19 @@ html:has(.landing) {
     animation: none;
   }
 }
+
+/* Location picker map: dim OSM tiles in dark theme; teal marker from accent tokens. */
+.vq-map-marker {
+  background: var(--accent);
+  border: 3px solid var(--surface);
+  border-radius: 9999px;
+  box-shadow: 0 0 0 2px var(--accent-strong), 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+:root[data-theme="dark"] .vq-map .leaflet-tile-pane {
+  filter: brightness(0.7) contrast(0.95) saturate(0.8);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .vq-map .leaflet-tile-pane {
+    filter: brightness(0.7) contrast(0.95) saturate(0.8);
+  }
+}

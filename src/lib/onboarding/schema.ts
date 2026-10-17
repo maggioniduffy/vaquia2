@@ -11,8 +11,5 @@ export const onboardingSchema = z.object({
     .transform((v) => v.replace(/[.\s-]/g, ""))
     .refine((v) => /^[0-9]{7,8}$/.test(v), e.invalidDni),
   companyName: z.string().trim().min(2, e.invalidName).max(120, e.invalidName),
-  cuit: z
-    .string()
-    .refine(isValidCuit, e.invalidCuit)
-    .transform(normalizeCuit),
+  cuit: z.string().refine(isValidCuit, e.invalidCuit).transform(normalizeCuit),
 });

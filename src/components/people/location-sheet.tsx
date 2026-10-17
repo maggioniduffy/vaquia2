@@ -7,6 +7,7 @@ import { t } from "@/i18n/es-AR";
 import { deleteLocation, saveLocation } from "@/lib/people/actions";
 import type { LocationRow, Option } from "@/lib/people/queries";
 import { controlClass, EntitySheet, Field } from "./entity-sheet";
+import { LocationPicker } from "./location-picker";
 
 /** Create (no `location`) or edit a location; delete is offered when editing (blocked if crews use it). */
 export function LocationSheet({
@@ -87,33 +88,12 @@ export function LocationSheet({
               ))}
             </Select>
           </Field>
-          <Field
-            name="lat"
-            label={t.locations.fields.lat}
-            hint={t.locations.fields.coordsHint}
-            error={errors.lat}
-          >
-            <Input
-              id="lat"
-              name="lat"
-              defaultValue={location?.lat ?? ""}
-              inputMode="decimal"
-              autoComplete="off"
-              aria-invalid={errors.lat ? true : undefined}
-              className={`${controlClass} font-mono tabular-nums`}
-            />
-          </Field>
-          <Field name="lng" label={t.locations.fields.lng} error={errors.lng}>
-            <Input
-              id="lng"
-              name="lng"
-              defaultValue={location?.lng ?? ""}
-              inputMode="decimal"
-              autoComplete="off"
-              aria-invalid={errors.lng ? true : undefined}
-              className={`${controlClass} font-mono tabular-nums`}
-            />
-          </Field>
+          <LocationPicker
+            initialLat={location?.lat ?? null}
+            initialLng={location?.lng ?? null}
+            latError={errors.lat}
+            lngError={errors.lng}
+          />
         </>
       )}
     </EntitySheet>

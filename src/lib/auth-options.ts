@@ -45,3 +45,25 @@ export const authOptions = {
 export const accountLinking = { enabled: true } satisfies NonNullable<
   BetterAuthOptions["account"]
 >["accountLinking"];
+
+/**
+ * True when a user about to be created through an OAuth callback has an email the provider did
+ * not verify. Such a user would let an attacker pre-register a victim's email (account takeover
+ * once the victim signs in by OTP), so creation is refused. OTP users are created verified and
+ * guests never go through `/callback/*`.
+ */
+export function isUnverifiedSocialSignUp(
+  user: { emailVerified?: boolean | null },
+  context: { path?: string } | null | undefined,
+): boolean {
+  const path = context?.path ?? "";
+  return path.startsWith("/callback/") && user.emailVerified !== true;
+}
+
+// Known `?error=` values on /login (anything else is ignored).
+export const LOGIN_ERRORS = ["google"] as const;
+export type LoginError = (typeof LOGIN_ERRORS)[number];
+
+export function parseLoginError(value: unknown): LoginError | null {
+  return LOGIN_ERRORS.find((e) => e === value) ?? null;
+}

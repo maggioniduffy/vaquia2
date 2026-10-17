@@ -66,6 +66,38 @@ describe("tenancy RLS", () => {
       ).toBe(0);
     }));
 
+  it("admins cannot insert memberships or change user_id, but can still change the role", () =>
+    withRollback(async (db) => {
+      await twoCompanies(db);
+      await db.as(ids.userB); // admin of B
+      expect(
+        await db.errorCode(
+          "insert into memberships (company_id, user_id, role) values ($1, $2, 'worker')",
+          [ids.companyB, ids.userA],
+        ),
+      ).toBe(INSUFFICIENT_PRIVILEGE);
+      expect(
+        await db.errorCode("update memberships set user_id = $1 where company_id = $2", [
+          ids.userA,
+          ids.companyB,
+        ]),
+      ).toBe(INSUFFICIENT_PRIVILEGE);
+      expect(
+        await db.errorCode("update memberships set role = 'hse' where company_id = $1", [
+          ids.companyB,
+        ]),
+      ).toBeNull();
+      await db.as(null);
+      expect(
+        (
+          await db.one("select role from memberships where company_id = $1 and user_id = $2", [
+            ids.companyB,
+            ids.userB,
+          ])
+        ).role,
+      ).toBe("hse");
+    }));
+
   it("a member of two companies can switch, and then sees only the active one", () =>
     withRollback(async (db) => {
       await twoCompanies(db);

@@ -8,7 +8,7 @@
 - [ ] Factura electrónica (AFIP): provider options and cost (flag before adding).
 
 ## Tasks
-- [ ] **1c.1** (implementer) Migration: `companies.tier`, `companies.billing_interval`, `subscriptions`, `billing_events` (append-only) + RLS, grants; backfill existing companies (`paid`/`demo` → `pro`).
+- [ ] **1c.1** (implementer) Migration: `companies.tier`, `companies.billing_interval`, `subscriptions`, `billing_events` (append-only) + RLS, grants; backfill existing companies (`paid`/`demo` → `pro`). Same migration: `invitations.expires_at` (14 days, filtered in `my_invitations`/`accept_invitation`), and `assert_company_writable()` as security definer so `company_writable` execute can be revoked from `authenticated` (1b review minors).
 - [ ] **1c.2** (implementer) `[test-now]` Active-staff limit per tier, enforced server-side (DB) on create/import/reactivate personas; never blocks capture/close/export.
 - [ ] **1c.3** (implementer) Onboarding step "Elegí tu plan" (preselected from `/signup?plan=`, validated against `TIERS`), passed to `create_company`.
 - [ ] **1c.4** (implementer) `[test-now]` Tier switching during trial from `/settings/billing` (admin, audited, never touches `trial_ends_at`).
