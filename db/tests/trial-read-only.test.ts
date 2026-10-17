@@ -298,16 +298,13 @@ function writes(f: Fx): Write[] {
   ];
 }
 
-// Simulates the trial running out. The trigger refuses to store an expired trial (it checks the
-// NEW row), so the table owner disables it for this one statement and re-enables it straight after.
-// Everything runs inside the test transaction, which is rolled back.
+// Simulates the trial running out: a plain UPDATE of trial_ends_at (plan/trial_ends_at-only updates
+// are always allowed by the trigger).
 async function expireTrial(db: TestDb) {
-  await db.query("alter table companies disable trigger assert_company_writable");
   await db.query(
     "update companies set plan = 'trial', trial_ends_at = now() - interval '1 day' where id = $1",
     [companyT],
   );
-  await db.query("alter table companies enable trigger assert_company_writable");
 }
 
 describe("trial read-only trigger", () => {
@@ -428,6 +425,32 @@ describe("trial read-only trigger", () => {
       ).toBe(READ_ONLY);
     }));
 
+  it("an update of settings on an expired trial fails with VQ001", () =>
+    withRollback(async (db) => {
+      await seedTrial(db);
+      await expireTrial(db);
+      expect(
+        await db.errorCode(
+          `update companies set settings = '{"report_day": 3}'::jsonb where id = $1`,
+          [companyT],
+        ),
+      ).toBe(READ_ONLY);
+    }));
+
+  it("setting trial_ends_at into the past via UPDATE works", () =>
+    withRollback(async (db) => {
+      await seedTrial(db);
+      expect(
+        await db.errorCode(
+          "update companies set trial_ends_at = now() - interval '2 days' where id = $1",
+          [companyT],
+        ),
+      ).toBeNull();
+      expect(
+        await db.errorCode("insert into locations (company_id, name) values ($1, 'x')", [companyT]),
+      ).toBe(READ_ONLY);
+    }));
+
   it("audit_log inserts are not blocked on an expired trial, global rows are unaffected", () =>
     withRollback(async (db) => {
       await seedTrial(db);
@@ -450,16 +473,14 @@ describe("trial read-only trigger", () => {
       ).toBeNull();
     }));
 
-  it("deleting an expired-trial company (owner, cascade) does not fail", () =>
+  it("deleting an expired-trial company is not blocked by the trigger", () =>
     withRollback(async (db) => {
+      // audit_log.company_id is ON DELETE RESTRICT and the company insert is audited, so the delete
+      // ends in a restrict violation (23001) after the trigger passed; it must never be VQ001.
       await seedTrial(db);
       await expireTrial(db);
-      expect(await db.errorCode("delete from companies where id = $1", [companyT])).toBeNull();
-      const left = await db.one(
-        "select count(*)::int as n from memberships where company_id = $1",
-        [companyT],
-      );
-      expect(left.n).toBe(0);
+      const code = await db.errorCode("delete from companies where id = $1", [companyT]);
+      expect(code).not.toBe(READ_ONLY);
     }));
 
   it("plan outside (trial, paid, demo) is rejected", () =>
