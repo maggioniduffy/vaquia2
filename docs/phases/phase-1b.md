@@ -20,6 +20,7 @@
 - [x] **1b.6** (implementer) Landing CTAs + `scripts/company-plan.ts` (`pnpm company:plan <cuit> paid|trial [--days N]`).
 - [x] **1b.7** (tester) DB tests (trigger, `create_company`), unit tests `cuit.ts`, e2e OTP sign-up → wizard → checklist.
 - [ ] **1b.7b** (implementer) Review fixes: Google linking, pending invitations, checklist scoping, create_company length checks, membership revoke on expired trials, CUIT duplicate support contact.
+- [ ] **1b.9** (implementer) Location picker in the locations form: map (Leaflet + OpenStreetMap tiles, lazy-loaded, click/drag marker, centered on Neuquén or the saved point), place search with autocomplete (Photon/komoot, client-side, debounced; not Nominatim, whose policy forbids autocomplete), and paste a Google Maps link or `lat, lng` text. All three fill the existing `lat`/`lng` (no schema change); raw fields stay as an advanced option. Server keeps validating ranges. Free services only, with OSM attribution.
 - [ ] **1b.8** (reviewer) Phase review: auth surface, security definer function, trigger coverage.
 
 ## Acceptance
@@ -29,3 +30,4 @@
 - An invited user signing in with Google with the invited email gets their existing membership.
 - With `trial_ends_at` in the past every business write fails with `VQ001`, the UI shows the read-only message, reads still work; `paid`/`demo` unaffected.
 - The checklist ticks itself as data is added and can be hidden.
+- A location's coordinates can be set by clicking the map, choosing a search result, or pasting a Google Maps link / `lat, lng`; the saved point shows on reopening; works on phone width and in dark theme.
