@@ -1,5 +1,3 @@
-const DEMO_COMPANY_ID = "30000000-0000-7000-8000-000000000001";
-
 function required(name: string): string {
   const value = process.env[name];
   if (!value) throw new Error(`Missing environment variable ${name}`);
@@ -41,11 +39,8 @@ export const env = {
     return process.env.EMAIL_OUTBOX_FILE;
   },
   // Temporary guest sessions for demos: on unless GUEST_LOGIN_ENABLED=false. Guests join the
-  // demo company created by db/migrations/*_demo_company.sql (override with GUEST_COMPANY_ID).
+  // demo company created by db/migrations/*_demo_company.sql.
   get guestLoginEnabled() {
     return process.env.GUEST_LOGIN_ENABLED !== "false";
-  },
-  get guestCompanyId() {
-    return process.env.GUEST_COMPANY_ID ?? DEMO_COMPANY_ID;
   },
 };

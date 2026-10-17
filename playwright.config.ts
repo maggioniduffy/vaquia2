@@ -46,6 +46,7 @@ export default defineConfig({
         env: {
           ...inheritedEnv,
           EMAIL_OUTBOX_FILE: outboxFile,
+          AUTH_RATE_LIMIT_DISABLED: "true",
         },
       },
 });

@@ -1,4 +1,7 @@
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { t } from "@/i18n/es-AR";
+import { auth } from "@/lib/auth";
 import { env } from "@/lib/env";
 import { safeNextPath } from "@/lib/routes";
 import { LoginForm } from "./login-form";
@@ -8,6 +11,9 @@ export default async function LoginPage({
 }: {
   searchParams: Promise<{ next?: string }>;
 }) {
+  // Real session check (a stale cookie must not bounce between / and /login).
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (session) redirect("/");
   const { next } = await searchParams;
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-center px-4 py-12">

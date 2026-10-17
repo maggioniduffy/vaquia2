@@ -10,6 +10,14 @@ describe("safeNextPath", () => {
     ["https://evil.example", "/"],
     ["//evil.example", "/"],
     ["/\\evil.example", "/"],
+    ["/\t/evil.com", "/"],
+    ["/\n/evil.com", "/"],
+    ["/%09/evil.com", "/%09/evil.com"],
+    ["\\evil", "/"],
+    ["/\\evil", "/"],
+    ["http://evil", "/"],
+    ["//evil", "/"],
+    ["/a/b?x=1&y=2#h", "/a/b?x=1&y=2#h"],
   ])("%s → %s", (input, expected) => {
     expect(safeNextPath(input)).toBe(expected);
   });

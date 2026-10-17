@@ -31,7 +31,9 @@ code is printed to the `pnpm dev` log (when no email sender is configured):
 | otp-lock@petrosur.test | Petrosur Servicios SRL | supervisor (OTP e2e only) |
 
 "Entrar como invitado" logs into `Empresa Demo` (created by a migration) as `hse`. It is on by
-default for now; set `GUEST_LOGIN_ENABLED=false` to hide it.
+default for now; set `GUEST_LOGIN_ENABLED=false` to hide it. The company is fixed (no override) and
+must have `plan = 'demo'`, otherwise no membership is created. Guests are detected by
+`isAnonymous` only; `@guest.vaquia.invalid` emails are reserved and rejected by `admin:create-company`.
 
 ## Checks
 

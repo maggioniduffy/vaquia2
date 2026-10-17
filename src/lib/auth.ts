@@ -8,6 +8,8 @@ import { sendEmail } from "@/lib/email";
 import { env } from "@/lib/env";
 import { authOptions } from "@/lib/auth-options";
 
+// Guests always join this company (migration demo_company); it must have plan = 'demo'.
+const DEMO_COMPANY_ID = "30000000-0000-7000-8000-000000000001";
 const GUEST_EMAIL_DOMAIN = "guest.vaquia.invalid";
 
 // Vercel preview deployments are served from per-deploy hosts; trust them besides the main URL.
@@ -27,14 +29,14 @@ export const auth = betterAuth({
     user: {
       create: {
         after: async (user) => {
-          const isGuest =
-            (user as { isAnonymous?: boolean | null }).isAnonymous === true ||
-            user.email.endsWith(`@${GUEST_EMAIL_DOMAIN}`);
+          const isGuest = (user as { isAnonymous?: boolean | null }).isAnonymous === true;
           if (!isGuest || !env.guestLoginEnabled) return;
           // Owner pool on purpose: auth-side provisioning, there is no tenant session yet.
           await pool.query(
-            "insert into memberships (company_id, user_id, role) values ($1, $2, 'hse')",
-            [env.guestCompanyId, user.id],
+            `insert into memberships (company_id, user_id, role)
+             select $1, $2, 'hse'
+             where exists (select 1 from companies where id = $1 and plan = 'demo')`,
+            [DEMO_COMPANY_ID, user.id],
           );
         },
       },

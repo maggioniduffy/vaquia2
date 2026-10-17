@@ -28,7 +28,7 @@ Later: STT API · Claude API
 | Rules | json-logic-js |
 | PDF / XLSX | @react-pdf/renderer / exceljs |
 | Email | Resend (needs a verified domain) or any SMTP server (Gmail app password for now); `src/lib/email.ts` |
-| Auth | Better Auth: 6-digit email OTP only (`emailOTP`, 5 min, 3 attempts, hashed; no passwords, no magic link), invite-only (`disableSignUp`). Temporary guest sessions (`anonymous` plugin, on unless `GUEST_LOGIN_ENABLED=false`; guests join the `Empresa Demo` company created by migration as `hse`; to be removed before real customers). Base URL: `BETTER_AUTH_URL`, else `https://$VERCEL_URL` (preview deploys; `VERCEL_URL`/`VERCEL_BRANCH_URL` are trusted origins). Tables `users`, `sessions`, `accounts`, `verifications` |
+| Auth | Better Auth: 6-digit email OTP only (`emailOTP`, 5 min, 3 attempts, hashed; no passwords, no magic link), invite-only (`disableSignUp`). Temporary guest sessions (`anonymous` plugin, on unless `GUEST_LOGIN_ENABLED=false`; guests always join the fixed `Empresa Demo` company (`plan = 'demo'`, created by migration; membership is only inserted if that plan matches) as `hse`; login server actions are rate limited via `auth_rate_limits` (`src/lib/rate-limit.ts`); to be removed before real customers). Base URL: `BETTER_AUTH_URL`, else `https://$VERCEL_URL` (preview deploys; `VERCEL_URL`/`VERCEL_BRANCH_URL` are trusted origins). Tables `users`, `sessions`, `accounts`, `verifications` |
 | DB access | `pg` (node-postgres), raw SQL. Migrations: dbmate |
 | Files | Cloudflare R2 (S3 API), private bucket, presigned URLs |
 | Tests | Vitest (unit + `db/tests` against real Postgres), Playwright |
@@ -45,6 +45,8 @@ Later: STT API · Claude API
 ## Security & tenancy
 - `company_id` on every tenant row; RLS via `current_company_id()` and `has_role(role[])`.
 - Request identity: the app connects as the DB owner; `withUser(userId, fn)` opens a transaction, `set local role authenticated` and sets `app.user_id`, read by `app.current_user_id()`. Use Neon's **pooled** URL (transaction pooling keeps `set local` safe).
+- Known hardening, later: the app connects as the table owner (RLS relies on `withUser()` discipline). Move the runtime to a non-owner login role that is a member of `authenticated`; keep the owner for migrations/Better Auth/scripts.
+- Production migrations (`migrate.yml`) run in parallel with the Vercel deploy: keep every migration backward compatible with the previously deployed code (expand, then contract).
 - Cron: Vercel Hobby only allows daily jobs. Hourly escalation (phase 4) needs Vercel Pro, or a GitHub Actions schedule calling the same route as a stopgap.
 - Append-only (`audit_log`, `rule_evaluations`, `notifications`, `period_snapshots`, `exports`): `reject_mutation()` trigger rejects UPDATE/DELETE/TRUNCATE for every role; inserts via functions.
 - Audit: attach `audit_row()` (AFTER INSERT/UPDATE/DELETE) to every tenant table; diff = `{new}` / `{old}` / `{col: {old,new}}`.

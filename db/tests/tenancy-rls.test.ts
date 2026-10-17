@@ -96,3 +96,53 @@ describe("tenancy RLS", () => {
       }
     }));
 });
+
+describe("user_settings RLS", () => {
+  it("a user cannot read another user's settings row", () =>
+    withRollback(async (db) => {
+      await twoCompanies(db);
+      await db.as(ids.userA);
+      await db.query("select public.set_active_company($1)", [ids.companyA]);
+      await db.as(ids.userB);
+      expect(await db.query("select 1 from user_settings where user_id = $1", [ids.userA])).toEqual(
+        [],
+      );
+      await db.as(ids.userA);
+      expect((await db.one("select count(*)::int as n from user_settings")).n).toBe(1);
+    }));
+
+  it("direct insert/update by authenticated is denied", () =>
+    withRollback(async (db) => {
+      await twoCompanies(db);
+      await db.as(ids.userA);
+      expect(
+        await db.errorCode(
+          "insert into user_settings (user_id, active_company_id) values ($1, $2)",
+          [ids.userA, ids.companyA],
+        ),
+      ).toBe(INSUFFICIENT_PRIVILEGE);
+      expect(
+        await db.errorCode("update user_settings set active_company_id = $1", [ids.companyA]),
+      ).toBe(INSUFFICIENT_PRIVILEGE);
+    }));
+
+  it("set_active_company works only for own memberships", () =>
+    withRollback(async (db) => {
+      await twoCompanies(db);
+      await db.as(ids.both);
+      expect(await db.errorCode("select public.set_active_company($1)", [ids.companyB])).toBeNull();
+      expect((await db.one("select public.current_company_id() as id")).id).toBe(ids.companyB);
+      await db.as(ids.userA);
+      expect(await db.errorCode("select public.set_active_company($1)", [ids.companyB])).toBe(
+        INSUFFICIENT_PRIVILEGE,
+      );
+    }));
+
+  it("tenants cannot update companies.plan but can update name", () =>
+    withRollback(async (db) => {
+      await twoCompanies(db);
+      await db.as(ids.userB);
+      expect(await db.errorCode("update companies set plan = 'demo'")).toBe(INSUFFICIENT_PRIVILEGE);
+      expect(await db.errorCode("update companies set name = 'Renamed'")).toBeNull();
+    }));
+});
