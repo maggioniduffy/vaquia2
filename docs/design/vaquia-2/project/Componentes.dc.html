@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc><helmet><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap"><style>body{margin:0;-webkit-font-smoothing:antialiased;--base:#F2F2F3;--surf:#FAFAFA;--bd:#E4E4E7;--tx:#18181B;--mu:#71717A;--ac:#0E9F9A;--acs:rgba(14,159,154,.10);--onac:#FFFFFF;--dg:#DC2626;--wn:#D97706;--hov:#F1F1F2;--scrim:rgba(24,24,27,.10)}a{color:#0E9F9A}a:hover{color:#0B807C}</style></helmet>
+
+<div style="width:1280px;box-sizing:border-box;padding:48px;background-color:var(--base);background-image:var(--grain);color:var(--tx);font-family:'Geist',sans-serif;font-size:14px;display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline">
+    <div style="font-size:28px;font-weight:500;letter-spacing:-0.02em">Componentes</div>
+    <div style="font-family:'Geist Mono',monospace;font-size:12px;color:var(--mu)">{{ themeLabel }}</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+    <!-- Buttons -->
+    <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px">
+      <div style="font-size:12px;color:var(--mu)">Botones</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+        <button style="height:36px;padding:0 16px;border-radius:6px;border:1px solid var(--ac);background:var(--ac);color:var(--onac);font:500 14px 'Geist',sans-serif">Enviar a aprobación</button>
+        <button style="height:36px;padding:0 16px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);font:500 14px 'Geist',sans-serif">Guardar borrador</button>
+        <button style="height:36px;padding:0 16px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--tx);font:500 14px 'Geist',sans-serif">Cancelar</button>
+        <button style="height:36px;padding:0 16px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--dg);font:500 14px 'Geist',sans-serif">Rechazar</button>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+        <button style="height:36px;padding:0 16px;border-radius:6px;border:1px solid var(--ac);background:var(--ac);color:var(--onac);font:500 14px 'Geist',sans-serif;box-shadow:0 0 0 3px var(--acs)">Foco</button>
+        <button style="height:36px;padding:0 16px;border-radius:6px;border:1px solid var(--bd);background:var(--hov);color:var(--mu);font:500 14px 'Geist',sans-serif">Deshabilitado</button>
+        <button style="height:28px;padding:0 10px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);font:500 12px 'Geist',sans-serif">Chico</button>
+        <a href="#" style="color:var(--ac);font-weight:500;text-decoration:none">Ver detalle</a>
+      </div>
+      <div style="display:flex;gap:12px">
+        <button style="flex:1;height:52px;border-radius:6px;border:1px solid var(--ac);background:var(--ac);color:var(--onac);font:500 16px 'Geist',sans-serif">Firmar · móvil 52px</button>
+      </div>
+    </div>
+
+    <!-- Inputs -->
+    <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px">
+      <div style="font-size:12px;color:var(--mu)">Campos</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:var(--mu)">Tema de la charla</span><span style="height:36px;border:1px solid var(--bd);border-radius:6px;padding:0 12px;display:flex;align-items:center;background:var(--surf)">Izaje de cargas</span></label>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:var(--mu)">Locación</span><span style="height:36px;border:1px solid var(--ac);box-shadow:0 0 0 3px var(--acs);border-radius:6px;padding:0 12px;display:flex;align-items:center;background:var(--surf)">Loma Campana – LC-2<span style="width:1px;height:16px;background:var(--tx);margin-left:1px"></span></span></label>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:var(--mu)">Cuadrilla</span><span style="height:36px;border:1px solid var(--bd);border-radius:6px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;background:var(--surf)">Cuadrilla Workover 3<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:var(--mu)">Vencimiento</span><span style="height:36px;border:1px solid var(--dg);border-radius:6px;padding:0 12px;display:flex;align-items:center;background:var(--surf);font-family:'Geist Mono',monospace;font-variant-numeric:tabular-nums">31/02/2026</span><span style="font-size:12px;color:var(--dg)">Fecha inválida</span></label>
+      </div>
+      <div style="display:flex;gap:24px">
+        <span style="display:flex;align-items:center;gap:8px"><span style="width:16px;height:16px;border-radius:4px;background:var(--ac);display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--onac)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>Casco</span>
+        <span style="display:flex;align-items:center;gap:8px"><span style="width:16px;height:16px;border-radius:4px;background:var(--ac);display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--onac)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>Arnés</span>
+        <span style="display:flex;align-items:center;gap:8px"><span style="width:16px;height:16px;border-radius:4px;border:1px solid var(--bd);background:var(--surf);box-sizing:border-box"></span>Protección auditiva</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+    <!-- Badges -->
+    <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px">
+      <div style="font-size:12px;color:var(--mu)">Estados</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px 24px">
+        <span style="display:flex;align-items:center;gap:8px;color:var(--dg);font-weight:500"><span style="width:6px;height:6px;border-radius:50%;background:var(--dg)"></span>Bloqueado</span>
+        <span style="display:flex;align-items:center;gap:8px;color:var(--wn);font-weight:500"><span style="width:6px;height:6px;border-radius:50%;background:var(--wn)"></span>Advertencia</span>
+        <span style="display:flex;align-items:center;gap:8px;color:var(--wn);font-weight:500"><span style="width:6px;height:6px;border-radius:50%;border:1.5px solid var(--wn);box-sizing:border-box"></span>Vence pronto</span>
+        <span style="display:flex;align-items:center;gap:8px;color:var(--dg);font-weight:500"><span style="width:6px;height:6px;border-radius:50%;background:var(--dg)"></span>Vencido</span>
+        <span style="display:flex;align-items:center;gap:6px;color:var(--mu)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>Válido</span>
+        <span style="display:flex;align-items:center;gap:8px;color:var(--mu)"><span style="width:6px;height:6px;border-radius:50%;border:1.5px dashed var(--mu);box-sizing:border-box"></span>Pendiente de sincronizar</span>
+      </div>
+      <div style="border-top:1px solid var(--bd);padding-top:16px;display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:12px;color:var(--mu)">Indicador de sincronización</div>
+        <div style="display:flex;gap:12px">
+          <span style="height:28px;padding:0 10px;border:1px solid var(--bd);border-radius:6px;display:flex;align-items:center;gap:8px;font-size:12px"><span style="width:6px;height:6px;border-radius:50%;background:var(--ac)"></span>Sincronizado</span>
+          <span style="height:28px;padding:0 10px;border:1px solid var(--bd);border-radius:6px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tx)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h.01M8.5 16.4a5 5 0 0 1 7 0M2 8.8a15 15 0 0 1 4.2-2.8M10.7 5.1A15 15 0 0 1 22 8.8M5 12.9a10 10 0 0 1 5.2-2.7M16.9 10.6a10 10 0 0 1 2.1 2.3M2 2l20 20"></path></svg>Sin conexión · <span style="font-family:'Geist Mono',monospace">3</span> pendientes</span>
+          <span style="height:28px;padding:0 10px;border:1px solid var(--bd);border-radius:6px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mu)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"></path><path d="M21 3v5h-5"></path></svg>Enviando 2 de 3…</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI tiles -->
+    <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:16px">
+      <div style="font-size:12px;color:var(--mu)">KPI</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+        <div style="border:1px solid var(--bd);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:12px;color:var(--mu)">TRIR</span>
+          <span style="font:600 28px 'Geist Mono',monospace;font-variant-numeric:tabular-nums;letter-spacing:-0.02em">0,84</span>
+          <span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">↓ 0,12 vs ago</span>
+        </div>
+        <div style="border:1px solid var(--bd);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:12px;color:var(--mu)">Acciones vencidas</span>
+          <span style="font:600 28px 'Geist Mono',monospace;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:8px">7<span style="width:6px;height:6px;border-radius:50%;background:var(--dg)"></span></span>
+          <span style="font:400 12px 'Geist Mono',monospace;color:var(--mu)">↑ 2 vs ago</span>
+        </div>
+        <div style="border:1px solid var(--bd);border-left:2px solid var(--wn);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:12px;color:var(--mu)">LTIFR</span>
+          <span style="font:600 28px 'Geist Mono',monospace;color:var(--mu)">—</span>
+          <span style="font-size:12px;color:var(--wn)">Incompleto</span>
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--bd);padding-top:16px;display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:12px;color:var(--mu)">Stepper</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px">
+          <span style="display:flex;align-items:center;gap:6px;color:var(--mu)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>Borrador</span>
+          <span style="flex:1;height:1px;background:var(--bd)"></span>
+          <span style="display:flex;align-items:center;gap:6px;color:var(--tx);font-weight:500"><span style="width:14px;height:14px;border-radius:50%;border:1.5px solid var(--ac);box-sizing:border-box;display:flex;align-items:center;justify-content:center"><span style="width:6px;height:6px;border-radius:50%;background:var(--ac)"></span></span>Revisión HSE</span>
+          <span style="flex:1;height:1px;background:var(--bd)"></span>
+          <span style="display:flex;align-items:center;gap:6px;color:var(--mu)"><span style="width:14px;height:14px;border-radius:50%;border:1px solid var(--bd);box-sizing:border-box"></span>Aprobación</span>
+          <span style="flex:1;height:1px;background:var(--bd)"></span>
+          <span style="display:flex;align-items:center;gap:6px;color:var(--mu)"><span style="width:14px;height:14px;border-radius:50%;border:1px solid var(--bd);box-sizing:border-box"></span>Exportado</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table rows -->
+  <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;overflow:hidden">
+    <div style="padding:16px 24px 8px;font-size:12px;color:var(--mu)">Filas de tabla</div>
+    <div style="display:grid;grid-template-columns:120px 100px 1fr 1fr 140px 140px;padding:8px 24px;font-size:12px;color:var(--mu);border-bottom:1px solid var(--bd)"><span>Estado de fila</span><span>Tipo</span><span>Cuadrilla</span><span>Locación</span><span>Autor</span><span>Estado</span></div>
+    <div style="display:grid;grid-template-columns:120px 100px 1fr 1fr 140px 140px;padding:0 24px;height:40px;align-items:center;border-bottom:1px solid var(--bd)"><span style="color:var(--mu);font-size:12px">Normal</span><span>Charla</span><span>Cuadrilla Workover 3</span><span>LC-214</span><span>Juan Pérez</span><span style="display:flex;align-items:center;gap:6px;color:var(--mu)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>Válido</span></div>
+    <div style="display:grid;grid-template-columns:120px 100px 1fr 1fr 140px 140px;padding:0 24px;height:40px;align-items:center;border-bottom:1px solid var(--bd);background:var(--hov)"><span style="color:var(--mu);font-size:12px">Hover</span><span>ATS</span><span>Cuadrilla Wireline 2</span><span>LACh-118</span><span>Lucía Benítez</span><span style="display:flex;align-items:center;gap:8px;color:var(--wn);font-weight:500"><span style="width:6px;height:6px;border-radius:50%;background:var(--wn)"></span>Advertencia</span></div>
+    <div style="display:grid;grid-template-columns:120px 100px 1fr 1fr 140px 140px;padding:0 24px 0 22px;height:40px;align-items:center;border-bottom:1px solid var(--bd);background:var(--acs);border-left:2px solid var(--ac)"><span style="color:var(--mu);font-size:12px">Seleccionada</span><span>ATS</span><span>Cuadrilla Workover 3</span><span>LC-214</span><span>Martín Sosa</span><span style="display:flex;align-items:center;gap:8px;color:var(--dg);font-weight:500"><span style="width:6px;height:6px;border-radius:50%;background:var(--dg)"></span>Bloqueado</span></div>
+    <div style="display:grid;grid-template-columns:120px 100px 1fr 1fr 140px 140px;padding:0 24px;height:40px;align-items:center;color:var(--mu)"><span style="font-size:12px">Borrador</span><span>Charla</span><span>Cuadrilla Fractura 1</span><span>BdP-07</span><span>Diego Ramírez</span><span style="display:flex;align-items:center;gap:8px"><span style="width:6px;height:6px;border-radius:50%;border:1.5px dashed var(--mu);box-sizing:border-box"></span>Pendiente</span></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:24px;align-items:start">
+    <!-- Signature pad + toast -->
+    <div style="display:flex;flex-direction:column;gap:24px">
+      <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:24px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:12px;color:var(--mu)">Firma</div>
+        <div style="height:140px;border:1px dashed var(--bd);border-radius:6px;position:relative;display:flex;align-items:flex-end;padding:16px">
+          <svg width="220" height="70" viewBox="0 0 220 70" style="position:absolute;left:24px;top:22px" fill="none" stroke="var(--tx)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 50c10-30 18-42 22-36s-8 40-2 42 14-30 22-30-4 24 4 24 10-18 18-18 2 16 10 14 12-22 20-22 0 20 10 18c12-2 22-14 40-16 14-2 30 4 40 2"></path></svg>
+          <span style="flex:1;border-top:1px solid var(--bd);padding-top:6px;font-size:12px;color:var(--mu);display:flex;justify-content:space-between"><span>Juan Pérez · DNI 32.481.905</span><span style="font-family:'Geist Mono',monospace">14:32</span></span>
+        </div>
+      </div>
+      <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,.12)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+        <span style="flex:1">Registro guardado</span>
+        <a href="#" style="color:var(--ac);font-weight:500;text-decoration:none">Deshacer</a>
+      </div>
+    </div>
+
+    <!-- Dialog -->
+    <div style="position:relative;border:1px solid var(--bd);border-radius:8px;background:var(--scrim);padding:32px;display:flex;align-items:center;justify-content:center;min-height:300px;box-sizing:border-box">
+      <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;box-shadow:0 16px 40px rgba(0,0,0,.18);width:100%;display:flex;flex-direction:column">
+        <div style="padding:20px 20px 0;display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:16px;font-weight:500">Marcar como falso positivo</div>
+          <div style="color:var(--mu);line-height:1.5">La regla dejará de bloquear este registro. Queda asentado en el historial con tu nombre.</div>
+          <div style="height:72px;border:1px solid var(--bd);border-radius:6px;padding:8px 12px;color:var(--mu);margin-top:4px;box-sizing:border-box">Motivo (obligatorio)</div>
+        </div>
+        <div style="padding:16px 20px;display:flex;justify-content:flex-end;gap:8px">
+          <button style="height:36px;padding:0 14px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);font:500 14px 'Geist',sans-serif">Cancelar</button>
+          <button style="height:36px;padding:0 14px;border-radius:6px;border:1px solid var(--ac);background:var(--ac);color:var(--onac);font:500 14px 'Geist',sans-serif">Confirmar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Side sheet -->
+    <div style="border:1px solid var(--bd);border-radius:8px;overflow:hidden;display:flex;min-height:300px;background:var(--scrim)">
+      <div style="flex:0 0 28%"></div>
+      <div style="flex:1;background:var(--surf);border-left:1px solid var(--bd);box-shadow:-12px 0 32px rgba(0,0,0,.12);display:flex;flex-direction:column">
+        <div style="padding:16px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center">
+          <span style="font-weight:500">Panel lateral</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+        </div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:12px;font-size:12px">
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">ID</span><span style="font-family:'Geist Mono',monospace">ATS-2026-0913</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">Fecha</span><span style="font-family:'Geist Mono',monospace">14/10/2026</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">Firmas</span><span style="font-family:'Geist Mono',monospace">5/6</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() { return { themeLabel: this.props.theme === 'dark' ? 'Tema oscuro' : 'Tema claro' }; }
+}
+</script>
+</body>
+</html>

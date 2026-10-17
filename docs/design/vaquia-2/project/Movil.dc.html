@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc><helmet><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap"><style>body{margin:0;-webkit-font-smoothing:antialiased;--base:#F2F2F3;--surf:#FAFAFA;--bd:#E4E4E7;--tx:#18181B;--mu:#71717A;--ac:#0E9F9A;--acs:rgba(14,159,154,.10);--onac:#FFFFFF;--dg:#DC2626;--wn:#D97706;--hov:#F1F1F2;--scrim:rgba(24,24,27,.10)}a{color:#0E9F9A}a:hover{color:#0B807C}</style></helmet>
+
+<div style="width:390px;height:844px;display:flex;flex-direction:column;background-color:var(--base);background-image:var(--grain);color:var(--tx);font-family:'Geist',sans-serif;font-size:16px;position:relative;overflow:hidden">
+  <div style="height:44px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 24px;font:600 15px 'Geist',sans-serif"><span style="font-family:'Geist Mono',monospace">{{ clock }}</span><span style="display:flex;gap:6px;align-items:center;font:500 12px 'Geist Mono',monospace;color:var(--mu)">{{ netLabel }}<span style="width:22px;height:11px;border:1px solid var(--tx);border-radius:3px;padding:1px;box-sizing:border-box"><span style="display:block;width:60%;height:100%;background:var(--tx);border-radius:1px"></span></span></span></div>
+  <div style="height:56px;flex:none;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid var(--bd)">
+    <sc-if value="{{ hasBack }}" hint-placeholder-val="{{ false }}"><span style="width:44px;height:44px;margin-left:-10px;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--tx)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"></path></svg></span></sc-if>
+    <span style="flex:1;display:flex;flex-direction:column;min-width:0"><span style="font-size:17px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ title }}</span><span style="font-size:13px;color:var(--mu)">{{ sub }}</span></span>
+    <span style="height:32px;padding:0 10px;border:1px solid var(--bd);border-radius:6px;display:flex;align-items:center;gap:6px;font-size:13px;background:var(--surf)">
+      <sc-if value="{{ online }}" hint-placeholder-val="{{ true }}"><span style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:var(--ac)"></span>Al día</span></sc-if>
+      <sc-if value="{{ offline }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h.01M8.5 16.4a5 5 0 0 1 7 0M2 8.8a15 15 0 0 1 4.2-2.8M10.7 5.1A15 15 0 0 1 22 8.8M5 12.9a10 10 0 0 1 5.2-2.7M16.9 10.6a10 10 0 0 1 2.1 2.3M2 2l20 20"></path></svg><span style="font-family:'Geist Mono',monospace">{{ pending }}</span></span></sc-if>
+    </span>
+  </div>
+
+  <div style="flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column">
+
+    <sc-if value="{{ is.hoy }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:16px;display:flex;flex-direction:column;gap:16px">
+        <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:13px;color:var(--mu)">Cuadrilla Workover 3 · 6 personas</span>
+          <span style="font-size:17px;font-weight:500">Loma Campana – Locación LC-214</span>
+          <span style="font-size:13px;color:var(--mu)">Pulling · intervención de pozo LC-214(h)</span>
+        </div>
+        <span style="font-size:13px;color:var(--mu)">Para hoy</span>
+        <sc-for list="{{ tasks }}" as="t" hint-placeholder-count="4">
+          <div style="min-height:64px;background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:12px;box-sizing:border-box">
+            <span style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-weight:500">{{ t.t }}</span><span style="font-size:13px;color:{{ t.mc }}">{{ t.m }}</span></span>
+            <sc-if value="{{ t.done }}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></sc-if>
+            <sc-if value="{{ t.open }}" hint-placeholder-val="{{ true }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></sc-if>
+          </div>
+        </sc-for>
+        <div style="border-left:2px solid var(--wn);padding:2px 0 2px 12px;display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:500">Pablo Díaz: Espacios confinados vence el 21/10</span><span style="font-size:13px;color:var(--mu)">Avisale para que la renueve antes de la próxima tarea.</span></div>
+      </div>
+      <div style="margin-top:auto;padding:16px;border-top:1px solid var(--bd);display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <button style="height:52px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);font:500 16px 'Geist',sans-serif">Reportar</button>
+        <button style="height:52px;border-radius:6px;border:1px solid var(--ac);background:var(--ac);color:var(--onac);font:500 16px 'Geist',sans-serif">Nueva ATS</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ is.charla }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:16px;display:flex;flex-direction:column;gap:16px">
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:var(--mu)">Tema</span><span style="height:52px;border:1px solid var(--bd);border-radius:6px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;background:var(--surf)">Viento y trabajo en altura<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span></label>
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:13px;color:var(--mu)">Asistentes</span><span style="font:500 13px 'Geist Mono',monospace">4/6</span></div>
+        <div style="display:flex;flex-direction:column;border:1px solid var(--bd);border-radius:8px;background:var(--surf);overflow:hidden">
+          <sc-for list="{{ crew }}" as="c" hint-placeholder-count="6">
+            <div style="min-height:56px;padding:0 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--bd)">
+              <span style="width:24px;height:24px;border-radius:6px;border:{{ c.bx }};background:{{ c.bg }};box-sizing:border-box;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="{{ c.ck }}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
+              <span style="flex:1;display:flex;flex-direction:column"><span>{{ c.n }}</span><span style="font-size:13px;color:var(--mu)">{{ c.r }}</span></span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="height:120px;border:1px dashed var(--bd);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--mu)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg><span style="font-size:15px">Foto de la charla (opcional)</span></div>
+      </div>
+      <div style="margin-top:auto;padding:16px;border-top:1px solid var(--bd)">
+        <button style="width:100%;height:52px;border-radius:6px;border:1px solid var(--ac);background:var(--ac);color:var(--onac);font:500 16px 'Geist',sans-serif">Pasar a firmas · 4</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ is.ats }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:16px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;gap:4px"><span style="flex:1;height:4px;border-radius:2px;background:var(--ac)"></span><span style="flex:1;height:4px;border-radius:2px;background:var(--ac)"></span><span style="flex:1;height:4px;border-radius:2px;background:var(--bd)"></span><span style="flex:1;height:4px;border-radius:2px;background:var(--bd)"></span></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;color:var(--mu)">Paso 2 de 4</span><span style="font-size:20px;font-weight:500;letter-spacing:-0.01em">EPP para trabajo en altura</span></div>
+        <div style="display:flex;flex-direction:column;border:1px solid var(--bd);border-radius:8px;background:var(--surf);overflow:hidden">
+          <sc-for list="{{ epp }}" as="e" hint-placeholder-count="6">
+            <div style="min-height:56px;padding:0 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--bd)">
+              <span style="width:24px;height:24px;border-radius:6px;border:{{ e.bx }};background:{{ e.bg }};box-sizing:border-box;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="{{ e.ck }}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
+              <span style="flex:1">{{ e.n }}</span>
+              <span style="font-size:13px;color:var(--mu)">{{ e.m }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:var(--mu)">Viento medido</span><span style="height:52px;border:1px solid var(--bd);border-radius:6px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;background:var(--surf)"><span style="font-family:'Geist Mono',monospace">46</span><span style="color:var(--mu)">km/h</span></span><span style="font-size:13px;color:var(--wn)">Supera el límite de 40 km/h. Podés seguir; queda como advertencia.</span></div>
+      </div>
+      <div style="margin-top:auto;padding:16px;border-top:1px solid var(--bd);display:grid;grid-template-columns:1fr 2fr;gap:12px">
+        <button style="height:52px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);font:500 16px 'Geist',sans-serif">Atrás</button>
+        <button style="height:52px;border-radius:6px;border:1px solid var(--ac);background:var(--ac);color:var(--onac);font:500 16px 'Geist',sans-serif">Siguiente: riesgos</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ is.firma }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:16px;display:flex;flex-direction:column;gap:16px;flex:1">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:13px;color:var(--mu)">Firma 3 de 6</span><span style="font-size:13px;color:var(--mu)">Pasá el teléfono a cada persona</span></div>
+        <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:24px;font-weight:500;letter-spacing:-0.02em">Pablo Díaz</span><span style="color:var(--mu)">Operador boca de pozo · DNI 30.912.447</span></div>
+        <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:12px 16px;font-size:15px;line-height:1.5;color:var(--mu)">Leí y entendí los riesgos y controles de esta ATS: montaje de equipo de pulling en LC-214.</div>
+        <div style="flex:1;min-height:240px;background:var(--surf);border:1px dashed var(--bd);border-radius:8px;position:relative;display:flex;align-items:flex-end;padding:16px">
+          <svg width="260" height="90" viewBox="0 0 220 70" style="position:absolute;left:40px;top:60px" fill="none" stroke="var(--tx)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 40c20-20 30-30 34-20s-14 30-6 30 20-40 30-36-6 30 4 30 24-28 34-24 6 20 16 18 30-20 50-18"></path></svg>
+          <span style="flex:1;border-top:1px solid var(--bd);padding-top:8px;display:flex;justify-content:space-between;font-size:13px;color:var(--mu)"><span>Firmá dentro del recuadro</span><a href="#" style="color:var(--ac);text-decoration:none;font-weight:500">Borrar</a></span>
+        </div>
+      </div>
+      <div style="padding:16px;border-top:1px solid var(--bd);display:grid;grid-template-columns:1fr 2fr;gap:12px">
+        <button style="height:52px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);font:500 16px 'Geist',sans-serif">No firma</button>
+        <button style="height:52px;border-radius:6px;border:1px solid var(--ac);background:var(--ac);color:var(--onac);font:500 16px 'Geist',sans-serif">Firmar y seguir</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ is.bloqueo }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:16px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:13px;color:var(--mu)">Firma 2 de 6</span></div>
+        <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:24px;font-weight:500;letter-spacing:-0.02em">Juan Pérez</span><span style="color:var(--mu)">Enganchador · DNI 32.481.905</span></div>
+        <div style="background:var(--surf);border:1px solid var(--bd);border-left:2px solid var(--dg);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:10px">
+          <span style="display:flex;align-items:center;gap:8px;color:var(--dg);font-weight:500;font-size:13px"><span style="width:6px;height:6px;border-radius:50%;background:var(--dg)"></span>No puede firmar</span>
+          <span style="font-size:20px;font-weight:500;line-height:1.3;letter-spacing:-0.01em">Trabajo en altura vencido el 02/10.</span>
+          <span style="font-size:15px;color:var(--mu);line-height:1.5">Esta tarea es en altura. Juan no puede participar hasta renovar la habilitación. El resto de la cuadrilla puede seguir firmando.</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;color:var(--mu)">Qué podés hacer</span><span style="font-size:15px;line-height:1.5">Sacalo de la tarea y asignale otra que no sea en altura. HSE ya fue avisado.</span></div>
+      </div>
+      <div style="margin-top:auto;padding:16px;border-top:1px solid var(--bd);display:flex;flex-direction:column;gap:12px">
+        <button style="height:52px;border-radius:6px;border:1px solid var(--ac);background:var(--ac);color:var(--onac);font:500 16px 'Geist',sans-serif">Quitar de esta tarea</button>
+        <button style="height:52px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);font:500 16px 'Geist',sans-serif">Saltar y seguir con otros</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ is.cola }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:16px;display:flex;flex-direction:column;gap:16px">
+        <div style="background:var(--surf);border:1px solid var(--bd);border-radius:8px;padding:16px;display:flex;gap:12px;align-items:flex-start">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M12 20h.01M8.5 16.4a5 5 0 0 1 7 0M2 8.8a15 15 0 0 1 4.2-2.8M10.7 5.1A15 15 0 0 1 22 8.8M5 12.9a10 10 0 0 1 5.2-2.7M16.9 10.6a10 10 0 0 1 2.1 2.3M2 2l20 20"></path></svg>
+          <span style="display:flex;flex-direction:column;gap:4px"><span style="font-weight:500">Sin conexión desde las 08:41</span><span style="font-size:15px;color:var(--mu);line-height:1.5">Todo queda guardado en el teléfono. Se envía solo cuando vuelva la señal.</span></span>
+        </div>
+        <span style="font-size:13px;color:var(--mu)">Pendientes de enviar · 3</span>
+        <div style="display:flex;flex-direction:column;border:1px solid var(--bd);border-radius:8px;background:var(--surf);overflow:hidden">
+          <sc-for list="{{ queue }}" as="q" hint-placeholder-count="3">
+            <div style="min-height:64px;padding:10px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--bd);box-sizing:border-box">
+              <span style="width:8px;height:8px;border-radius:50%;border:1.5px dashed var(--mu);box-sizing:border-box;flex:none"></span>
+              <span style="flex:1;display:flex;flex-direction:column;gap:2px"><span>{{ q.t }}</span><span style="font-size:13px;color:var(--mu)">{{ q.m }}</span></span>
+              <span style="font:400 13px 'Geist Mono',monospace;color:var(--mu)">{{ q.h }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <span style="font-size:13px;color:var(--mu)">Enviados hoy · 1</span>
+        <div style="min-height:56px;padding:0 16px;display:flex;align-items:center;gap:12px;border:1px solid var(--bd);border-radius:8px;background:var(--surf);color:var(--mu)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg><span style="flex:1">Charla · Izaje de cargas</span><span style="font:400 13px 'Geist Mono',monospace">07:05</span>
+        </div>
+      </div>
+      <div style="margin-top:auto;padding:16px;border-top:1px solid var(--bd)">
+        <button style="width:100%;height:52px;border-radius:6px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);font:500 16px 'Geist',sans-serif">Reintentar ahora</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ is.accion }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:16px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="font:400 13px 'Geist Mono',monospace;color:var(--mu)">AC-0329 · vence 31/10</span><span style="font-size:20px;font-weight:500;letter-spacing:-0.01em;line-height:1.3">Inspección de arneses Cuadrilla Workover 3</span><span style="font-size:15px;color:var(--mu);line-height:1.5">Revisar costuras, hebillas y fecha de fabricación de los 6 arneses. Sacar de uso los que fallen.</span></div>
+        <span style="font-size:13px;color:var(--mu)">Evidencia · 2 fotos</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+          <div style="aspect-ratio:1;border:1px solid var(--bd);border-radius:6px;background-image:repeating-linear-gradient(45deg,var(--hov) 0 1px,transparent 1px 8px)"></div>
+          <div style="aspect-ratio:1;border:1px solid var(--bd);border-radius:6px;background-image:repeating-linear-gradient(45deg,var(--hov) 0 1px,transparent 1px 8px)"></div>
+          <div style="aspect-ratio:1;border:1px dashed var(--bd);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--mu);font-size:13px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>Agregar</div>
+        </div>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:var(--mu)">Qué se hizo</span><span style="min-height:96px;border:1px solid var(--ac);box-shadow:0 0 0 3px var(--acs);border-radius:6px;padding:12px 14px;background:var(--surf);line-height:1.5;box-sizing:border-box">5 arneses OK. Uno con costura abierta, retirado y rotulado "fuera de uso".<span style="display:inline-block;width:1px;height:16px;background:var(--tx);vertical-align:middle;margin-left:1px"></span></span></label>
+      </div>
+      <div style="margin-top:auto;padding:16px;border-top:1px solid var(--bd)">
+        <button style="width:100%;height:52px;border-radius:6px;border:1px solid var(--ac);background:var(--ac);color:var(--onac);font:500 16px 'Geist',sans-serif">Enviar a aprobación</button>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const TITLES = { hoy:['Hoy','Viernes 16/10 · Martín Sosa'], charla:['Charla de 5 minutos','Cuadrilla Workover 3'], ats:['Nueva ATS','Montaje de equipo de pulling'], firma:['Firmas','ATS · Montaje de equipo de pulling'], bloqueo:['Firmas','ATS · Montaje de equipo de pulling'], cola:['Envíos','Cuadrilla Workover 3'], accion:['Acción correctiva','Asignada a vos'] };
+const box = on => on ? { bx:'none', bg:'var(--ac)', ck:'var(--onac)' } : { bx:'1.5px solid var(--bd)', bg:'var(--surf)', ck:'transparent' };
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.props.screen || 'hoy';
+    const offline = ['ats','firma','bloqueo','cola'].includes(s);
+    const is = {}; Object.keys(TITLES).forEach(k => is[k] = k === s);
+    return {
+      is, title: TITLES[s][0], sub: TITLES[s][1], hasBack: s !== 'hoy',
+      online: !offline, offline, pending: s === 'cola' ? '3' : '2',
+      clock: s === 'cola' ? '09:20' : s === 'hoy' ? '06:48' : s === 'charla' ? '07:02' : '09:12',
+      netLabel: offline ? 'Sin señal' : '4G',
+      tasks: [
+        { t:'Charla de 5 minutos', m:'Antes de las 07:30', mc:'var(--mu)', done:false },
+        { t:'ATS · Montaje de equipo de pulling', m:'Requiere Trabajo en altura', mc:'var(--mu)', done:false },
+        { t:'Inspección de arneses', m:'Acción AC-0329 · vence 31/10', mc:'var(--mu)', done:false },
+        { t:'Checklist de camioneta AF 312 KJ', m:'Hecho a las 06:30', mc:'var(--mu)', done:true }
+      ].map(t => Object.assign(t, { open: !t.done })),
+      crew: [['Martín Sosa','Supervisor de campo',1],['Juan Pérez','Enganchador',1],['Pablo Díaz','Operador boca de pozo',1],['Hernán Quiroga','Maquinista',1],['Sergio Paredes','Ayudante',0],['Nahuel Catriel','Ayudante',0]].map(c => Object.assign({ n:c[0], r:c[1] }, box(c[2]))),
+      epp: [['Casco con barbijo','',1],['Arnés de cuerpo completo','',1],['Doble cabo con absorbedor','',1],['Línea de vida vertical','Revisada 14/10',1],['Guantes de vaqueta','',1],['Protección auditiva','',0]].map(e => Object.assign({ n:e[0], m:e[1] }, box(e[2]))),
+      queue: [
+        { t:'ATS · Montaje de equipo de pulling', m:'5 firmas · 1 foto', h:'09:12' },
+        { t:'Charla · Viento y trabajo en altura', m:'6 asistentes', h:'07:02' },
+        { t:'Acción AC-0329 · evidencia', m:'2 fotos · 3,1 MB', h:'08:55' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
