@@ -1,4 +1,4 @@
-import { PageHeader } from "@/components/shell/page-header";
+import { PageTitle } from "@/components/people/page-title";
 import { t } from "@/i18n/es-AR";
 import { getSession } from "@/lib/session";
 import { ImportForm } from "./import-form";
@@ -7,10 +7,13 @@ export default async function ImportPage() {
   const session = await getSession();
   const role = session.active?.role;
   const allowed = role === "hse" || role === "admin";
-  return (
-    <>
-      <PageHeader title={t.import.title} />
-      {allowed ? <ImportForm /> : <p className="text-muted text-sm">{t.import.forbidden}</p>}
-    </>
-  );
+  if (!allowed) {
+    return (
+      <div className="flex flex-col gap-4">
+        <PageTitle title={t.import.title} />
+        <p className="text-muted text-sm">{t.import.forbidden}</p>
+      </div>
+    );
+  }
+  return <ImportForm />;
 }

@@ -32,6 +32,16 @@ export type FitnessIssue = {
   daysLeft: number | null;
 };
 
+/** One required qualification of the selected task for one persona (any status). */
+export type FitnessCell = {
+  name: string;
+  status: QualificationStatusValue;
+  expiresOn: string | null;
+  daysLeft: number | null;
+};
+
+export type ExpiringSoon = { in7: number; in15: number; in30: number };
+
 export type FitnessRow = {
   personaId: string;
   fullName: string;
@@ -41,6 +51,8 @@ export type FitnessRow = {
   expiring: boolean;
   /** Non-valid requirements, most severe first. */
   issues: FitnessIssue[];
+  /** Every required qualification of the task (valid ones included), by name. */
+  cells: FitnessCell[];
 };
 
 export type FitnessPage = {
@@ -52,6 +64,8 @@ export type FitnessPage = {
   task: FitnessTaskType | null;
   fitCount: number;
   unfitCount: number;
+  /** Expiring qualifications (persona x requirement) among the filtered personas, cumulative. */
+  expiringSoon: ExpiringSoon;
   /** Rows to display (the "show" filter applied). */
   rows: FitnessRow[];
 };
@@ -105,6 +119,12 @@ type RowRecord = {
   issues: {
     name: string;
     status: FitnessIssue["status"];
+    expires_on: string | null;
+    days_left: number | null;
+  }[];
+  cells: {
+    name: string;
+    status: QualificationStatusValue;
     expires_on: string | null;
     days_left: number | null;
   }[];
@@ -167,7 +187,23 @@ export async function loadFitnessPage(db: Db, filters: FitnessFilters): Promise<
                     and qs.task_type_id = f.task_type_id
                     and qs.status <> 'valid'),
                 '[]'::json
-              ) as issues
+              ) as issues,
+              coalesce(
+                (select json_agg(
+                          json_build_object(
+                            'name', qt.name,
+                            'status', qs.status,
+                            'expires_on', qs.expires_on,
+                            'days_left', qs.days_left
+                          )
+                          order by qt.name
+                        )
+                   from public.qualification_status qs
+                   join public.qualification_types qt on qt.id = qs.qualification_type_id
+                  where qs.persona_id = f.persona_id
+                    and qs.task_type_id = f.task_type_id),
+                '[]'::json
+              ) as cells
          from public.persona_task_fitness f
          join public.personas p on p.company_id = f.company_id and p.id = f.persona_id
          left join public.crews c on c.company_id = p.company_id and c.id = p.crew_id
@@ -199,12 +235,27 @@ export async function loadFitnessPage(db: Db, filters: FitnessFilters): Promise<
           apto: r.apto,
           expiring: r.apto && issues.some((i) => i.status === "expiring"),
           issues,
+          cells: r.cells.map((c) => ({
+            name: c.name,
+            status: c.status,
+            expiresOn: c.expires_on,
+            daysLeft: c.days_left,
+          })),
         };
       })
       .sort((a, b) => rank(a) - rank(b) || a.fullName.localeCompare(b.fullName, "es"));
   }
 
   const fitCount = all.filter((r) => r.apto).length;
+  const expiringSoon: ExpiringSoon = { in7: 0, in15: 0, in30: 0 };
+  for (const row of all) {
+    for (const c of row.cells) {
+      if (c.status !== "expiring" || c.daysLeft === null) continue;
+      if (c.daysLeft <= 7) expiringSoon.in7 += 1;
+      if (c.daysLeft <= 15) expiringSoon.in15 += 1;
+      if (c.daysLeft <= 30) expiringSoon.in30 += 1;
+    }
+  }
   return {
     taskTypes,
     crews: crewsRes.rows,
@@ -213,6 +264,7 @@ export async function loadFitnessPage(db: Db, filters: FitnessFilters): Promise<
     task,
     fitCount,
     unfitCount: all.length - fitCount,
+    expiringSoon,
     rows: filters.show === "unfit" ? all.filter((r) => !r.apto) : all,
   };
 }

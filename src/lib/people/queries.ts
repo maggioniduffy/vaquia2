@@ -11,6 +11,10 @@ export type PersonaRow = {
   crew_id: string | null;
   crew_name: string | null;
   active: boolean;
+  /** Task types the persona is not fit for (0 for inactive personas: the views skip them). */
+  unfit_tasks: number;
+  /** Required qualifications expiring within 30 days. */
+  expiring_count: number;
 };
 
 export type CrewRow = {
@@ -76,7 +80,11 @@ export async function listPersonas(userId: string, filters: PersonaFilters): Pro
   if (filters.active === "0") where.push("not p.active");
 
   const sql = `
-    select p.id, p.full_name, p.dni, p.crew_id, c.name as crew_name, p.active
+    select p.id, p.full_name, p.dni, p.crew_id, c.name as crew_name, p.active,
+      (select count(*)::int from public.persona_task_fitness f
+        where f.persona_id = p.id and not f.apto) as unfit_tasks,
+      (select count(distinct qs.qualification_type_id)::int from public.qualification_status qs
+        where qs.persona_id = p.id and qs.status = 'expiring') as expiring_count
     from public.personas p
     left join public.crews c on c.company_id = p.company_id and c.id = p.crew_id
     ${where.length ? `where ${where.join(" and ")}` : ""}

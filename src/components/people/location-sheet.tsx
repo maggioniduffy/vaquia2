@@ -36,11 +36,11 @@ export function LocationSheet({
       }
       trigger={
         primary ? (
-          <Button variant="primary" size="touch" className="md:h-9 md:text-sm">
+          <Button variant="primary" className="h-10 md:h-8">
             {t.locations.new}
           </Button>
         ) : (
-          <Button variant="ghost" className="min-h-12 md:min-h-9">
+          <Button variant="ghost" size="sm" className="min-h-12 md:min-h-7">
             {t.locations.edit}
           </Button>
         )

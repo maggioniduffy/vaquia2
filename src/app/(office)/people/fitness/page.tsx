@@ -1,36 +1,78 @@
 import Link from "next/link";
-import { PageHeader } from "@/components/shell/page-header";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { FilterSelect } from "@/components/people/filter-select";
+import { Mono, PageTitle } from "@/components/people/page-title";
+import { StatusBadge, StatusDot } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
-import { Label, Select } from "@/components/ui/select";
+import { CheckIcon } from "@/components/ui/icons";
 import { Table, TBody, Td, Th, THead, Tr } from "@/components/ui/table";
 import { t } from "@/i18n/es-AR";
+import { formatDateAr, todayInArt } from "@/lib/dates";
+import { cn } from "@/lib/cn";
 import { withUser } from "@/lib/db";
 import {
-  describeIssue,
   loadFitnessPage,
   parseFitnessParams,
+  type FitnessCell,
   type FitnessRow,
 } from "@/lib/people/fitness";
 import { getSession } from "@/lib/session";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
-function StatusBadge({ row }: { row: FitnessRow }) {
-  if (!row.apto) return <Badge tone="danger">{t.fitness.unfit}</Badge>;
-  if (row.expiring) return <Badge tone="warning">{t.fitness.fitExpiring}</Badge>;
-  return <Badge tone="neutral">{t.fitness.fit}</Badge>;
+const f = t.fitness;
+
+/** One requirement cell: valid = neutral check + date, expiring = hollow amber, expired/missing = red. */
+function Cell({ cell }: { cell: FitnessCell | undefined }) {
+  const base = "inline-flex items-center gap-1.5 font-mono text-xs tabular-nums";
+  const date = cell?.expiresOn ? formatDateAr(cell.expiresOn) : "—";
+  if (!cell || cell.status === "missing") {
+    return (
+      <span className={cn(base, "text-danger gap-[7px] font-medium")}>
+        <StatusDot status="expired" />
+        {f.missing}
+      </span>
+    );
+  }
+  if (cell.status === "expired") {
+    return (
+      <span className={cn(base, "text-danger gap-[7px] font-medium")}>
+        <StatusDot status="expired" />
+        {date}
+      </span>
+    );
+  }
+  if (cell.status === "expiring") {
+    return (
+      <span className={cn(base, "text-warning gap-[7px] font-medium")}>
+        <StatusDot status="expiring" />
+        {date}
+      </span>
+    );
+  }
+  return (
+    <span className={cn(base, "text-muted")}>
+      <CheckIcon size={13} />
+      {date}
+    </span>
+  );
 }
 
-function Reasons({ row }: { row: FitnessRow }) {
-  if (row.issues.length === 0) return <span className="text-muted">—</span>;
+function Result({ row }: { row: FitnessRow }) {
+  return row.apto ? (
+    <StatusBadge status="valid">{f.fit}</StatusBadge>
+  ) : (
+    <StatusBadge status="blocked">{f.unfit}</StatusBadge>
+  );
+}
+
+function Soon({ value, label, warn }: { value: number; label: string; warn?: boolean }) {
   return (
-    <ul className="space-y-0.5">
-      {row.issues.map((issue) => (
-        <li key={`${issue.name}-${issue.status}`}>{describeIssue(issue)}</li>
-      ))}
-    </ul>
+    <span className="flex items-baseline gap-1.5">
+      <Mono className={cn("text-xl font-semibold", warn && value > 0 && "text-warning")}>
+        {value}
+      </Mono>
+      <span className="text-muted">{label}</span>
+    </span>
   );
 }
 
@@ -38,147 +80,148 @@ export default async function FitnessPage({ searchParams }: { searchParams: Sear
   const { userId } = await getSession();
   const filters = parseFitnessParams(await searchParams);
   const page = await withUser(userId, (db) => loadFitnessPage(db, filters));
-  const f = t.fitness;
 
   if (!page.task) {
     return (
-      <>
-        <PageHeader title={f.title} />
+      <div className="flex flex-col gap-4">
+        <PageTitle title={f.title} />
         <EmptyState message={f.noTaskTypes} />
-      </>
+      </div>
     );
   }
 
+  const { task, expiringSoon } = page;
+  const crewId = page.filters.crewId ?? "";
+  const locationId = page.filters.locationId ?? "";
+  const requirements = task.requirements;
+
   return (
-    <>
-      <PageHeader title={f.title} />
+    <div className="flex flex-col gap-4">
+      <PageTitle
+        title={f.title}
+        subtitle={
+          <>
+            {f.subtitleAt} <Mono>{formatDateAr(todayInArt())}</Mono>
+          </>
+        }
+      />
 
-      <form method="get" className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5 lg:items-end">
-        <div className="space-y-1">
-          <Label htmlFor="task">{f.filterTask}</Label>
-          <Select id="task" name="task" defaultValue={page.task.id}>
-            {page.taskTypes.map((tt) => (
-              <option key={tt.id} value={tt.id}>
-                {tt.name}
-              </option>
-            ))}
-          </Select>
-        </div>
-        <div className="space-y-1">
-          <Label htmlFor="crew">{f.filterCrew}</Label>
-          <Select id="crew" name="crew" defaultValue={page.filters.crewId ?? ""}>
-            <option value="">{f.allCrews}</option>
-            {page.crews.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </Select>
-        </div>
-        <div className="space-y-1">
-          <Label htmlFor="location">{f.filterLocation}</Label>
-          <Select id="location" name="location" defaultValue={page.filters.locationId ?? ""}>
-            <option value="">{f.allLocations}</option>
-            {page.locations.map((l) => (
-              <option key={l.id} value={l.id}>
-                {l.name}
-              </option>
-            ))}
-          </Select>
-        </div>
-        <div className="space-y-1">
-          <Label htmlFor="show">{f.filterShow}</Label>
-          <Select id="show" name="show" defaultValue={page.filters.show}>
-            <option value="all">{f.showAll}</option>
-            <option value="unfit">{f.showUnfit}</option>
-          </Select>
-        </div>
-        <Button type="submit" variant="primary">
-          {f.apply}
-        </Button>
-      </form>
-
-      <div className="mb-4 space-y-1 text-sm">
-        <p>
+      <form method="get" className="flex flex-wrap items-center gap-2">
+        <FilterSelect
+          name="task"
+          label={f.filterTask}
+          value={task.id}
+          options={page.taskTypes.map((tt) => ({ value: tt.id, label: tt.name }))}
+          active
+        />
+        <FilterSelect
+          name="crew"
+          label={f.filterCrew}
+          value={crewId}
+          options={[
+            { value: "", label: f.allCrews },
+            ...page.crews.map((c) => ({ value: c.id, label: c.name })),
+          ]}
+          active={Boolean(crewId)}
+        />
+        <FilterSelect
+          name="location"
+          label={f.filterLocation}
+          value={locationId}
+          options={[
+            { value: "", label: f.allLocations },
+            ...page.locations.map((l) => ({ value: l.id, label: l.name })),
+          ]}
+          active={Boolean(locationId)}
+        />
+        <FilterSelect
+          name="show"
+          label={f.filterShow}
+          value={page.filters.show}
+          options={[
+            { value: "all", label: f.showAll },
+            { value: "unfit", label: f.showUnfit },
+          ]}
+          active={page.filters.show !== "all"}
+        />
+        <noscript>
+          <button type="submit">{f.apply}</button>
+        </noscript>
+        <span className="flex-1" />
+        <p className="text-muted">
           {f.summary.split(/(\{fit\}|\{unfit\})/).map((part, i) =>
-            part === "{fit}" || part === "{unfit}" ? (
-              <span key={i} className="font-mono tabular-nums">
-                {part === "{fit}" ? page.fitCount : page.unfitCount}
-              </span>
+            part === "{fit}" ? (
+              <Mono key={i} className="text-text">
+                {page.fitCount}
+              </Mono>
+            ) : part === "{unfit}" ? (
+              <Mono key={i} className={cn(page.unfitCount > 0 && "text-danger")}>
+                {page.unfitCount}
+              </Mono>
             ) : (
               part
             ),
           )}
         </p>
-        <p className="text-muted">
-          {page.task.requirements.length > 0
-            ? `${f.requires} ${page.task.requirements.join(", ")}`
-            : f.requiresNothing}
-        </p>
-      </div>
+      </form>
+
+      <section
+        aria-label={f.soon.title}
+        className="bg-surface border-border border-l-warning flex flex-wrap items-center gap-x-6 gap-y-2 rounded-[var(--radius-panel)] border border-l-2 px-4 py-3"
+      >
+        <span className="font-medium">{f.soon.title}</span>
+        <Soon value={expiringSoon.in7} label={f.soon.in7} warn />
+        <Soon value={expiringSoon.in15} label={f.soon.in15} />
+        <Soon value={expiringSoon.in30} label={f.soon.in30} />
+      </section>
+
+      <p className="text-muted -mb-2 text-sm">
+        {requirements.length > 0 ? `${f.requires} ${requirements.join(", ")}` : f.requiresNothing}
+      </p>
 
       {page.rows.length === 0 ? (
         <EmptyState message={page.filters.show === "unfit" ? f.emptyUnfit : f.empty} />
       ) : (
-        <>
-          <div className="hidden md:block">
-            <Table>
-              <THead>
-                <Tr>
-                  <Th>{f.colPersona}</Th>
-                  <Th>{f.colDni}</Th>
-                  <Th>{f.colCrew}</Th>
-                  <Th>{f.colStatus}</Th>
-                  <Th>{f.colReason}</Th>
-                </Tr>
-              </THead>
-              <TBody>
-                {page.rows.map((row) => (
-                  <Tr key={row.personaId} className="align-top">
-                    <Td className="py-2.5">
-                      <Link
-                        href={`/people/${row.personaId}`}
-                        className="underline-offset-2 hover:underline"
-                      >
-                        {row.fullName}
-                      </Link>
-                    </Td>
-                    <Td className="py-2.5 font-mono tabular-nums">{row.dni}</Td>
-                    <Td className="py-2.5">
-                      {row.crewName ?? <span className="text-muted">{f.noCrew}</span>}
-                    </Td>
-                    <Td className="py-2.5 whitespace-nowrap">
-                      <StatusBadge row={row} />
-                    </Td>
-                    <Td className="py-2.5">
-                      <Reasons row={row} />
-                    </Td>
-                  </Tr>
+        <div className="bg-surface border-border overflow-hidden rounded-[var(--radius-panel)] border">
+          <Table>
+            <THead>
+              <Tr className="hover:bg-transparent">
+                <Th className="h-11 px-4">{f.colPersona}</Th>
+                <Th className="h-11">{f.colCrew}</Th>
+                {requirements.map((name) => (
+                  <Th key={name} className="h-11 leading-[1.3]">
+                    {name}
+                  </Th>
                 ))}
-              </TBody>
-            </Table>
-          </div>
-
-          <ul className="divide-border divide-y md:hidden">
-            {page.rows.map((row) => (
-              <li key={row.personaId} className="space-y-1 py-3 text-sm">
-                <div className="flex items-start justify-between gap-3">
-                  <Link href={`/people/${row.personaId}`} className="font-medium">
-                    {row.fullName}
-                  </Link>
-                  <StatusBadge row={row} />
-                </div>
-                <p className="text-muted">
-                  <span className="font-mono tabular-nums">{row.dni}</span>
-                  {" · "}
-                  {row.crewName ?? f.noCrew}
-                </p>
-                {row.issues.length > 0 && <Reasons row={row} />}
-              </li>
-            ))}
-          </ul>
-        </>
+                <Th className="h-11">{f.colResult}</Th>
+              </Tr>
+            </THead>
+            <TBody>
+              {page.rows.map((row) => (
+                <Tr key={row.personaId} className="last:border-b-0">
+                  <Td className="px-4 whitespace-nowrap">
+                    <Link
+                      href={`/people/${row.personaId}`}
+                      className="underline-offset-2 hover:underline"
+                    >
+                      {row.fullName}
+                    </Link>
+                  </Td>
+                  <Td className="text-muted whitespace-nowrap">{row.crewName ?? f.noCrew}</Td>
+                  {requirements.map((name) => (
+                    <Td key={name} className="whitespace-nowrap">
+                      <Cell cell={row.cells.find((c) => c.name === name)} />
+                    </Td>
+                  ))}
+                  <Td className="whitespace-nowrap">
+                    <Result row={row} />
+                  </Td>
+                </Tr>
+              ))}
+            </TBody>
+          </Table>
+        </div>
       )}
-    </>
+    </div>
   );
 }

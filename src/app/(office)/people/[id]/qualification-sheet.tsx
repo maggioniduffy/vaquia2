@@ -22,7 +22,7 @@ type Props = {
   today: string;
   /** Renewal: type is fixed. Omit for "add". */
   renewType?: { id: string; name: string };
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "link";
 };
 
 const q = t.qualifications;
@@ -39,7 +39,17 @@ export function QualificationSheet({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant={variant}>{renewType ? q.renew : q.add}</Button>
+        {variant === "link" ? (
+          <button
+            type="button"
+            aria-label={renewType ? `${q.renew}: ${renewType.name}` : q.add}
+            className="text-accent hover:text-accent-hover shrink-0 text-xs font-medium"
+          >
+            {renewType ? q.renew : t.people.panel.add}
+          </button>
+        ) : (
+          <Button variant={variant}>{renewType ? q.renew : q.add}</Button>
+        )}
       </SheetTrigger>
       <SheetContent
         title={renewType ? q.renewTitle(renewType.name) : q.addTitle}
