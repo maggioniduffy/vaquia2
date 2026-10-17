@@ -40,6 +40,9 @@ Rules:
 - Append-only tables (`audit_log`, `rule_evaluations`, `notifications`, `period_snapshots`, `exports`): no UPDATE/DELETE, ever.
 - Locked records are never edited — corrections are amendment records.
 - Migrations: plain SQL with dbmate (`db/migrations`, `-- migrate:up` / `-- migrate:down`). Never edit an applied migration.
+- **Migration gate (`.env.local` points at Neon = production):** a migration is applied to Neon only after `pnpm db:verify` is green (local Docker Postgres: fresh migrate, rollback + re-up of the latest, full `test:db`). Until it is applied anywhere but local, fix the file in place instead of adding a follow-up migration. Write the DB test that exercises the change (including INSERT/UPDATE/DELETE on *every* table a shared trigger/function touches) before applying. This overrides "tests once per phase" for DB changes.
+- Shared plpgsql trigger functions: never write `old.col`/`new.col` for a column only some tables have (plpgsql resolves the field even inside a false `and`); read it via `to_jsonb(new) ->> 'col'` or a nested `if tg_table_name = ...`.
+- Aim for one migration per coherent change; plan the schema in the phase plan so fixes don't need follow-up migrations.
 - Tenant data access only through `withUser()` (`src/lib/db`): it runs as the `authenticated` role so RLS applies. The bare pool is the table owner and bypasses RLS — Better Auth and scripts only.
 - Every new table: explicit `grant` to `authenticated` (no default privileges).
 - UI follows `docs/spec/design.md`: greys + teal accent for actions/focus/selection; red/amber only as dots or thin borders.
@@ -47,7 +50,7 @@ Rules:
 
 ## Commands
 - `pnpm dev` · `pnpm lint` · `pnpm typecheck` · `pnpm test` · `pnpm test:e2e`
-- `docker compose up -d` (local Postgres) · `pnpm db:migrate` · `pnpm db:reset` (local only) · `pnpm db:seed` · `pnpm db:new <name>` · `pnpm test:db`
+- `docker compose up -d` (local Postgres) · `pnpm db:migrate` · `pnpm db:reset` (local only) · `pnpm db:seed` · `pnpm db:new <name>` · `pnpm test:db` · `pnpm db:verify` (local migrate + rollback + DB tests; required before any Neon migrate)
 
 ## Cost awareness
 Prefer free tiers and boring tech. Flag any new paid service before adding it.
