@@ -20,17 +20,17 @@ export function SheetContent({
 }) {
   return (
     <D.Portal>
-      <D.Overlay className="fixed inset-0 bg-black/40" />
-      <D.Content className="border-border bg-bg fixed inset-x-0 bottom-0 flex max-h-[90dvh] flex-col rounded-t-[var(--radius-panel)] border-t md:inset-x-auto md:inset-y-0 md:right-0 md:max-h-none md:w-full md:max-w-md md:rounded-none md:border-t-0 md:border-l">
+      <D.Overlay className="bg-scrim fixed inset-0" />
+      <D.Content className="border-border bg-surface fixed inset-x-0 bottom-0 flex max-h-[90dvh] flex-col rounded-t-[var(--radius-panel)] border-t shadow-[var(--shadow-sheet)] md:inset-x-auto md:inset-y-0 md:right-0 md:max-h-none md:w-full md:max-w-md md:rounded-none md:border-t-0 md:border-l">
         <div className="border-border flex items-start justify-between gap-4 border-b p-4">
           <div>
-            <D.Title className="text-base font-medium">{title}</D.Title>
+            <D.Title className="text-sm font-medium">{title}</D.Title>
             {description ? (
               <D.Description className="text-muted mt-1 text-sm">{description}</D.Description>
             ) : null}
           </div>
           <D.Close
-            className="text-muted hover:bg-surface min-h-9 shrink-0 rounded-[var(--radius-control)] px-2 py-1 text-xs"
+            className="text-muted hover:bg-hover min-h-9 shrink-0 rounded-[var(--radius-control)] px-2 py-1 text-xs"
             aria-label={t.common.close}
           >
             {t.common.close}

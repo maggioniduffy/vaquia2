@@ -91,7 +91,12 @@ export const t = {
   },
   nav: {
     office: {
-      dashboard: "Tablero",
+      home: "Inicio",
+      close: "Cierre mensual",
+      exports: "Exportaciones",
+      qualifications: "Habilitaciones",
+      kpis: "Indicadores",
+      dashboard: "Inicio",
       records: "Registros",
       people: "Personal",
       actions: "Acciones",
@@ -106,6 +111,29 @@ export const t = {
     },
     toField: "Vista campo",
     toOffice: "Vista oficina",
+  },
+  theme: {
+    toggle: "Cambiar tema",
+    light: "Tema claro",
+    dark: "Tema oscuro",
+  },
+  status: {
+    blocked: "Bloqueado",
+    warning: "Advertencia",
+    expiring: "Vence pronto",
+    expired: "Vencido",
+    valid: "Válido",
+    pending: "Pendiente de sincronizar",
+  },
+  sync: {
+    synced: "Sincronizado",
+    offline: (n: number) => `Sin conexión · ${n} pendientes`,
+    sending: (done: number, total: number) => `Enviando ${done} de ${total}…`,
+  },
+  greeting: {
+    morning: (name: string) => `Buen día, ${name}`,
+    afternoon: (name: string) => `Buenas tardes, ${name}`,
+    evening: (name: string) => `Buenas noches, ${name}`,
   },
   empty: {
     dashboard: "Todavía no hay datos para mostrar.",

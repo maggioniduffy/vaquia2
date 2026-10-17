@@ -20,7 +20,7 @@ function fileHref(key: string): string {
 }
 
 function StatusBadge({ row }: { row: CurrentQualificationRow }) {
-  let tone: Tone = "success";
+  let tone: Tone = "neutral";
   let label: string = q.status.valid;
   if (row.status === "expired" && row.expires_on) {
     tone = "danger";
@@ -77,7 +77,7 @@ export default async function PersonaDetailPage({ params }: { params: Promise<{ 
           <div>
             <dt className="text-muted text-xs">{q.persona.state}</dt>
             <dd>
-              <Badge tone={persona.active ? "success" : "neutral"}>
+              <Badge tone={"neutral"}>
                 {persona.active ? q.persona.active : q.persona.inactive}
               </Badge>
             </dd>
@@ -125,7 +125,7 @@ export default async function PersonaDetailPage({ params }: { params: Promise<{ 
             {fitness.map((f) => (
               <li key={f.task_type_id} className="flex items-center gap-2">
                 <span>{f.task_name}</span>
-                <Badge tone={f.apto ? "success" : "danger"}>
+                <Badge tone={f.apto ? "neutral" : "danger"}>
                   {f.apto ? q.fitness.apto : q.fitness.noApto}
                 </Badge>
               </li>

@@ -20,7 +20,7 @@ type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 function StatusBadge({ row }: { row: FitnessRow }) {
   if (!row.apto) return <Badge tone="danger">{t.fitness.unfit}</Badge>;
   if (row.expiring) return <Badge tone="warning">{t.fitness.fitExpiring}</Badge>;
-  return <Badge tone="success">{t.fitness.fit}</Badge>;
+  return <Badge tone="neutral">{t.fitness.fit}</Badge>;
 }
 
 function Reasons({ row }: { row: FitnessRow }) {

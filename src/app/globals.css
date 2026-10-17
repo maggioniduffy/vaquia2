@@ -1,47 +1,59 @@
 @import "tailwindcss";
 
-/* Tokens — docs/spec/design.md. Greys carry everything; color only means something. */
+/* Tokens — docs/spec/design.md. Greys carry the UI; teal = action/focus/selection; red/amber = dot or thin border. */
 :root {
-  --bg: #ffffff;
+  --bg: #f2f2f3;
   --surface: #fafafa;
-  --border: #e5e5e5;
-  --text: #0a0a0a;
-  --text-muted: #737373;
-  --accent: #0a0a0a;
+  --border: #e4e4e7;
+  --text: #18181b;
+  --text-muted: #71717a;
+  --accent: #0e9f9a;
+  --accent-hover: #0b807c;
+  --accent-subtle: rgba(14, 159, 154, 0.1);
   --accent-text: #ffffff;
   --danger: #dc2626;
   --warning: #d97706;
-  --success: #16a34a;
+  --hover: #f1f1f2;
+  --scrim: rgba(24, 24, 27, 0.1);
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%27180%27 height=%27180%27><filter id=%27n%27><feTurbulence type=%27fractalNoise%27 baseFrequency=%27.85%27 numOctaves=%272%27 stitchTiles=%27stitch%27/><feColorMatrix values=%270 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 -0.2%27/></filter><rect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23n)%27 opacity=%27.07%27/></svg>");
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0a0a0a;
-    --surface: #111111;
-    --border: #262626;
-    --text: #fafafa;
-    --text-muted: #a3a3a3;
-    --accent: #fafafa;
-    --accent-text: #0a0a0a;
+    --bg: #1c1c1f;
+    --surface: #232327;
+    --border: #2e2e33;
+    --text: #f4f4f5;
+    --text-muted: #a1a1aa;
+    --accent: #2dd4bf;
+    --accent-hover: #5eead4;
+    --accent-subtle: rgba(45, 212, 191, 0.12);
+    --accent-text: #0b2a27;
     --danger: #f87171;
     --warning: #fbbf24;
-    --success: #4ade80;
+    --hover: #29292e;
+    --scrim: rgba(0, 0, 0, 0.35);
+    --grain: url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%27180%27 height=%27180%27><filter id=%27n%27><feTurbulence type=%27fractalNoise%27 baseFrequency=%27.85%27 numOctaves=%272%27 stitchTiles=%27stitch%27/><feColorMatrix values=%270 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.2 -0.2%27/></filter><rect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23n)%27 opacity=%27.05%27/></svg>");
     color-scheme: dark;
   }
 }
 
 :root[data-theme="dark"] {
-  --bg: #0a0a0a;
-  --surface: #111111;
-  --border: #262626;
-  --text: #fafafa;
-  --text-muted: #a3a3a3;
-  --accent: #fafafa;
-  --accent-text: #0a0a0a;
+  --bg: #1c1c1f;
+  --surface: #232327;
+  --border: #2e2e33;
+  --text: #f4f4f5;
+  --text-muted: #a1a1aa;
+  --accent: #2dd4bf;
+  --accent-hover: #5eead4;
+  --accent-subtle: rgba(45, 212, 191, 0.12);
+  --accent-text: #0b2a27;
   --danger: #f87171;
   --warning: #fbbf24;
-  --success: #4ade80;
+  --hover: #29292e;
+  --scrim: rgba(0, 0, 0, 0.35);
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%27180%27 height=%27180%27><filter id=%27n%27><feTurbulence type=%27fractalNoise%27 baseFrequency=%27.85%27 numOctaves=%272%27 stitchTiles=%27stitch%27/><feColorMatrix values=%270 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.2 -0.2%27/></filter><rect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23n)%27 opacity=%27.05%27/></svg>");
   color-scheme: dark;
 }
 
@@ -52,10 +64,13 @@
   --color-text: var(--text);
   --color-muted: var(--text-muted);
   --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-subtle: var(--accent-subtle);
   --color-accent-text: var(--accent-text);
   --color-danger: var(--danger);
   --color-warning: var(--warning);
-  --color-success: var(--success);
+  --color-hover: var(--hover);
+  --color-scrim: var(--scrim);
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
@@ -69,6 +84,10 @@
 
   --radius-control: 6px;
   --radius-panel: 8px;
+
+  --shadow-toast: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-dialog: 0 16px 40px rgba(0, 0, 0, 0.18);
+  --shadow-sheet: -12px 0 32px rgba(0, 0, 0, 0.12);
 }
 
 @layer base {
@@ -76,14 +95,22 @@
     border-color: var(--border);
   }
   body {
-    background: var(--bg);
+    background-color: var(--bg);
+    background-image: var(--grain);
     color: var(--text);
     font-family: var(--font-sans);
     font-size: 14px;
     -webkit-font-smoothing: antialiased;
   }
+  a {
+    color: var(--accent);
+  }
+  a:hover {
+    color: var(--accent-hover);
+  }
   :focus-visible {
-    outline: 2px solid var(--text);
-    outline-offset: 2px;
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-subtle);
   }
 }
