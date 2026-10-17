@@ -19,14 +19,21 @@ test("unauthenticated users are sent to login", async ({ page }) => {
 test("HSE logs in and sees the office shell of their company", async ({ page }, info) => {
   await login(page, "hse@petrosur.test");
   await expect(page).toHaveURL(/\/dashboard$/);
-  await expect(page.getByRole("heading", { name: /^(Buen día|Buenas tardes|Buenas noches), / })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: /^(Buen día|Buenas tardes|Buenas noches), / }),
+  ).toBeVisible();
   await expect(page.getByTestId("company-name")).toHaveText("Petrosur Servicios SRL");
+  // Mobile: the nav lives in the menu dialog.
+  if (info.project.name.startsWith("mobile")) {
+    await page.getByRole("button", { name: "Abrir menú", exact: true }).click();
+  }
   await expect(page.getByRole("link", { name: "Registros" })).toBeVisible();
 
+  // Page background tokens from docs/spec/design.md (--bg).
   const dark = info.project.name.endsWith("dark");
   await expect(page.locator("body")).toHaveCSS(
     "background-color",
-    rgb(dark ? "#1c1c1f" : "#f2f2f3"),
+    rgb(dark ? "#0d1820" : "#f5f7fa"),
   );
 });
 
@@ -56,10 +63,15 @@ test("user with two companies can switch between them", async ({ page }, info) =
   await expect(page.getByTestId("company-name")).toHaveCount(0);
 });
 
-test("signing out ends the session", async ({ page }) => {
+test("signing out ends the session", async ({ page }, info) => {
   await login(page, "hse@petrosur.test");
   await expect(page).toHaveURL(/\/dashboard$/);
-  await page.getByRole("button", { name: "Menú de usuario" }).click();
+  // Desktop: user menu in the header. Mobile: sign-out is in the menu dialog.
+  if (info.project.name.startsWith("mobile")) {
+    await page.getByRole("button", { name: "Abrir menú", exact: true }).click();
+  } else {
+    await page.getByRole("button", { name: "Menú de usuario" }).click();
+  }
   await page.getByRole("button", { name: "Cerrar sesión" }).click();
   await expect(page).toHaveURL(/\/login/);
   await page.goto("/dashboard");
