@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { t } from "@/i18n/es-AR";
@@ -26,11 +27,11 @@ export function PersonaSheet({
       successMessage={editing ? t.people.updated : t.people.created}
       trigger={
         primary ? (
-          <Button variant="primary" size="touch" className="md:h-9 md:text-sm">
+          <Button variant="primary" className="h-10 md:h-8">
             {t.people.new}
           </Button>
         ) : (
-          <Button variant="ghost" className="min-h-12 md:min-h-9">
+          <Button variant="ghost" size="sm" className="min-h-12 md:min-h-7">
             {t.people.edit}
           </Button>
         )
@@ -84,15 +85,12 @@ export function PersonaSheet({
             </Select>
           </Field>
           <div className="flex flex-col gap-1">
-            <label className="flex min-h-12 items-center gap-3 text-sm md:min-h-9">
-              <input
-                type="checkbox"
-                name="active"
-                defaultChecked={persona?.active ?? true}
-                className="size-5 md:size-4"
-              />
-              {t.people.fields.active}
-            </label>
+            <Checkbox
+              name="active"
+              defaultChecked={persona?.active ?? true}
+              label={t.people.fields.active}
+              className="size-4"
+            />
             <p className="text-muted text-xs">{t.people.fields.activeHint}</p>
           </div>
         </>

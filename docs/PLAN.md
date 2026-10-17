@@ -4,10 +4,11 @@ Read only the current phase file. Status: `todo` · `doing` · `review` · `done
 
 | # | Phase | File | Status |
 |---|---|---|---|
-| 0 | Foundations: repo, auth, tenancy, RLS, design system, CI | `phases/phase-0.md` | review |
+| 0 | Foundations: repo, auth, tenancy, RLS, design system, CI | `phases/phase-0.md` | done |
 | 1 | People, crews, locations, qualifications | `phases/phase-1.md` | doing |
 | 2 | Field capture: toolbox talk + ATS, offline, signatures | `phases/phase-2.md` | todo |
 | 3 | Validation engine (Layer 1) + audit log | `phases/phase-3.md` | todo |
+| 3b | Company forms: builder, extensions of charla/ATS, field rules | `phases/phase-3b.md` | todo |
 | 4 | Findings + corrective actions | `phases/phase-4.md` | todo |
 | 5 | **A1** qualification expiry alerts + notifications | `phases/phase-5.md` | todo |
 | 6 | Man-hours, incidents, KPIs | `phases/phase-6.md` | todo |

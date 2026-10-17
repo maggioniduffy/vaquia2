@@ -121,7 +121,7 @@ export function EntitySheet({
             </p>
           ) : null}
 
-          <div className="flex flex-col gap-2 pt-2">
+          <div className="flex flex-col gap-2 pt-2 md:flex-row-reverse md:justify-start">
             <Button
               type="submit"
               variant="primary"

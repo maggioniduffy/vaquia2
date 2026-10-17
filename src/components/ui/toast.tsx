@@ -4,24 +4,28 @@ import { Toast as T } from "radix-ui";
 import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import type { Tone } from "@/components/ui/badge";
+import { CheckIcon } from "@/components/ui/icons";
 
-type ToastItem = { id: number; message: string; tone: Tone };
-type ToastFn = (message: string, tone?: Tone) => void;
+/** "success" is an alias of "neutral" (no green in the system): neutral border + check icon. */
+type ToastTone = Tone | "success";
+type ToastAction = { label: string; onClick: () => void };
+type ToastItem = { id: number; message: string; tone: ToastTone; action?: ToastAction };
+type ToastFn = (message: string, tone?: ToastTone, action?: ToastAction) => void;
 
 const ToastContext = createContext<ToastFn | null>(null);
 
-const border: Record<Tone, string> = {
-  neutral: "border-l-border",
-  danger: "border-l-danger",
-  warning: "border-l-warning",
-  success: "border-l-success",
+const border: Record<ToastTone, string> = {
+  neutral: "",
+  success: "",
+  danger: "border-l-danger border-l-2",
+  warning: "border-l-warning border-l-2",
 };
 
 export function Toaster({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<ToastItem[]>([]);
 
-  const toast = useCallback<ToastFn>((message, tone = "neutral") => {
-    setItems((prev) => [...prev, { id: Date.now() + Math.random(), message, tone }]);
+  const toast = useCallback<ToastFn>((message, tone = "neutral", action) => {
+    setItems((prev) => [...prev, { id: Date.now() + Math.random(), message, tone, action }]);
   }, []);
 
   return (
@@ -35,14 +39,28 @@ export function Toaster({ children }: { children: ReactNode }) {
               if (!open) setItems((prev) => prev.filter((i) => i.id !== item.id));
             }}
             className={cn(
-              "border-border bg-bg rounded-[var(--radius-panel)] border border-l-2 px-4 py-3 text-sm shadow-lg",
+              "border-border bg-surface flex items-center gap-3 rounded-[var(--radius-panel)] border px-4 py-3 text-sm shadow-[var(--shadow-toast)]",
               border[item.tone],
             )}
           >
-            <T.Description>{item.message}</T.Description>
+            {item.tone === "neutral" || item.tone === "success" ? (
+              <CheckIcon size={16} className="text-muted shrink-0" />
+            ) : null}
+            <T.Description className="flex-1">{item.message}</T.Description>
+            {item.action ? (
+              <T.Action altText={item.action.label} asChild>
+                <button
+                  type="button"
+                  onClick={item.action.onClick}
+                  className="text-accent-strong hover:text-accent-hover font-medium"
+                >
+                  {item.action.label}
+                </button>
+              </T.Action>
+            ) : null}
           </T.Root>
         ))}
-        <T.Viewport className="fixed right-4 bottom-20 z-50 flex w-[calc(100vw-32px)] max-w-sm flex-col gap-2 md:bottom-4" />
+        <T.Viewport className="fixed right-4 bottom-4 z-50 flex w-[calc(100vw-32px)] max-w-sm flex-col gap-2 md:bottom-4" />
       </T.Provider>
     </ToastContext.Provider>
   );

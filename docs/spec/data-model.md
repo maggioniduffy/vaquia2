@@ -7,7 +7,7 @@ All tenant tables have `id uuid (v7, client-generatable)`, `company_id uuid`, `c
 |---|---|---|
 | `users`, `sessions`, `accounts`, `verifications` | Better Auth (see `src/lib/auth-options.ts`); `users.is_anonymous` for temporary guest sessions | not tenant tables; never granted to `authenticated` |
 | `companies` | name, cuit, plan, settings jsonb | settings: report_day, timezone, kpi_base |
-| `memberships` | user_id, company_id, role enum(worker, supervisor, hse, manager, admin), persona_id? | role lives here |
+| `memberships` | user_id, company_id, role enum(worker, supervisor, hse, manager, admin), persona_id? | role lives here; `persona_id` unique per company (one login per persona); link/unlink and role changes are admin-only; the last admin can't be demoted or removed, and admins can't remove themselves |
 | `user_settings` | user_id (pk), active_company_id | user-scoped, not tenant. Written only via `set_active_company()`. `current_company_id()` = active company if still a member, else oldest membership. `my_companies()` feeds the switcher. |
 
 ## People & places
@@ -43,8 +43,9 @@ Files (certificates): stored by `src/lib/storage` under `{company_id}/qualificat
 ## Records
 | Table | Key columns | Notes |
 |---|---|---|
-| `record_types` | code (toolbox_talk, ats…), current_schema_version | global |
-| `records` | type, schema_version, status enum, occurred_at, crew_id, location_id, task_type_id?, author_id, payload jsonb, geo, device_id, amends_record_id? | status per spec/workflow.md#Record states |
+| `record_types` | company_id? (null = global built-in), code (unique per company; toolbox_talk, ats…), name, active | built-ins read-only; company types written by `admin` (spec/forms.md) |
+| `form_schemas` | record_type_id, company_id?, kind (base, extension), version, schema jsonb, status (draft, published, retired), published_at, published_by | published rows immutable; one published per type × kind × company; extensions only for global types |
+| `records` | type, schema_version, extension_version?, status enum, occurred_at, crew_id, location_id, task_type_id?, author_id, payload jsonb, geo, device_id, amends_record_id? | status per spec/workflow.md#Record states |
 | `record_participants` | record_id, persona_id, role (attendee, signer, responsible) | |
 | `signatures` | record_id, persona_id, image_path, signed_at, geo, content_hash | |
 | `attachments` | owner_type, owner_id, path, mime, taken_at, geo | photos/evidence |
@@ -52,7 +53,7 @@ Files (certificates): stored by `src/lib/storage` under `{company_id}/qualificat
 ## Validation & audit (append-only)
 | Table | Key columns | Notes |
 |---|---|---|
-| `rules` | code, version, record_type, logic jsonb, severity, message_template, active | new row per version |
+| `rules` | company_id? (null = global), code, version, record_type, logic jsonb, severity, message_template, active | new row per version; company rules only reference the company's own fields (spec/forms.md) |
 | `rule_evaluations` | record_id, rule_id+version, result, severity, explanation, input_hash, evaluated_at | append-only |
 | `alert_feedback` | rule_evaluation_id, user_id, kind (false_positive, ack), note | |
 | `audit_log` | actor_id, entity, entity_id, action, diff jsonb, at | append-only, trigger-fed |

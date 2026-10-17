@@ -1,4 +1,5 @@
 import { LocationSheet } from "@/components/people/location-sheet";
+import { Mono, PageTitle } from "@/components/people/page-title";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Table, TBody, Td, Th, THead, Tr } from "@/components/ui/table";
 import { t } from "@/i18n/es-AR";
@@ -19,22 +20,22 @@ export default async function LocationsPage() {
   ]);
 
   return (
-    <div className="flex flex-col gap-6">
-      {canWrite ? (
-        <div className="flex md:justify-end">
-          <LocationSheet operators={operators} primary />
-        </div>
-      ) : null}
+    <div className="flex flex-col gap-4">
+      <PageTitle
+        title={t.people.tabs.locations}
+        subtitle={<Mono>{locations.length}</Mono>}
+        actions={canWrite ? <LocationSheet operators={operators} primary /> : null}
+      />
 
       {locations.length === 0 ? (
         <EmptyState message={t.locations.empty} />
       ) : (
         <>
-          <div className="hidden md:block">
+          <div className="bg-surface border-border hidden overflow-hidden rounded-[var(--radius-panel)] border md:block">
             <Table>
               <THead>
                 <Tr>
-                  <Th>{t.locations.columns.name}</Th>
+                  <Th className="px-4">{t.locations.columns.name}</Th>
                   <Th>{t.locations.columns.field}</Th>
                   <Th>{t.locations.columns.operator}</Th>
                   <Th>{t.locations.columns.coords}</Th>
@@ -47,8 +48,8 @@ export default async function LocationsPage() {
               </THead>
               <TBody>
                 {locations.map((l) => (
-                  <Tr key={l.id}>
-                    <Td className="font-medium">{l.name}</Td>
+                  <Tr key={l.id} className="last:border-b-0">
+                    <Td className="h-11 px-4 font-medium">{l.name}</Td>
                     <Td className="text-muted">{l.field ?? "—"}</Td>
                     <Td className="text-muted">{l.operator_name ?? "—"}</Td>
                     <Td className="text-muted font-mono tabular-nums">{coords(l)}</Td>
@@ -63,9 +64,9 @@ export default async function LocationsPage() {
             </Table>
           </div>
 
-          <ul className="divide-border border-border divide-y border-y md:hidden">
+          <ul className="divide-border border-border bg-surface divide-y rounded-[var(--radius-panel)] border md:hidden">
             {locations.map((l) => (
-              <li key={l.id} className="flex items-center justify-between gap-3 py-2">
+              <li key={l.id} className="flex items-center justify-between gap-3 px-3 py-2">
                 <div className="flex min-h-12 min-w-0 flex-1 flex-col justify-center">
                   <span className="truncate text-sm font-medium">{l.name}</span>
                   <span className="text-muted flex flex-wrap gap-x-3 text-xs">

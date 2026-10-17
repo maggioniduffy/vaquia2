@@ -5,11 +5,10 @@ import pg from "pg";
 
 if (process.env.NODE_ENV === "production") throw new Error("Refusing to seed in production");
 
-if (
-  new URL(process.env.DATABASE_URL ?? "postgres://x@localhost/x").hostname.endsWith("neon.tech") &&
-  !process.argv.includes("--allow-remote")
-) {
-  throw new Error("Refusing to seed a Neon database without --allow-remote");
+const LOCAL_HOSTS = ["localhost", "127.0.0.1", "[::1]", "::1"]; // CI's Postgres service is localhost too
+const dbHost = new URL(process.env.DATABASE_URL ?? "postgres://x@localhost/x").hostname;
+if (!LOCAL_HOSTS.includes(dbHost) && !process.argv.includes("--allow-remote")) {
+  throw new Error(`Refusing to seed non-local database host "${dbHost}" without --allow-remote`);
 }
 
 const users = [

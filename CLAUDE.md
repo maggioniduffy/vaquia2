@@ -41,7 +41,7 @@ Rules:
 - Migrations: plain SQL with dbmate (`db/migrations`, `-- migrate:up` / `-- migrate:down`). Never edit an applied migration.
 - Tenant data access only through `withUser()` (`src/lib/db`): it runs as the `authenticated` role so RLS applies. The bare pool is the table owner and bypasses RLS — Better Auth and scripts only.
 - Every new table: explicit `grant` to `authenticated` (no default privileges).
-- UI follows `docs/spec/design.md`: greys only; color = meaning (danger/warning/success).
+- UI follows `docs/spec/design.md`: greys + teal accent for actions/focus/selection; red/amber only as dots or thin borders.
 - Commits: Conventional Commits. Small and per task.
 
 ## Commands

@@ -17,13 +17,39 @@ export function TBody(props: ComponentProps<"tbody">) {
   return <tbody {...props} />;
 }
 
-export function Tr({ className, ...props }: ComponentProps<"tr">) {
-  return <tr className={cn("border-border border-b", className)} {...props} />;
+/** Row: hover = --hover; `selected` = accent-subtle + 2px left accent; `draft` = muted text. */
+export function Tr({
+  className,
+  selected,
+  draft,
+  ...props
+}: ComponentProps<"tr"> & { selected?: boolean; draft?: boolean }) {
+  return (
+    <tr
+      aria-selected={selected || undefined}
+      className={cn(
+        "border-border border-b transition-colors",
+        "[&>td:first-child]:border-l-2 [&>td:first-child]:border-l-transparent",
+        selected
+          ? "bg-accent-subtle [&>td:first-child]:border-l-accent"
+          : "hover:bg-hover",
+        draft && "text-muted",
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 export function Th({ className, ...props }: ComponentProps<"th">) {
   return (
-    <th className={cn("text-muted h-9 px-3 text-left text-xs font-medium", className)} {...props} />
+    <th
+      className={cn(
+        "text-muted border-border h-9 border-b px-3 text-left text-xs font-normal",
+        className,
+      )}
+      {...props}
+    />
   );
 }
 

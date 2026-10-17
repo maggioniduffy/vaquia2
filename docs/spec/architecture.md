@@ -23,12 +23,12 @@ Later: STT API · Claude API
 | Styling | Tailwind v4 + CSS variables (`docs/spec/design.md`) |
 | Primitives | shadcn/ui (Radix) restyled to tokens |
 | Client state | Zustand (UI only); server state via RSC + server actions |
-| Schemas | Zod, one per `record_type@version`, shared client/server |
+| Schemas | Forms are data: JSON form DSL per `record_type@version` (spec/forms.md) compiled to Zod by `src/forms/`, same code client/server |
 | Offline | Serwist + Dexie |
 | Rules | json-logic-js |
 | PDF / XLSX | @react-pdf/renderer / exceljs |
 | Email | Resend (needs a verified domain) or any SMTP server (Gmail app password for now); `src/lib/email.ts` |
-| Auth | Better Auth: 6-digit email OTP only (`emailOTP`, 5 min, 3 attempts, hashed; no passwords, no magic link), invite-only (`disableSignUp`). Temporary guest sessions (`anonymous` plugin, on unless `GUEST_LOGIN_ENABLED=false`; guests always join the fixed `Empresa Demo` company (`plan = 'demo'`, created by migration; membership is only inserted if that plan matches) as `hse`; login server actions are rate limited via `auth_rate_limits` (`src/lib/rate-limit.ts`); to be removed before real customers). Base URL: `BETTER_AUTH_URL`, else `https://$VERCEL_URL` (preview deploys; `VERCEL_URL`/`VERCEL_BRANCH_URL` are trusted origins). Tables `users`, `sessions`, `accounts`, `verifications` |
+| Auth | Better Auth: 6-digit email OTP only (`emailOTP`, 5 min, 3 attempts, hashed; no passwords, no magic link), invite-only (`disableSignUp`). Temporary guest sessions (`anonymous` plugin, on unless `GUEST_LOGIN_ENABLED=false`; guests always join the fixed `Empresa Demo` company (`plan = 'demo'`, created by migration; membership is only inserted if that plan matches) as `hse`; login server actions are rate limited via `auth_rate_limits` (`src/lib/rate-limit.ts`); to be removed before real customers). Better Auth's HTTP route accepts POST only for `/sign-out` (allowlist in `src/app/api/auth/[...all]/blocked.ts`, else 404) so sign-in/OTP endpoints cannot bypass those limits; login actions call `auth.api` in-process. Limits are keyed per email and per IP (IP trusted from `x-forwarded-for` only on Vercel); per-email limits let someone lock out a known email for the window — accepted trade-off. Base URL: `BETTER_AUTH_URL`, else `https://$VERCEL_URL` (preview deploys; `VERCEL_URL`/`VERCEL_BRANCH_URL` are trusted origins). Tables `users`, `sessions`, `accounts`, `verifications` |
 | DB access | `pg` (node-postgres), raw SQL. Migrations: dbmate |
 | Files | Cloudflare R2 (S3 API), private bucket, presigned URLs |
 | Tests | Vitest (unit + `db/tests` against real Postgres), Playwright |
@@ -37,6 +37,7 @@ Later: STT API · Claude API
 ## Offline sync
 - UUIDv7 generated on client; idempotent upsert by id.
 - Outbox: blobs (signatures, photos) upload first, record references storage paths after.
+- Published form schemas (base + extensions) and company rules are cached with the reference data; a draft keeps the schema versions it started with (spec/forms.md#Offline).
 - One author per draft → conflicts rare. If server is newer, keep client version as conflict copy for HSE. Never overwrite silently.
 - Never delete local data until server confirms.
 - Persistent "N pendientes" indicator; device heartbeat so HSE sees stale devices.

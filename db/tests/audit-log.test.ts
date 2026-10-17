@@ -31,7 +31,8 @@ describe("audit_log", () => {
       );
       await db.as(null);
       const entry = await db.one(
-        "select actor_id from audit_log where entity = 'memberships' and action = 'update'",
+        "select actor_id from audit_log where entity = 'memberships' and action = 'update' and company_id = $1",
+        [ids.companyB],
       );
       expect(entry.actor_id).toBe(ids.userB);
     }));

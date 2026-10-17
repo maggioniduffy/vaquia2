@@ -10,7 +10,7 @@
 - [x] **1.4** (implementer) Qualifications per persona: add/renew with file upload (`src/lib/storage`: local disk in dev, private R2 in prod; downloads via an authenticated route; file optional until R2 is set up). Renewal = new row, old kept.
 - [x] **1.5** (implementer) CSV import for personas and qualifications: preview, row-level errors, commit. Template CSV downloadable.
 - [x] **1.6** (implementer) "Personal apto / no apto" screen: filter by crew, location, task type; status dots.
-- [ ] **1.7** (implementer) Link persona ↔ membership (invite user from persona).
+- [x] **1.7** (implementer) Link persona ↔ membership (invite user from persona).
 - [ ] **1.8** (tester) RLS tests for all new tables; unit tests for status view edge cases (expires today, no expiry, renewed); import fixture with 200 rows incl. bad rows.
 
 ## Acceptance

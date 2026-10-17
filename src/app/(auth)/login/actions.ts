@@ -19,7 +19,9 @@ function readEmail(formData: FormData): string {
 
 async function clientIp(): Promise<string> {
   const h = await headers();
-  return h.get("x-forwarded-for")?.split(",")[0]?.trim() || h.get("x-real-ip")?.trim() || "unknown";
+  // Only Vercel's edge sets x-forwarded-for reliably; elsewhere it is client-controlled.
+  if (!process.env.VERCEL) return "unknown";
+  return h.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
 }
 
 // True when every limit passes (all counters are incremented either way).
@@ -86,10 +88,10 @@ export async function verifyCode(_prev: LoginState, formData: FormData): Promise
 }
 
 // Temporary demo access. On unless GUEST_LOGIN_ENABLED=false.
-export async function signInAsGuest(): Promise<void> {
-  if (!env.guestLoginEnabled) throw new Error("Guest login is disabled");
+export async function signInAsGuest(): Promise<LoginState> {
+  if (!env.guestLoginEnabled) return { error: t.auth.genericError };
   if (!(await allowed([`guest:ip:${await clientIp()}`, { limit: 5, windowSeconds: 3600 }]))) {
-    throw new Error(t.auth.rateLimited);
+    return { error: t.auth.rateLimited };
   }
   await auth.api.signInAnonymous({ headers: await headers() });
   redirect("/");

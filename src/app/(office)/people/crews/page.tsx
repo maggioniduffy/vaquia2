@@ -1,4 +1,5 @@
 import { CrewSheet } from "@/components/people/crew-sheet";
+import { Mono, PageTitle } from "@/components/people/page-title";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Table, TBody, Td, Th, THead, Tr } from "@/components/ui/table";
 import { t } from "@/i18n/es-AR";
@@ -16,22 +17,22 @@ export default async function CrewsPage() {
   ]);
 
   return (
-    <div className="flex flex-col gap-6">
-      {canWrite ? (
-        <div className="flex md:justify-end">
-          <CrewSheet personas={personas} locations={locations} primary />
-        </div>
-      ) : null}
+    <div className="flex flex-col gap-4">
+      <PageTitle
+        title={t.people.tabs.crews}
+        subtitle={<Mono>{crews.length}</Mono>}
+        actions={canWrite ? <CrewSheet personas={personas} locations={locations} primary /> : null}
+      />
 
       {crews.length === 0 ? (
         <EmptyState message={t.crews.empty} />
       ) : (
         <>
-          <div className="hidden md:block">
+          <div className="bg-surface border-border hidden overflow-hidden rounded-[var(--radius-panel)] border md:block">
             <Table>
               <THead>
                 <Tr>
-                  <Th>{t.crews.columns.name}</Th>
+                  <Th className="px-4">{t.crews.columns.name}</Th>
                   <Th>{t.crews.columns.supervisor}</Th>
                   <Th>{t.crews.columns.location}</Th>
                   <Th className="text-right">{t.crews.columns.members}</Th>
@@ -44,8 +45,8 @@ export default async function CrewsPage() {
               </THead>
               <TBody>
                 {crews.map((c) => (
-                  <Tr key={c.id}>
-                    <Td className="font-medium">{c.name}</Td>
+                  <Tr key={c.id} className="last:border-b-0">
+                    <Td className="h-11 px-4 font-medium">{c.name}</Td>
                     <Td className="text-muted">{c.supervisor_name ?? "—"}</Td>
                     <Td className="text-muted">{c.location_name ?? "—"}</Td>
                     <Td numeric>{c.persona_count}</Td>
@@ -60,9 +61,9 @@ export default async function CrewsPage() {
             </Table>
           </div>
 
-          <ul className="divide-border border-border divide-y border-y md:hidden">
+          <ul className="divide-border border-border bg-surface divide-y rounded-[var(--radius-panel)] border md:hidden">
             {crews.map((c) => (
-              <li key={c.id} className="flex items-center justify-between gap-3 py-2">
+              <li key={c.id} className="flex items-center justify-between gap-3 px-3 py-2">
                 <div className="flex min-h-12 min-w-0 flex-1 flex-col justify-center">
                   <span className="truncate text-sm font-medium">{c.name}</span>
                   <span className="text-muted flex flex-wrap gap-x-3 text-xs">

@@ -19,15 +19,17 @@ export function DialogContent({
 }) {
   return (
     <D.Portal>
-      <D.Overlay className="fixed inset-0 bg-black/40" />
-      <D.Content className="border-border bg-bg fixed top-1/2 left-1/2 w-[calc(100vw-32px)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-[var(--radius-panel)] border p-6 shadow-lg">
+      <D.Overlay className="bg-scrim fixed inset-0" />
+      <D.Content className="border-border bg-surface fixed top-1/2 left-1/2 w-[calc(100vw-32px)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-[var(--radius-panel)] border p-5 shadow-[var(--shadow-dialog)]">
         <D.Title className="text-base font-medium">{title}</D.Title>
         {description ? (
-          <D.Description className="text-muted mt-1 text-sm">{description}</D.Description>
+          <D.Description className="text-muted mt-2 text-sm leading-normal">
+            {description}
+          </D.Description>
         ) : null}
         <div className="mt-4">{children}</div>
         <D.Close
-          className="text-muted hover:bg-surface absolute top-3 right-3 rounded-[var(--radius-control)] px-2 py-1 text-xs"
+          className="text-muted hover:bg-hover absolute top-3 right-3 rounded-[var(--radius-control)] px-2 py-1 text-xs"
           aria-label={t.common.close}
         >
           {t.common.close}
