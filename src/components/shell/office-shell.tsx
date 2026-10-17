@@ -7,7 +7,7 @@ import { t } from "@/i18n/es-AR";
 import { displayNameFromEmail, initials } from "@/lib/office/greeting";
 import { countHabilitaciones } from "@/lib/office/queries";
 import type { Session } from "@/lib/session";
-import { version } from "../../../package.json";
+import pkg from "../../../package.json";
 import { CompanySwitcher } from "./company-switcher";
 import { OfficeNav } from "./office-nav";
 import { OfficeSearch } from "./office-search";
@@ -42,7 +42,7 @@ export async function OfficeShell({
             <span aria-hidden className="bg-accent size-1.5 rounded-full" />
             {t.sync.synced}
           </span>
-          <span className="text-muted font-mono">{t.officeShell.version(version)}</span>
+          <span className="text-muted font-mono">{t.officeShell.version(pkg.version)}</span>
         </div>
       </aside>
 
