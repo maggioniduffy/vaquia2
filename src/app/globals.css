@@ -2,11 +2,11 @@
 
 /* Tokens — docs/spec/design.md. Greys carry the UI; teal = action/focus/selection; red/amber = dot or thin border. */
 :root {
-  --bg: #f2f2f3;
-  --surface: #fafafa;
-  --border: #e4e4e7;
-  --text: #18181b;
-  --text-muted: #71717a;
+  --bg: #f5f7fa;
+  --surface: #ffffff;
+  --border: #d6dee5;
+  --text: #1f2e3b;
+  --text-muted: #5a6f82;
   --accent: #0e9f9a;
   --accent-strong: #0a7671;
   --accent-hover: #08605c;
@@ -14,49 +14,58 @@
   --accent-text: #ffffff;
   --danger: #dc2626;
   --warning: #d97706;
-  --hover: #f1f1f2;
-  --scrim: rgba(24, 24, 27, 0.1);
+  --hover: #eef2f5;
+  --scrim: rgba(31, 46, 59, 0.12);
   --grain: url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%27180%27 height=%27180%27><filter id=%27n%27><feTurbulence type=%27fractalNoise%27 baseFrequency=%27.85%27 numOctaves=%272%27 stitchTiles=%27stitch%27/><feColorMatrix values=%270 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 -0.2%27/></filter><rect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23n)%27 opacity=%27.07%27/></svg>");
+  --logo-from: #22e3d9;
+  --logo-to: #00b5ac;
+  --logo-dark: #2e4558;
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #1c1c1f;
-    --surface: #232327;
-    --border: #2e2e33;
-    --text: #f4f4f5;
-    --text-muted: #a1a1aa;
-    --accent: #2dd4bf;
-    --accent-strong: #2dd4bf;
-    --accent-hover: #5eead4;
-    --accent-subtle: rgba(45, 212, 191, 0.12);
-    --accent-text: #0b2a27;
+    --bg: #0d1820;
+    --surface: #15232e;
+    --border: #2b3a47;
+    --text: #eef2f5;
+    --text-muted: #8ca0b3;
+    --accent: #00d1c7;
+    --accent-strong: #00d1c7;
+    --accent-hover: #5ce8e0;
+    --accent-subtle: rgba(0, 209, 199, 0.12);
+    --accent-text: #0d1820;
     --danger: #f87171;
     --warning: #fbbf24;
-    --hover: #29292e;
-    --scrim: rgba(0, 0, 0, 0.35);
+    --hover: #1b2b37;
+    --scrim: rgba(0, 0, 0, 0.45);
     --grain: url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%27180%27 height=%27180%27><filter id=%27n%27><feTurbulence type=%27fractalNoise%27 baseFrequency=%27.85%27 numOctaves=%272%27 stitchTiles=%27stitch%27/><feColorMatrix values=%270 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.2 -0.2%27/></filter><rect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23n)%27 opacity=%27.05%27/></svg>");
+    --logo-from: #2af0e5;
+    --logo-to: #00c2b9;
+    --logo-dark: #4a6478;
     color-scheme: dark;
   }
 }
 
 :root[data-theme="dark"] {
-  --bg: #1c1c1f;
-  --surface: #232327;
-  --border: #2e2e33;
-  --text: #f4f4f5;
-  --text-muted: #a1a1aa;
-  --accent: #2dd4bf;
-  --accent-strong: #2dd4bf;
-  --accent-hover: #5eead4;
-  --accent-subtle: rgba(45, 212, 191, 0.12);
-  --accent-text: #0b2a27;
+  --bg: #0d1820;
+  --surface: #15232e;
+  --border: #2b3a47;
+  --text: #eef2f5;
+  --text-muted: #8ca0b3;
+  --accent: #00d1c7;
+  --accent-strong: #00d1c7;
+  --accent-hover: #5ce8e0;
+  --accent-subtle: rgba(0, 209, 199, 0.12);
+  --accent-text: #0d1820;
   --danger: #f87171;
   --warning: #fbbf24;
-  --hover: #29292e;
-  --scrim: rgba(0, 0, 0, 0.35);
+  --hover: #1b2b37;
+  --scrim: rgba(0, 0, 0, 0.45);
   --grain: url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%27180%27 height=%27180%27><filter id=%27n%27><feTurbulence type=%27fractalNoise%27 baseFrequency=%27.85%27 numOctaves=%272%27 stitchTiles=%27stitch%27/><feColorMatrix values=%270 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.2 -0.2%27/></filter><rect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23n)%27 opacity=%27.05%27/></svg>");
+  --logo-from: #2af0e5;
+  --logo-to: #00c2b9;
+  --logo-dark: #4a6478;
   color-scheme: dark;
 }
 

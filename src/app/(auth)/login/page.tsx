@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { VaquiaWordmark } from "@/components/ui/brand";
 import { t } from "@/i18n/es-AR";
 import { auth } from "@/lib/auth";
 import { env } from "@/lib/env";
@@ -19,8 +20,8 @@ export default async function LoginPage({
     <main className="mx-auto flex min-h-dvh w-full max-w-[360px] flex-col justify-center px-4 py-12">
       <div className="border-border bg-surface flex flex-col gap-6 rounded-[var(--radius-panel)] border p-6">
         <div className="flex flex-col gap-4">
-          <p className="flex items-baseline gap-2">
-            <span className="text-base font-medium lowercase">{t.app.name}</span>
+          <p className="flex items-center gap-3">
+            <VaquiaWordmark />
             <span className="text-muted font-mono text-xs">{t.auth.tagline}</span>
           </p>
           <h1 className="text-xl font-medium">{t.auth.title}</h1>
