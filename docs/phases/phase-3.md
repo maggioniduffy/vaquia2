@@ -10,7 +10,7 @@
 - [ ] **3.4** (implementer) Seed rules: missing signature of a participant; signer lacks valid qualification required by task type (block); required PPE unchecked for task type (warn); ATS without at least one hazard/control (block); talk with < 2 attendees (warn).
 - [ ] **3.5** (implementer) Server: on submit → evaluate → persist evaluations → set `blocked`/`accepted`. Client: live preview while filling, block banner prevents finishing, warn requires ack.
 - [ ] **3.6** (implementer) "Falso positivo" + ack buttons on each alert → `alert_feedback`.
-- [ ] **3.7** (implementer) Admin: list rules, toggle active, edit message/severity (creates new version). Logic editing stays code/seed for now.
+- [ ] **3.7** (implementer) Admin: list rules, toggle active, edit message/severity (creates new version). Logic editing of global rules stays code/seed; no-code rules on company fields arrive in phase 3b.
 - [ ] **3.8** (tester) Table-driven tests per rule; test that old evaluations keep their rule version after edit; append-only tests.
 
 ## Acceptance

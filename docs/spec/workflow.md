@@ -7,7 +7,7 @@
 | `supervisor` | Field, often offline | Creates talks/ATS, collects signatures, uploads evidence | Closure of own crew's actions |
 | `hse` | Office + field | Reviews records, manages actions, qualifications, monthly close | Records, actions, report draft |
 | `manager` | Office | Dashboards | Monthly report, export |
-| `admin` | Office | Company config, rules, templates | — |
+| `admin` | Office | Company config, rules, templates, forms (custom types, extensions of charla/ATS, field rules) | Publishing a form version |
 
 `personas` (payroll) ≠ `users` (login). Role lives on `memberships`.
 

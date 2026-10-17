@@ -23,7 +23,7 @@ Later: STT API · Claude API
 | Styling | Tailwind v4 + CSS variables (`docs/spec/design.md`) |
 | Primitives | shadcn/ui (Radix) restyled to tokens |
 | Client state | Zustand (UI only); server state via RSC + server actions |
-| Schemas | Zod, one per `record_type@version`, shared client/server |
+| Schemas | Forms are data: JSON form DSL per `record_type@version` (spec/forms.md) compiled to Zod by `src/forms/`, same code client/server |
 | Offline | Serwist + Dexie |
 | Rules | json-logic-js |
 | PDF / XLSX | @react-pdf/renderer / exceljs |
@@ -37,6 +37,7 @@ Later: STT API · Claude API
 ## Offline sync
 - UUIDv7 generated on client; idempotent upsert by id.
 - Outbox: blobs (signatures, photos) upload first, record references storage paths after.
+- Published form schemas (base + extensions) and company rules are cached with the reference data; a draft keeps the schema versions it started with (spec/forms.md#Offline).
 - One author per draft → conflicts rare. If server is newer, keep client version as conflict copy for HSE. Never overwrite silently.
 - Never delete local data until server confirms.
 - Persistent "N pendientes" indicator; device heartbeat so HSE sees stale devices.
