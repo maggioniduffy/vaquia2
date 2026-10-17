@@ -42,6 +42,7 @@ if (!name || !adminEmail || !adminName) {
   fail("Missing required arguments: --name, --admin-email and --admin-name.");
 }
 if (!adminEmail.includes("@")) fail(`Invalid --admin-email: ${adminEmail}`);
+if (adminEmail.endsWith("@guest.vaquia.invalid")) fail("Reserved guest email domain.");
 if (!process.env.DATABASE_URL) fail("DATABASE_URL is not set.");
 
 const client = new pg.Client({ connectionString: process.env.DATABASE_URL });
@@ -94,9 +95,6 @@ try {
   console.log(`  admin user id: ${userId}`);
   console.log(`  admin user: ${userIsNew ? "new" : "already existed (reused)"} <${adminEmail}>`);
   console.log("The admin signs in with the 6-digit code sent to their email (no password).");
-  console.log(
-    `Note: to use this company for guest sessions set GUEST_COMPANY_ID=${companyId} (only for a demo company).`,
-  );
 } catch (error) {
   await client.query("rollback");
   console.error(error instanceof Error ? error.message : error);

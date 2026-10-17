@@ -5,6 +5,13 @@ import pg from "pg";
 
 if (process.env.NODE_ENV === "production") throw new Error("Refusing to seed in production");
 
+if (
+  new URL(process.env.DATABASE_URL ?? "postgres://x@localhost/x").hostname.endsWith("neon.tech") &&
+  !process.argv.includes("--allow-remote")
+) {
+  throw new Error("Refusing to seed a Neon database without --allow-remote");
+}
+
 const users = [
   { id: "a0000000-0000-7000-8000-000000000001", email: "hse@petrosur.test", name: "Laura Gómez" },
   {

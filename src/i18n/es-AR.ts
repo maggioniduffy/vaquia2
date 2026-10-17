@@ -18,6 +18,7 @@ export const t = {
     codeExpired: "El código venció. Pedir uno nuevo.",
     codeTooManyAttempts: "Demasiados intentos. Pedir un código nuevo.",
     genericError: "No se pudo ingresar. Intentar de nuevo.",
+    rateLimited: "Demasiados intentos. Esperar unos minutos e intentar de nuevo.",
     guestSignIn: "Entrar como invitado",
     signOut: "Salir",
     noMembership: "Este usuario no pertenece a ninguna empresa. Contactar al administrador.",
@@ -29,6 +30,53 @@ export const t = {
   },
   guest: {
     name: "Invitado",
+  },
+  access: {
+    title: "Acceso a Vaquia",
+    noAccess: "Esta persona no tiene acceso a Vaquia.",
+    email: "Correo",
+    role: "Rol",
+    grant: "Dar acceso",
+    grantTitle: "Dar acceso a Vaquia",
+    grantDescription:
+      "Se envía una invitación por correo. El ingreso es con un código de 6 dígitos.",
+    emailLabel: "Correo electrónico",
+    roleLabel: "Rol",
+    submit: "Dar acceso",
+    saving: "Guardando…",
+    changeRole: "Cambiar rol",
+    changeRoleTitle: "Cambiar rol",
+    save: "Guardar",
+    remove: "Quitar acceso",
+    removeTitle: "Quitar acceso",
+    removeConfirm: (name: string) =>
+      `${name} ya no podrá ingresar a esta empresa. La persona y sus registros se conservan.`,
+    removeSubmit: "Quitar acceso",
+    cancel: "Cancelar",
+    granted: "Acceso otorgado. Se envió la invitación.",
+    grantedNoEmail: "Acceso otorgado, pero no se pudo enviar la invitación por correo.",
+    roleChanged: "Rol actualizado.",
+    removed: "Acceso quitado.",
+    errors: {
+      generic: "No se pudo completar la operación. Intentar de nuevo.",
+      noPermission: "Solo un administrador puede gestionar accesos.",
+      invalidEmail: "Ingresar un correo válido.",
+      invalidRole: "Elegir un rol válido.",
+      guestEmail: "Ese correo no se puede usar.",
+      personaLinked: "Esta persona ya tiene acceso a Vaquia.",
+      userLinkedOther: "Ese correo ya tiene acceso y está vinculado a otra persona.",
+      notFound: "No se encontró el acceso.",
+      removeSelf: "No se puede quitar el propio acceso.",
+      lastAdmin:
+        "No se puede dejar la empresa sin administradores. Asignar otro administrador antes.",
+      lastAdminRole:
+        "No se puede cambiar el rol del último administrador. Asignar otro administrador antes.",
+    },
+    invite: {
+      subject: (company: string) => `Invitación a Vaquia - ${company}`,
+      body: (name: string, company: string, loginUrl: string) =>
+        `Hola ${name},\n\nSe otorgó acceso a Vaquia para la empresa ${company}.\n\nPara ingresar, abrir ${loginUrl}, escribir este correo electrónico y pedir el código. Al ingresar, se envía por correo un código de 6 dígitos.\n`,
+    },
   },
   company: {
     switcherLabel: "Empresa",

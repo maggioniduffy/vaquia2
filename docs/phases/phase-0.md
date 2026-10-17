@@ -23,7 +23,7 @@
 - CI runs DB tests and e2e against a Postgres 17 service container.
 - Moved from Supabase to Neon + Better Auth (free-tier project limit). Migrations rewritten in place: none had been applied outside local dev.
 - Magic link replaced by a 6-digit email OTP (Better Auth `emailOTP`): scanners/preview bots consume one-shot links and links need a stable origin; a code works on any device and Vercel preview URL.
-- Guest login (`anonymous` plugin, migration `anonymous_users`) is a temporary demo feature, on by default (`GUEST_LOGIN_ENABLED=false` hides it); guests join `Empresa Demo` (migration `demo_company`). Remove before onboarding real customers.
+- Guest login (`anonymous` plugin, migration `anonymous_users`) is a temporary demo feature, on by default (`GUEST_LOGIN_ENABLED=false` hides it); guests always join `Empresa Demo` (migration `demo_company`, `plan = 'demo'` set by a later migration; no env override). Login actions are rate limited (`auth_rate_limits`). Remove before onboarding real customers.
 
 ## Acceptance
 - User of company A cannot read company B rows (test proves it).

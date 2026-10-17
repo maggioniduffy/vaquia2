@@ -75,9 +75,6 @@
   * {
     border-color: var(--border);
   }
-  html {
-    font-size: 14px;
-  }
   body {
     background: var(--bg);
     color: var(--text);

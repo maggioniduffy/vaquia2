@@ -5,6 +5,9 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -59,7 +62,8 @@ jobs:
         run: pnpm db:migrate
       - name: Migrations roll back cleanly
         run: |
-          pnpm db:rollback && pnpm db:rollback && pnpm db:rollback
+          n=$(ls db/migrations/*.sql | wc -l)
+          for _ in $(seq "$n"); do pnpm db:rollback; done
           pnpm db:migrate
       - name: DB tests (RLS, append-only)
         run: pnpm test:db

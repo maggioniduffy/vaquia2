@@ -21,6 +21,7 @@ export type Db = PoolClient;
  */
 export async function withUser<T>(userId: string, fn: (db: Db) => Promise<T>): Promise<T> {
   const client = await pool.connect();
+  let failure: Error | undefined;
   try {
     await client.query("begin");
     await client.query(
@@ -31,9 +32,11 @@ export async function withUser<T>(userId: string, fn: (db: Db) => Promise<T>): P
     await client.query("commit");
     return result;
   } catch (error) {
-    await client.query("rollback");
+    // Never let a failed rollback mask the original error; drop the connection if it broke.
+    await client.query("rollback").catch(() => {});
+    failure = error instanceof Error ? error : new Error(String(error));
     throw error;
   } finally {
-    client.release();
+    client.release(failure);
   }
 }

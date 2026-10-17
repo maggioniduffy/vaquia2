@@ -9,6 +9,9 @@ on:
     paths: ["db/migrations/**"]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 # Never two migration runs against the same database at once.
 concurrency:
   group: migrate-neon
@@ -18,6 +21,7 @@ jobs:
   migrate:
     name: dbmate up
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
