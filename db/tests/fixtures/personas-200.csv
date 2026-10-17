@@ -1,0 +1,201 @@
+dni;nombre;cuadrilla;activo
+20000000;Mariana Fernández;cuadrilla norte;si
+20000137;Julián Ruiz;Cuadrilla Sur;
+20.000.274;Lucía Pérez;;si
+20000411;Sebastián Molina;;
+20000548;Carolina Sosa;Cuadrilla Sur;si
+20000685;Tomás Quiroga;cuadrilla norte;
+20.000.822;Valentina Benítez;;si
+20000959;Nicolás Gómez;Cuadrilla Sur;
+;Agustina Acosta;;si
+20001233;Facundo Rodríguez;;no
+20.001.370;Camila Ojeda;cuadrilla norte;si
+20001507;Gonzalo Álvarez;;
+20001644;Mariana Fernández;;si
+20001781;Julián Ruiz;Cuadrilla Sur;
+20.001.918;Lucía Pérez;;si
+20002055;Sebastián Molina;cuadrilla norte;
+20002192;Carolina Sosa;Cuadrilla Sur;si
+20002329;Tomás Quiroga;;
+12.ABC.345;Valentina Benítez;;si
+20002603;Nicolás Gómez;Cuadrilla Sur;no
+20002740;Agustina Acosta;cuadrilla norte;si
+20002877;Facundo Rodríguez;;
+20.003.014;Camila Ojeda;Cuadrilla Sur;si
+20003151;Gonzalo Álvarez;;
+20003288;Mariana Fernández;;si
+20003425;Julián Ruiz;cuadrilla norte;
+20.003.562;Lucía Pérez;;si
+20003699;Sebastián Molina;;
+20003836;;Cuadrilla Sur;si
+20003973;Tomás Quiroga;;no
+20.004.110;Valentina Benítez;cuadrilla norte;si
+20004247;Nicolás Gómez;Cuadrilla Sur;
+20004384;Agustina Acosta;;si
+20004521;Facundo Rodríguez;;
+20.004.658;Camila Ojeda;Cuadrilla Sur;si
+20004795;Gonzalo Álvarez;cuadrilla norte;
+20004932;Mariana Fernández;;si
+20005069;Julián Ruiz;Cuadrilla Sur;
+20000411;Lucía Pérez;;si
+20005343;Sebastián Molina;;no
+20005480;Carolina Sosa;cuadrilla norte;si
+20005617;Tomás Quiroga;;
+20.005.754;Valentina Benítez;;si
+20005891;Nicolás Gómez;Cuadrilla Sur;
+20006028;Agustina Acosta;;si
+20006165;Facundo Rodríguez;cuadrilla norte;
+20.006.302;Camila Ojeda;Cuadrilla Sur;si
+20006439;Gonzalo Álvarez;;
+20006576;Mariana Fernández;Cuadrilla Inexistente;si
+20006713;Julián Ruiz;Cuadrilla Sur;no
+20.006.850;Lucía Pérez;cuadrilla norte;si
+20006987;Sebastián Molina;;
+20007124;Carolina Sosa;Cuadrilla Sur;si
+20007261;Tomás Quiroga;;
+20.007.398;Valentina Benítez;;si
+20007535;Nicolás Gómez;cuadrilla norte;
+20007672;Agustina Acosta;;si
+20007809;Facundo Rodríguez;;
+20.007.946;Camila Ojeda;Cuadrilla Sur;quizas
+20008083;Gonzalo Álvarez;;no
+20008220;Mariana Fernández;cuadrilla norte;si
+20008357;Julián Ruiz;Cuadrilla Sur;
+20.008.494;Lucía Pérez;;si
+20008631;Sebastián Molina;;
+20008768;Carolina Sosa;Cuadrilla Sur;si
+20008905;Tomás Quiroga;cuadrilla norte;
+20.009.042;Valentina Benítez;;si
+20009179;Nicolás Gómez;Cuadrilla Sur;
+1234;Agustina Acosta;;si
+20009453;Facundo Rodríguez;;no
+20.009.590;Camila Ojeda;cuadrilla norte;si
+20009727;Gonzalo Álvarez;;
+20009864;Mariana Fernández;;si
+20010001;Julián Ruiz;Cuadrilla Sur;
+20.010.138;Lucía Pérez;;si
+20010275;Sebastián Molina;cuadrilla norte;
+20010412;Carolina Sosa;Cuadrilla Sur;si
+20010549;Tomás Quiroga;;
+20.010.686;Valentina Benítez;;si
+20010823;Nicolás Gómez;Cuadrilla Sur;no
+20010960;Agustina Acosta;cuadrilla norte;si
+20011097;Facundo Rodríguez;;
+20.011.234;Camila Ojeda;Cuadrilla Sur;si
+20011371;Gonzalo Álvarez;;
+20011508;Mariana Fernández;;si
+20011645;Julián Ruiz;cuadrilla norte;
+20.011.782;Lucía Pérez;;si
+20011919;Sebastián Molina;;
+20012056;Carolina Sosa;Cuadrilla Sur;si
+20012193;Tomás Quiroga;;no
+20.012.330;Valentina Benítez;cuadrilla norte;si
+20012467;Nicolás Gómez;Cuadrilla Sur;
+20012604;Agustina Acosta;;si
+20012741;Facundo Rodríguez;;
+20.012.878;Camila Ojeda;Cuadrilla Sur;si
+20013015;Gonzalo Álvarez;cuadrilla norte;
+20013152;Mariana Fernández;;si
+20013289;Julián Ruiz;Cuadrilla Sur;
+20.013.426;Lucía Pérez;;si
+20013563;Sebastián Molina;;no
+20013700;Carolina Sosa;cuadrilla norte;si
+20013837;Tomás Quiroga;;
+20.013.974;Valentina Benítez;;si
+20014111;Nicolás Gómez;Cuadrilla Sur;
+20014248;Agustina Acosta;;si
+20014385;Facundo Rodríguez;cuadrilla norte;
+20.014.522;Camila Ojeda;Cuadrilla Sur;si
+20014659;Gonzalo Álvarez;;
+20014796;Mariana Fernández;;si
+20014933;Julián Ruiz;Cuadrilla Sur;no
+20.015.070;Lucía Pérez;cuadrilla norte;si
+20015207;Sebastián Molina;;
+20015344;Carolina Sosa;Cuadrilla Sur;si
+20015481;Tomás Quiroga;;
+20.015.618;Valentina Benítez;;si
+20015755;Nicolás Gómez;cuadrilla norte;
+20015892;Agustina Acosta;;si
+20016029;Facundo Rodríguez;;
+20.016.166;Camila Ojeda;Cuadrilla Sur;si
+20016303;Gonzalo Álvarez;;no
+20016440;Mariana Fernández;cuadrilla norte;si
+20016577;Julián Ruiz;Cuadrilla Sur;
+20.016.714;Lucía Pérez;;si
+20016851;Sebastián Molina;;
+20016988;Carolina Sosa;Cuadrilla Sur;si
+20017125;Tomás Quiroga;cuadrilla norte;
+20.017.262;Valentina Benítez;;si
+20017399;Nicolás Gómez;Cuadrilla Sur;
+20017536;Agustina Acosta;;si
+20017673;Facundo Rodríguez;;no
+20.017.810;Camila Ojeda;cuadrilla norte;si
+20017947;Gonzalo Álvarez;;
+20018084;Mariana Fernández;;si
+20018221;Julián Ruiz;Cuadrilla Sur;
+20.018.358;Lucía Pérez;;si
+20018495;Sebastián Molina;cuadrilla norte;
+20018632;Carolina Sosa;Cuadrilla Sur;si
+20018769;Tomás Quiroga;;
+20.018.906;Valentina Benítez;;si
+20019043;Nicolás Gómez;Cuadrilla Sur;no
+20019180;Agustina Acosta;cuadrilla norte;si
+20019317;Facundo Rodríguez;;
+20.019.454;Camila Ojeda;Cuadrilla Sur;si
+20019591;Gonzalo Álvarez;;
+20019728;Mariana Fernández;;si
+20019865;Julián Ruiz;cuadrilla norte;
+20.020.002;Lucía Pérez;;si
+20020139;Sebastián Molina;;
+20020276;Carolina Sosa;Cuadrilla Sur;si
+20020413;Tomás Quiroga;;no
+20.020.550;Valentina Benítez;cuadrilla norte;si
+20020687;Nicolás Gómez;Cuadrilla Sur;
+20020824;Agustina Acosta;;si
+20020961;Facundo Rodríguez;;
+20.021.098;Camila Ojeda;Cuadrilla Sur;si
+20021235;Gonzalo Álvarez;cuadrilla norte;
+20021372;Mariana Fernández;;si
+20021509;Julián Ruiz;Cuadrilla Sur;
+20.021.646;Lucía Pérez;;si
+20021783;Sebastián Molina;;no
+20021920;Carolina Sosa;cuadrilla norte;si
+20022057;Tomás Quiroga;;
+20.022.194;Valentina Benítez;;si
+20022331;Nicolás Gómez;Cuadrilla Sur;
+20022468;Agustina Acosta;;si
+20022605;Facundo Rodríguez;cuadrilla norte;
+20.022.742;Camila Ojeda;Cuadrilla Sur;si
+20022879;Gonzalo Álvarez;;
+20023016;Mariana Fernández;;si
+20023153;Julián Ruiz;Cuadrilla Sur;no
+20.023.290;Lucía Pérez;cuadrilla norte;si
+20023427;Sebastián Molina;;
+20023564;Carolina Sosa;Cuadrilla Sur;si
+20023701;Tomás Quiroga;;
+20.023.838;Valentina Benítez;;si
+20023975;Nicolás Gómez;cuadrilla norte;
+20024112;Agustina Acosta;;si
+20024249;Facundo Rodríguez;;
+20.024.386;Camila Ojeda;Cuadrilla Sur;si
+20024523;Gonzalo Álvarez;;no
+20024660;Mariana Fernández;cuadrilla norte;si
+20024797;Julián Ruiz;Cuadrilla Sur;
+20.024.934;Lucía Pérez;;si
+20025071;Sebastián Molina;;
+20025208;Carolina Sosa;Cuadrilla Sur;si
+20025345;Tomás Quiroga;cuadrilla norte;
+20.025.482;Valentina Benítez;;si
+20025619;Nicolás Gómez;Cuadrilla Sur;
+20025756;Agustina Acosta;;si
+20025893;Facundo Rodríguez;;no
+20.026.030;Camila Ojeda;cuadrilla norte;si
+20026167;Gonzalo Álvarez;;
+20026304;Mariana Fernández;;si
+20026441;Julián Ruiz;Cuadrilla Sur;
+20.026.578;Lucía Pérez;;si
+20026715;Sebastián Molina;cuadrilla norte;
+20026852;Carolina Sosa;Cuadrilla Sur;si
+20026989;Tomás Quiroga;;
+20.027.126;Valentina Benítez;;si
+20027263;Nicolás Gómez;Cuadrilla Sur;no
