@@ -6,7 +6,7 @@ Source of truth for values: `docs/design/vaquia-2/project/` (Claude Design hando
 - **Greys carry the UI.** Hierarchy through size, weight and whitespace.
 - **Teal accent** only for: primary action, focus, selection, links, sync state, current period.
 - **Red / amber** only as a 6px dot or a thin (1–2px) border + text, **never a fill**. No green: "Válido" is a neutral check.
-- Faint grain texture on the page background. No gradients, colored cards, illustrations or decorative icons.
+- Faint grain texture on the page background. No gradients, colored cards, illustrations or decorative icons (office nav icons are functional wayfinding, not decoration).
 
 ## Tokens (CSS variables in `src/app/globals.css`, exposed to Tailwind via `@theme`)
 | Token | Design name | Light | Dark | Use |
@@ -37,7 +37,9 @@ Theme: `theme` cookie (`light` | `dark` | absent = system). Root layout sets `da
 ## Layout and shape
 - 4px spacing grid. Radius **6** controls (buttons, inputs, chips), **8** panels (cards, dialogs, toasts), **4** checkbox and kbd.
 - Shadows only on toast (`0 8px 24px rgba(0,0,0,.12)`), dialog (`0 16px 40px rgba(0,0,0,.18)`), side sheet (`-12px 0 32px rgba(0,0,0,.12)`) and popovers. Nothing else.
-- **Office:** 224px sidebar (right border), 56px header (bottom border, 24px side padding), page padding `24px 32px`, vertical gap 16–24px. Tables over cards.
+- **Office:** 224px sidebar (right border), 64px header (bottom border, 24px side padding), page padding `24px 32px`, vertical gap 16–24px. Tables over cards.
+  - Sidebar: brand row 64px (bottom border, aligned with the header) = "Vaquia" 18/500 + 1px divider + muted 12px "Gestión HSE"; nav rows 40px with a 20px line icon + label + optional mono muted count; active = `--accent-subtle` bg + 2px `--accent` left border + `--accent-strong` text/icon; footer (top border) = sync dot + "Sincronizado" and mono muted version.
+  - Header: company chip (40px, bordered, name + chevron) · search field (36px, max 576px, "Ctrl K" hint; Ctrl/⌘K focuses it) · 40px bordered bell and theme buttons · bordered user chip (avatar + name + role) opening a menu with "Vista campo" and "Salir". No breadcrumb.
 - **Field (390px):** 56px header (back arrow, title + muted subtitle, sync pill, 16px side padding); content padding 16px; primary action **52px pinned at the bottom**; **no tab bar** ("Hoy" is the hub); touch targets **≥ 48px**.
 
 ## Components (`src/components/ui`)
