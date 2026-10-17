@@ -45,3 +45,4 @@ Source of truth: `src/lib/billing/tiers.ts` (the landing reads it). Prices are *
 - Annual frequency in `preapproval` (12 months) vs. a one-off payment for annual.
 - Price updates on existing preapprovals (limits, user notification rules).
 - Factura electrónica (AFIP) and IVA: Mercado Pago doesn't invoice; likely a separate provider.
+- Trial farming: a new email plus any valid CUIT yields a new 30-day trial. Decide on mitigation (CUIT ownership check, payment method up front, rate limits).
