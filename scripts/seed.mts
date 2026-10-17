@@ -65,7 +65,7 @@ try {
   }
   for (const c of companies) {
     await client.query(
-      "insert into companies (id, name, cuit) values ($1, $2, $3) on conflict (id) do nothing",
+      "insert into companies (id, name, cuit, plan) values ($1, $2, $3, 'paid') on conflict (id) do nothing",
       [c.id, c.name, c.cuit],
     );
   }

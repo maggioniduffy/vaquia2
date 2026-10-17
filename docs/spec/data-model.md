@@ -6,7 +6,7 @@ All tenant tables have `id uuid (v7, client-generatable)`, `company_id uuid`, `c
 | Table | Key columns | Notes |
 |---|---|---|
 | `users`, `sessions`, `accounts`, `verifications` | Better Auth (see `src/lib/auth-options.ts`); `users.is_anonymous` for temporary guest sessions | not tenant tables; never granted to `authenticated` |
-| `companies` | name, cuit, plan, settings jsonb | settings: report_day, timezone, kpi_base |
+| `companies` | name, cuit, plan, trial_ends_at?, settings jsonb | settings: report_day, timezone, kpi_base. `plan` in (`trial`, `paid`, `demo`), default `trial`; `trial_ends_at` required when `plan = 'trial'`. `public.company_writable(company)` is false only for an expired trial. Trigger `app.assert_company_writable()` (BEFORE INSERT/UPDATE/DELETE, all roles) on every business tenant table raises `company_read_only` (errcode `VQ001`) for expired trials; global rows (null `company_id`) pass; on `companies` UPDATE the NEW row is checked so ops can re-activate. Not attached to `audit_log`, `user_settings`, auth tables. |
 | `memberships` | user_id, company_id, role enum(worker, supervisor, hse, manager, admin), persona_id? | role lives here; `persona_id` unique per company (one login per persona); link/unlink and role changes are admin-only; the last admin can't be demoted or removed, and admins can't remove themselves |
 | `user_settings` | user_id (pk), active_company_id | user-scoped, not tenant. Written only via `set_active_company()`. `current_company_id()` = active company if still a member, else oldest membership. `my_companies()` feeds the switcher. |
 

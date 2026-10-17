@@ -63,7 +63,7 @@ try {
   }
 
   const company = await client.query<{ id: string }>(
-    "insert into companies (name, cuit) values ($1, $2) returning id",
+    "insert into companies (name, cuit, plan) values ($1, $2, 'paid') returning id",
     [name, cuit],
   );
   const companyId = company.rows[0]!.id;
