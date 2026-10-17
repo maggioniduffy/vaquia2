@@ -394,7 +394,7 @@ export const t = {
       expiresEmptyWithDefault:
         "Vacío = sin vencimiento. La capacitación no se va a marcar como vencida.",
       expiresOptional: "Opcional. Vacío = sin vencimiento.",
-      file: "Certificado (PDF, JPG o PNG, hasta 10 MB)",
+      file: "Certificado (PDF, JPG o PNG, hasta 4 MB)",
       renewNote: "Se crea un registro nuevo; el anterior queda en el historial.",
       submit: "Guardar",
       saving: "Guardando…",
@@ -405,7 +405,7 @@ export const t = {
       invalidDate: "Fecha inválida.",
       expiresBeforeIssued: "El vencimiento no puede ser anterior a la fecha de emisión.",
       typeNotAllowed: "Ese tipo de capacitación no está disponible para esta empresa.",
-      fileTooLarge: "El archivo supera los 10 MB. Elegir uno más liviano.",
+      fileTooLarge: "El archivo supera los 4 MB. Elegir uno más liviano.",
       fileType: "El archivo debe ser PDF, JPG o PNG.",
       uploadFailed: "No se pudo subir el archivo. No se guardó la capacitación; intentar de nuevo.",
       forbidden: "Solo HSE o administración pueden cargar capacitaciones.",
