@@ -6,6 +6,7 @@ import { t } from "@/i18n/es-AR";
 import { pool, withUser } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
 import { env } from "@/lib/env";
+import { isReadOnlyError } from "@/lib/trial";
 import { getSession } from "@/lib/session";
 
 export type AccessResult =
@@ -54,6 +55,7 @@ function revalidate(personaId: string) {
 
 function mapError(error: unknown): AccessResult {
   const code = (error as { code?: string } | null)?.code;
+  if (isReadOnlyError(error)) return fail(t.trial.readOnly);
   if (code === "42501") return fail(e.noPermission);
   if (code === "23505") return fail(e.personaLinked);
   console.error("access action failed", error);

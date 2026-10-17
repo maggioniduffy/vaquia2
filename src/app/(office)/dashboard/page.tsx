@@ -6,6 +6,8 @@ import { t } from "@/i18n/es-AR";
 import { formatDateAr } from "@/lib/dates";
 import { displayNameFromEmail, greetingFor, longDateAr } from "@/lib/office/greeting";
 import { listAttention, type AttentionItem } from "@/lib/office/queries";
+import { ChecklistCard } from "@/components/onboarding/checklist-card";
+import { getChecklist } from "@/lib/onboarding/checklist";
 import { getSession } from "@/lib/session";
 
 function Group({ title, items }: { title: string; items: AttentionItem[] }) {
@@ -39,7 +41,11 @@ function Group({ title, items }: { title: string; items: AttentionItem[] }) {
 
 export default async function DashboardPage() {
   const session = await getSession();
-  const items = await listAttention(session.userId, 7);
+  const isAdmin = session.active?.role === "admin";
+  const [items, checklist] = await Promise.all([
+    listAttention(session.userId, 7),
+    isAdmin ? getChecklist(session.userId) : null,
+  ]);
   const expired = items.filter((i) => i.status === "expired");
   const expiring = items.filter((i) => i.status === "expiring");
   const name = displayNameFromEmail(session.email).split(" ")[0] ?? "";
@@ -50,6 +56,7 @@ export default async function DashboardPage() {
         <h1 className="text-lg font-medium tracking-tight">{greetingFor(name)}</h1>
         <span className="text-muted">{longDateAr()}</span>
       </div>
+      {checklist ? <ChecklistCard checklist={checklist} /> : null}
       <div className="grid items-start gap-6 lg:grid-cols-[1.4fr_1fr]">
         <section className="border-border bg-surface rounded-[var(--radius-panel)] border">
           <div className="border-border flex items-center justify-between border-b px-5 py-4">

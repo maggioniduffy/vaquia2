@@ -614,6 +614,28 @@ export const t = {
     soonClose: "El cierre mensual llega con la fase 7.",
     soonExports: "Las exportaciones llegan con la fase 8.",
   },
+  trial: {
+    daysLeft: (n: number) =>
+      `Prueba gratuita: ${n === 1 ? "queda 1 día" : `quedan ${n} días`}`,
+    expired: "La prueba terminó. La cuenta está en modo solo lectura.",
+    contact: "Activar la cuenta",
+    readOnly: "La prueba terminó: la cuenta está en modo solo lectura.",
+  },
+  onboardingChecklist: {
+    title: "Primeros pasos",
+    progress: (done: number, total: number) => `${done} de ${total}`,
+    dismiss: "Ocultar",
+    items: {
+      team: "Invitar al equipo",
+      people: "Importar personas",
+      crews: "Crear cuadrillas",
+      locations: "Cargar locaciones",
+    },
+    errors: {
+      forbidden: "Solo un administrador puede ocultar esta guía.",
+      generic: "No se pudo ocultar. Intentar de nuevo.",
+    },
+  },
   home: {
     attention: "Requiere atención",
     expired: "Vencidas",

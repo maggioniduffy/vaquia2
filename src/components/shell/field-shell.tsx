@@ -5,6 +5,7 @@ import { weekdayDayMonth } from "@/lib/field/format";
 import { getFieldToday } from "@/lib/field/today";
 import type { Session } from "@/lib/session";
 import { FieldHeader } from "./field-header";
+import { TrialBanner } from "./trial-banner";
 import { SignOutButton } from "./sign-out-button";
 
 // No tab bar: "Hoy" (/field) is the hub; inner pages get a back arrow in the header.
@@ -24,6 +25,7 @@ export async function FieldShell({ session, children }: { session: Session; chil
   );
   return (
     <div className="flex min-h-dvh flex-col text-base">
+      <TrialBanner userId={session.userId} />
       <FieldHeader homeSubtitle={`${weekdayDayMonth()} · ${who}`} end={end} />
       <main className="flex flex-1 flex-col">{children}</main>
     </div>

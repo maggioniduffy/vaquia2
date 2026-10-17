@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import type { z } from "zod";
 import { t } from "@/i18n/es-AR";
 import { withUser } from "@/lib/db";
+import { isReadOnlyError } from "@/lib/trial";
 import { getSession } from "@/lib/session";
 import type { ActionResult } from "./result";
 import { crewSchema, idSchema, locationSchema, personaSchema } from "./schemas";
@@ -43,6 +44,7 @@ function fromPgError(
   messages: { unique: string; reference: string; uniqueField?: string },
 ): ActionResult {
   const code = (error as PgError | null)?.code;
+  if (isReadOnlyError(error)) return { ok: false, error: t.trial.readOnly };
   if (code === "42501") return noPermission;
   if (code === "23505") {
     return {

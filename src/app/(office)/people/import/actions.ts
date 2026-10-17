@@ -7,6 +7,7 @@ import { withUser } from "@/lib/db";
 import { MAX_BYTES, type ImportCounts, type ImportKind, type RowResult } from "@/lib/people/import";
 import { commitImport, previewImport, type ImportPreview } from "@/lib/people/import-db";
 import { getSession } from "@/lib/session";
+import { isReadOnlyError } from "@/lib/trial";
 
 /** Row shape sent to the browser (no parsed payload). */
 export type ClientRow = Pick<RowResult, "line" | "values" | "errors" | "note" | "action">;
@@ -82,6 +83,7 @@ export async function commitAction(formData: FormData): Promise<ImportActionStat
     revalidatePath("/people");
     return toClient(result);
   } catch (error) {
+    if (isReadOnlyError(error)) return { ok: false, error: t.trial.readOnly };
     console.error("commitAction failed", error);
     return { ok: false, error: t.import.commitError };
   }
