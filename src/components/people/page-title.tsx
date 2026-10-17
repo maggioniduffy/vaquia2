@@ -13,7 +13,7 @@ export function PageTitle({
   return (
     <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-3">
       <div className="flex min-w-0 flex-col gap-1">
-        <h1 className="text-xl font-medium tracking-[-0.01em]">{title}</h1>
+        <h1 className="text-lg font-medium tracking-[-0.01em]">{title}</h1>
         {subtitle ? <p className="text-muted text-sm">{subtitle}</p> : null}
       </div>
       {actions ? <div className="flex flex-wrap items-center gap-2">{actions}</div> : null}

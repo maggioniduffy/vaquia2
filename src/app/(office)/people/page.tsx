@@ -169,13 +169,13 @@ export default async function PeoplePage({ searchParams }: { searchParams: Searc
                         <Td className="h-11 px-4 whitespace-nowrap">
                           <Link
                             href={withPersona(p.id)}
-                            className="hidden flex-col leading-[1.3] xl:flex"
+                            className="text-text hover:text-text hidden flex-col leading-[1.3] hover:[&>span:first-child]:underline xl:flex"
                           >
                             <PersonaName persona={p} />
                           </Link>
                           <Link
                             href={`/people/${p.id}`}
-                            className="flex flex-col leading-[1.3] xl:hidden"
+                            className="text-text hover:text-text flex flex-col leading-[1.3] hover:[&>span:first-child]:underline xl:hidden"
                           >
                             <PersonaName persona={p} />
                           </Link>
@@ -200,7 +200,7 @@ export default async function PeoplePage({ searchParams }: { searchParams: Searc
                   <li key={p.id} className="flex items-center justify-between gap-3 px-3 py-2">
                     <Link
                       href={`/people/${p.id}`}
-                      className="flex min-h-12 min-w-0 flex-1 flex-col justify-center"
+                      className="text-text hover:text-text flex min-h-12 min-w-0 flex-1 flex-col justify-center"
                     >
                       <span className="truncate text-sm font-medium">{p.full_name}</span>
                       <span className="text-muted flex flex-wrap items-center gap-x-3 text-xs">

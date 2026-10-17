@@ -202,7 +202,7 @@ export default async function FitnessPage({ searchParams }: { searchParams: Sear
                   <Td className="px-4 whitespace-nowrap">
                     <Link
                       href={`/people/${row.personaId}`}
-                      className="underline-offset-2 hover:underline"
+                      className="text-text hover:text-text underline-offset-2 hover:underline"
                     >
                       {row.fullName}
                     </Link>

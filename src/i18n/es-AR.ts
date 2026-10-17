@@ -368,6 +368,8 @@ export const t = {
     skippedHint: "Las filas omitidas no se importan.",
     separatorsHint: "Se aceptan separadores coma o punto y coma, hasta 2 MB y 5000 filas.",
     fileLabel: "Archivo CSV",
+    chooseFile: "Elegir archivo",
+    noFileChosen: "Ningún archivo seleccionado",
     preview: "Previsualizar",
     previewing: "Procesando…",
     commit: "Importar {count} filas válidas",
@@ -539,6 +541,7 @@ export const t = {
     toOffice: "Ir a oficina",
     forToday: "Para hoy",
     noCrew: "Sin cuadrilla asignada",
+    fieldLocation: (field: string, name: string) => `${field} – ${name}`,
     crewLine: (name: string, n: number) => `${name} · ${n} ${n === 1 ? "persona" : "personas"}`,
     expiringTitle: (name: string, type: string, ddmm: string) =>
       `${name}: ${type} vence el ${ddmm}`,

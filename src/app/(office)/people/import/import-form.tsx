@@ -108,7 +108,7 @@ export function ImportForm() {
       />
 
       {!preview && !result && (
-        <div className="bg-surface border-border flex max-w-3xl flex-col gap-5 rounded-[var(--radius-panel)] border p-5">
+        <div className="bg-surface border-border flex flex-col gap-5 rounded-[var(--radius-panel)] border p-5">
           <div className="flex flex-col gap-2">
             <Label>{t.import.kindLabel}</Label>
             <div className="flex gap-2" role="group" aria-label={t.import.kindLabel}>
@@ -145,7 +145,7 @@ export function ImportForm() {
               type="file"
               accept=".csv,text/csv"
               disabled={pending}
-              className="text-sm"
+              className="sr-only"
               onChange={(e) => {
                 setFile(e.target.files?.[0] ?? null);
                 setPreview(null);
@@ -153,6 +153,18 @@ export function ImportForm() {
                 setError(null);
               }}
             />
+            <div className="flex items-center gap-3">
+              <Button
+                variant="secondary"
+                disabled={pending}
+                onClick={() => inputRef.current?.click()}
+              >
+                {t.import.chooseFile}
+              </Button>
+              <span className="text-muted truncate text-sm">
+                {file ? file.name : t.import.noFileChosen}
+              </span>
+            </div>
             <div className="pt-2">
               <Button variant="primary" onClick={onPreview} disabled={pending || !file}>
                 {pending ? t.import.previewing : t.import.preview}

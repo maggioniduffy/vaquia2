@@ -11,7 +11,7 @@ export type ExpiringQualification = {
 
 export type FieldToday = {
   personaName: string | null;
-  crew: { name: string; members: number; locationName: string | null } | null;
+  crew: { name: string; members: number; locationName: string | null; locationField: string | null } | null;
   expiring: ExpiringQualification[];
 };
 
@@ -23,6 +23,7 @@ type ContextRow = {
   crew_name: string | null;
   members: number | null;
   location_name: string | null;
+  location_field: string | null;
 };
 
 type ExpiringRow = {
@@ -40,7 +41,7 @@ export const getFieldToday = cache(async (userId: string): Promise<FieldToday> =
         `select p.full_name as persona_name, c.id as crew_id, c.name as crew_name,
                 (select count(*) from public.personas m
                   where m.company_id = c.company_id and m.crew_id = c.id and m.active)::int as members,
-                l.name as location_name
+                l.name as location_name, l.field as location_field
          from public.memberships ms
          join public.personas p on p.company_id = ms.company_id and p.id = ms.persona_id
          left join public.crews c on c.company_id = p.company_id and c.id = p.crew_id
@@ -71,7 +72,7 @@ export const getFieldToday = cache(async (userId: string): Promise<FieldToday> =
 
     return {
       personaName: ctx.persona_name,
-      crew: { name: ctx.crew_name, members: ctx.members ?? 0, locationName: ctx.location_name },
+      crew: { name: ctx.crew_name, members: ctx.members ?? 0, locationName: ctx.location_name, locationField: ctx.location_field },
       expiring: expiring.map((r) => ({
         personaName: r.persona_name,
         typeName: r.type_name,

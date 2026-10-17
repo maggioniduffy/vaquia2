@@ -4,6 +4,7 @@ import { useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { RefreshIcon } from "@/components/ui/icons";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useToast } from "@/components/ui/toast";
 import { t } from "@/i18n/es-AR";
@@ -22,7 +23,7 @@ type Props = {
   today: string;
   /** Renewal: type is fixed. Omit for "add". */
   renewType?: { id: string; name: string };
-  variant?: "primary" | "secondary" | "link";
+  variant?: "primary" | "secondary" | "link" | "icon";
 };
 
 const q = t.qualifications;
@@ -39,7 +40,16 @@ export function QualificationSheet({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        {variant === "link" ? (
+        {variant === "icon" ? (
+          <button
+            type="button"
+            aria-label={renewType ? `${q.renew}: ${renewType.name}` : q.add}
+            title={renewType ? `${q.renew}: ${renewType.name}` : q.add}
+            className="text-muted hover:text-text inline-flex size-6 items-center justify-center"
+          >
+            <RefreshIcon size={14} />
+          </button>
+        ) : variant === "link" ? (
           <button
             type="button"
             aria-label={renewType ? `${q.renew}: ${renewType.name}` : q.add}

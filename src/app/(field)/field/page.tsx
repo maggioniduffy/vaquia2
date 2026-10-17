@@ -46,7 +46,11 @@ export default async function FieldHomePage() {
         {today.crew ? (
           <>
             <span className="text-[17px] font-medium">
-              {today.crew.locationName ?? today.crew.name}
+              {today.crew.locationName
+                ? today.crew.locationField
+                  ? t.field.fieldLocation(today.crew.locationField, today.crew.locationName)
+                  : today.crew.locationName
+                : today.crew.name}
             </span>
             <span className="text-muted text-[13px]">
               {t.field.crewLine(today.crew.name, today.crew.members)}

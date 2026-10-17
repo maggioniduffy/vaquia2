@@ -5,7 +5,6 @@ import { Mono } from "@/components/people/page-title";
 import { CloseIcon } from "@/components/ui/icons";
 import { StatusBadge, type Status } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
-import { Table, TBody, Td, Th, THead, Tr } from "@/components/ui/table";
 import { t } from "@/i18n/es-AR";
 import { formatDateAr, todayInArt } from "@/lib/dates";
 import { cn } from "@/lib/cn";
@@ -33,19 +32,19 @@ function initials(name: string): string {
 }
 
 function QualStatus({ row }: { row: CurrentQualificationRow }) {
+  let status: Status = "valid";
+  let title: string = row.expires_on ? q.status.valid : q.status.noExpiry;
   if (row.status === "expired" && row.expires_on) {
-    return (
-      <StatusBadge status="expired">{q.status.expired(formatDayMonth(row.expires_on))}</StatusBadge>
-    );
+    status = "expired";
+    title = q.status.expired(formatDayMonth(row.expires_on));
+  } else if (row.status === "expiring" && row.days_left !== null) {
+    status = "expiring";
+    title = q.status.expiring(row.days_left);
   }
-  if (row.status === "expiring" && row.days_left !== null) {
-    return <StatusBadge status="expiring">{q.status.expiring(row.days_left)}</StatusBadge>;
-  }
-  const status: Status = "valid";
   return (
-    <StatusBadge status={status} className="whitespace-nowrap">
-      {row.expires_on ? q.status.valid : q.status.noExpiry}
-    </StatusBadge>
+    <span title={title} className="min-w-0">
+      <StatusBadge status={status} className="whitespace-nowrap" />
+    </span>
   );
 }
 
@@ -65,7 +64,9 @@ function FileLink({ path }: { path: string | null }) {
   );
 }
 
-const QUAL_GRID = "grid grid-cols-[minmax(0,1.5fr)_84px_84px_132px_24px] items-center gap-2";
+const HIST_GRID = "grid grid-cols-[minmax(0,1.5fr)_84px_84px_116px_24px] items-center gap-2";
+const HIST_GRID_NOFILE = "grid grid-cols-[minmax(0,1.5fr)_84px_84px_116px] items-center gap-2";
+const QUAL_GRID = "grid grid-cols-[minmax(0,1.5fr)_84px_84px_116px_52px] items-center gap-2";
 
 /**
  * Legajo: header, aptitude callout, current qualifications, history, system access.
@@ -97,6 +98,8 @@ export async function PersonaDetail({
   const today = todayInArt();
   const sheetProps = { personaId: persona.id, types, storageAvailable, today };
 
+  const hasHistFiles = history.some((h) => h.file_path);
+  const histGrid = hasHistFiles ? HIST_GRID : HIST_GRID_NOFILE;
   const unfit = fitness.filter((f) => !f.apto);
   const fitCount = fitness.length - unfit.length;
 
@@ -111,7 +114,7 @@ export async function PersonaDetail({
             {initials(persona.full_name)}
           </span>
           <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <h2 className="truncate text-xl font-medium tracking-[-0.01em]">{persona.full_name}</h2>
+            <h2 className="truncate text-lg font-medium tracking-[-0.01em]">{persona.full_name}</h2>
             <span className="text-muted">{persona.crew_name ?? q.persona.noCrew}</span>
           </div>
           {panel ? (
@@ -183,24 +186,24 @@ export async function PersonaDetail({
                     key={row.qualification_id}
                     className={cn(QUAL_GRID, "border-border h-11 border-b px-5")}
                   >
-                    <span className="flex min-w-0 items-center gap-2">
-                      <span className="truncate" title={row.type_name}>
-                        {row.type_name}
-                      </span>
-                      {canWrite ? (
-                        <QualificationSheet
-                          {...sheetProps}
-                          variant="link"
-                          renewType={{ id: row.type_id, name: row.type_name }}
-                        />
-                      ) : null}
+                    <span className="truncate" title={row.type_name}>
+                      {row.type_name}
                     </span>
                     <Mono className="text-muted text-xs">{formatDateAr(row.issued_on)}</Mono>
                     <Mono className="text-xs">
                       {row.expires_on ? formatDateAr(row.expires_on) : "—"}
                     </Mono>
                     <QualStatus row={row} />
-                    <FileLink path={row.file_path} />
+                    <span className="flex items-center justify-end gap-1">
+                      <FileLink path={row.file_path} />
+                      {canWrite ? (
+                        <QualificationSheet
+                          {...sheetProps}
+                          variant="icon"
+                          renewType={{ id: row.type_id, name: row.type_name }}
+                        />
+                      ) : null}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -214,32 +217,42 @@ export async function PersonaDetail({
           <h3 id="history-title" className="text-muted mb-1 text-xs">
             {q.historyTitle}
           </h3>
-          <Table>
-            <THead>
-              <Tr>
-                <Th className="px-0">{q.columns.type}</Th>
-                <Th>{q.columns.issued}</Th>
-                <Th>{q.columns.expires}</Th>
-                <Th>{q.columns.file}</Th>
-                <Th>{q.columns.version}</Th>
-              </Tr>
-            </THead>
-            <TBody>
-              {history.map((row) => (
-                <Tr key={row.id} data-current={row.is_current} draft={!row.is_current}>
-                  <Td className="px-0">{row.type_name}</Td>
-                  <Td className="font-mono text-xs tabular-nums">{formatDateAr(row.issued_on)}</Td>
-                  <Td className="font-mono text-xs tabular-nums">
-                    {row.expires_on ? formatDateAr(row.expires_on) : q.status.noExpiry}
-                  </Td>
-                  <Td>
-                    <FileLink path={row.file_path} />
-                  </Td>
-                  <Td>{row.is_current ? q.version.current : q.version.superseded}</Td>
-                </Tr>
-              ))}
-            </TBody>
-          </Table>
+          <div className="overflow-x-auto">
+            <div className="min-w-[480px]">
+              <div className={cn(histGrid, "text-muted border-border border-b pb-1.5 text-xs")}>
+                <span>{q.columns.type}</span>
+                <span>{q.columns.issued}</span>
+                <span>{q.columns.expires}</span>
+                <span>{q.columns.version}</span>
+                {hasHistFiles ? <span className="sr-only">{q.columns.file}</span> : null}
+              </div>
+              <ul>
+                {history.map((row) => (
+                  <li
+                    key={row.id}
+                    data-current={row.is_current}
+                    className={cn(
+                      histGrid,
+                      "border-border h-11 border-b",
+                      !row.is_current && "text-muted",
+                    )}
+                  >
+                    <span className="truncate" title={row.type_name}>
+                      {row.type_name}
+                    </span>
+                    <Mono className="text-xs">{formatDateAr(row.issued_on)}</Mono>
+                    <Mono className="text-xs">
+                      {row.expires_on ? formatDateAr(row.expires_on) : q.status.noExpiry}
+                    </Mono>
+                    <span className="truncate text-xs">
+                      {row.is_current ? q.version.current : q.version.superseded}
+                    </span>
+                    {hasHistFiles ? <FileLink path={row.file_path} /> : null}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </section>
       ) : null}
 
