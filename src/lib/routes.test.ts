@@ -32,3 +32,19 @@ describe("isPublicPath", () => {
     expect(isPublicPath("/loginx")).toBe(false);
   });
 });
+
+describe("isPublicPath: sign-up and onboarding", () => {
+  it("keeps /signup public so new users can request a code", () => {
+    expect(isPublicPath("/signup")).toBe(true);
+  });
+
+  it("does not make /onboarding public (signed-in users with no company only)", () => {
+    expect(isPublicPath("/onboarding")).toBe(false);
+    expect(isPublicPath("/onboarding/step")).toBe(false);
+  });
+
+  it("does not match look-alike paths of the public ones", () => {
+    expect(isPublicPath("/signupx")).toBe(false);
+    expect(isPublicPath("/signup/extra")).toBe(false);
+  });
+});
