@@ -339,7 +339,8 @@ describe("trial read-only trigger", () => {
     withRollback(async (db) => {
       const f = await seedTrial(db);
       await expireTrial(db);
-      const all = writes(f);
+      // Revoking access must keep working on an expired trial (asserted separately below).
+      const all = writes(f).filter((w) => w.label !== "memberships delete");
 
       await db.as(adminT);
       for (const w of all) {
@@ -360,6 +361,12 @@ describe("trial read-only trigger", () => {
         [companyT],
       );
       expect(ownerRead.n).toBe(2);
+
+      await db.as(adminT);
+      expect(
+        await db.errorCode("delete from memberships where id = $1", [f.memberDel]),
+        "memberships delete on expired trial",
+      ).toBeNull();
     }));
 
   it("paid is never blocked, even with a past trial_ends_at", () =>
