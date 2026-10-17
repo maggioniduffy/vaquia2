@@ -31,6 +31,7 @@ export const t = {
     goToLogin: "Ingresar",
     guestSignIn: "Entrar como invitado",
     signOut: "Cerrar sesión",
+    leaveDemo: "Salir de la demo y crear cuenta",
     noMembership: "Este usuario no pertenece a ninguna empresa. Contactar al administrador.",
   },
   onboarding: {
@@ -47,6 +48,8 @@ export const t = {
     next: "Continuar",
     back: "Volver",
     submit: "Crear empresa",
+    duplicateContact: "Contactar a soporte",
+    duplicateHref: "mailto:hola@vaquia.com?subject=CUIT%20ya%20registrado",
     trialNote: "Prueba gratuita de 30 días. El usuario queda como administrador.",
     errors: {
       invalidName: "Ingresar el nombre de la empresa.",

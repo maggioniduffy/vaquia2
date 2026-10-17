@@ -15,10 +15,10 @@ export async function getChecklist(userId: string): Promise<Checklist | null> {
       locations: string;
     }>(
       `select coalesce(c.settings->>'onboarding_dismissed' = 'true', false) as dismissed,
-              (select count(*) from public.memberships) as memberships,
-              (select count(*) from public.personas) as personas,
-              (select count(*) from public.crews) as crews,
-              (select count(*) from public.locations) as locations
+              (select count(*) from public.memberships where company_id = public.current_company_id()) as memberships,
+              (select count(*) from public.personas where company_id = public.current_company_id()) as personas,
+              (select count(*) from public.crews where company_id = public.current_company_id()) as crews,
+              (select count(*) from public.locations where company_id = public.current_company_id()) as locations
          from public.companies c where c.id = public.current_company_id()`,
     );
     return res.rows[0];

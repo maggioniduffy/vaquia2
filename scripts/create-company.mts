@@ -6,7 +6,7 @@ import pg from "pg";
 
 const USAGE = `Usage:
   pnpm admin:create-company --name "Petrosur Servicios SRL" --admin-email ana@petrosur.com.ar \\
-    --admin-name "Ana López" [--cuit 30-71111111-1 (dashes optional)]`;
+    --admin-name "Ana López" [--cuit 30-70000000-8 (dashes optional)]`;
 
 function fail(message: string): never {
   console.error(`${message}\n\n${USAGE}`);

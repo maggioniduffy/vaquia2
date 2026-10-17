@@ -144,6 +144,14 @@ export function OnboardingForm() {
         {state.error ? (
           <p role="alert" className="border-danger border-l-2 pl-3 text-sm">
             {state.error}
+            {state.error === e.duplicate ? (
+              <>
+                {" "}
+                <a href={t.onboarding.duplicateHref} className="text-accent underline">
+                  {t.onboarding.duplicateContact}
+                </a>
+              </>
+            ) : null}
           </p>
         ) : null}
         <p className="text-muted text-xs">{t.onboarding.trialNote}</p>
