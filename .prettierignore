@@ -6,3 +6,4 @@ test-results
 docs
 *.md
 .claude
+.next-*
