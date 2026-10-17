@@ -13,8 +13,8 @@ export default async function LoginPage({
 }) {
   // Real session check (a stale cookie must not bounce between / and /login).
   const session = await auth.api.getSession({ headers: await headers() });
-  if (session) redirect("/");
   const { next } = await searchParams;
+  if (session) redirect(safeNextPath(next));
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-center px-4 py-12">
       <p className="text-muted text-sm">{t.app.name}</p>

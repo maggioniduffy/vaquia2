@@ -4,7 +4,7 @@ Read only the current phase file. Status: `todo` · `doing` · `review` · `done
 
 | # | Phase | File | Status |
 |---|---|---|---|
-| 0 | Foundations: repo, auth, tenancy, RLS, design system, CI | `phases/phase-0.md` | review |
+| 0 | Foundations: repo, auth, tenancy, RLS, design system, CI | `phases/phase-0.md` | done |
 | 1 | People, crews, locations, qualifications | `phases/phase-1.md` | doing |
 | 2 | Field capture: toolbox talk + ATS, offline, signatures | `phases/phase-2.md` | todo |
 | 3 | Validation engine (Layer 1) + audit log | `phases/phase-3.md` | todo |

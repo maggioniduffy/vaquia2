@@ -91,7 +91,7 @@ describe("tenancy RLS", () => {
     withRollback(async (db) => {
       await twoCompanies(db);
       await db.as(ids.userA);
-      for (const table of ["users", "sessions", "accounts", "verifications"]) {
+      for (const table of ["users", "sessions", "accounts", "verifications", "auth_rate_limits"]) {
         expect(await db.errorCode(`select 1 from ${table}`)).toBe(INSUFFICIENT_PRIVILEGE);
       }
     }));
@@ -144,5 +144,9 @@ describe("user_settings RLS", () => {
       await db.as(ids.userB);
       expect(await db.errorCode("update companies set plan = 'demo'")).toBe(INSUFFICIENT_PRIVILEGE);
       expect(await db.errorCode("update companies set name = 'Renamed'")).toBeNull();
+      await db.as(null);
+      expect((await db.one("select name from companies where id = $1", [ids.companyB])).name).toBe(
+        "Renamed",
+      );
     }));
 });

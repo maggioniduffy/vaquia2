@@ -32,9 +32,13 @@ export async function withUser<T>(userId: string, fn: (db: Db) => Promise<T>): P
     await client.query("commit");
     return result;
   } catch (error) {
-    // Never let a failed rollback mask the original error; drop the connection if it broke.
-    await client.query("rollback").catch(() => {});
-    failure = error instanceof Error ? error : new Error(String(error));
+    // Never let a failed rollback mask the original error; drop the connection only if
+    // the rollback itself failed (connection state unknown).
+    try {
+      await client.query("rollback");
+    } catch (rollbackError) {
+      failure = rollbackError instanceof Error ? rollbackError : new Error(String(rollbackError));
+    }
     throw error;
   } finally {
     client.release(failure);

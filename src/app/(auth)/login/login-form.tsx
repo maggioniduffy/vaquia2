@@ -21,6 +21,10 @@ async function codeFlow(prev: LoginState, formData: FormData): Promise<LoginStat
 // Email → 6-digit code sent by email → signed in. No passwords.
 export function LoginForm({ next, guestEnabled }: { next: string; guestEnabled: boolean }) {
   const [state, action, pending] = useActionState<LoginState, FormData>(codeFlow, {});
+  const [guestState, guestAction, guestPending] = useActionState<LoginState, FormData>(
+    signInAsGuest,
+    {},
+  );
   const codeStep = state.step === "code";
 
   return (
@@ -111,8 +115,19 @@ export function LoginForm({ next, guestEnabled }: { next: string; guestEnabled: 
         ) : null}
       </form>
       {guestEnabled && !codeStep ? (
-        <form action={signInAsGuest}>
-          <Button type="submit" variant="ghost" size="touch" className="w-full md:h-9 md:text-sm">
+        <form action={guestAction} className="flex flex-col gap-4">
+          {guestState.error ? (
+            <p role="alert" className="border-danger border-l-2 pl-3 text-sm">
+              {guestState.error}
+            </p>
+          ) : null}
+          <Button
+            type="submit"
+            variant="ghost"
+            size="touch"
+            disabled={guestPending}
+            className="w-full md:h-9 md:text-sm"
+          >
             {t.auth.guestSignIn}
           </Button>
         </form>
