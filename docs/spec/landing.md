@@ -9,7 +9,7 @@ Public marketing page at `/`. Source: handoff in `docs/design/landing/` (README 
 
 ## Sections
 Nav (76px) · Hero · ASCII landscape + "Inicio" dashboard · Pillars (`#producto`) · Campo (`#campo`, three phones) · Oficina (`#oficina`, 4 steps + "Acciones" screenshot) · Footer (glows, giant wordmark, bottom row). Desktop artboard max 1440px; section padding 80, nav/footer 40.
-- Breakpoints: `min-[68.75rem]:` (>=1100px) is the desktop layout. Below: grids stack, pillars get bottom dividers, phones scroll horizontally with snap, steps 2x2, dashboard in-flow at ~92% width. `<640`: h1 44px, screenshots full-bleed, nav center links hidden, nav demo button hidden (hero has it), footer wordmark scales with `vw`. Center links also hidden below 900px.
+- Breakpoints: `min-[68.75rem]:` (>=1100px) is the desktop layout. Below: grids stack, pillars get bottom dividers, phones scroll horizontally with snap, steps 2x2, dashboard in-flow at ~92% width. `<640`: h1 44px, screenshots full-bleed, nav center links hidden, nav sign-up button hidden (hero has it), footer wordmark scales with `vw`. Center links also hidden below 900px.
 
 ## Tokens
 Landing-only tokens live in `globals.css` under `.landing` (`--l-muted`, `--l-pill`, `--l-border`, `--l-line`, `--l-section`, `--l-footer`, `--l-label`, `--l-footer-text`, `--l-btn`, `--l-btn-text`) with light/dark in the same three patterns as the app tokens (system dark without `data-theme=light`, `[data-theme=dark]`). bg/text/accent reuse app tokens. Theme is the app's cookie toggle.
@@ -22,7 +22,9 @@ Landing-only tokens live in `globals.css` under `.landing` (`--l-muted`, `--l-pi
 - `public/landing/patagonia.png`: 330x247 source photo for the ASCII art (replace with a higher-res photo if available).
 
 ## CTAs
-- "Solicitar demo" -> `mailto:hola@vaquia.com?subject=Demo%20Vaquia` (swap for a demo form later).
+- Primary "Crear cuenta" (hero and nav) -> `/signup`.
+- Secondary "Ver demo" (hero) -> guest sign-in via a form posting `guestDemo` (`components/landing/actions.ts`, wraps `signInAsGuest`); only when `env.guestLoginEnabled`, otherwise falls back to the "Ver cómo funciona" anchor (`#oficina`).
+- "Solicitar demo" -> `mailto:hola@vaquia.com?subject=Demo%20Vaquia`, footer only (swap for a demo form later).
 - "Ingresar" -> `/login`. "Ver cómo funciona" -> `#oficina`. "Contratistas" -> `#campo`.
 
 ## Copy

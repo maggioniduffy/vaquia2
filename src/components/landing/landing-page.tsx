@@ -3,6 +3,8 @@ import { BarsIcon, HeartPulseIcon, ShieldIcon } from "@/components/ui/icons";
 import { VaquiaMark, VaquiaWordmark } from "@/components/ui/brand";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { t } from "@/i18n/es-AR";
+import { env } from "@/lib/env";
+import { guestDemo } from "./actions";
 import { AsciiCanvas } from "./ascii-canvas";
 import { ThemedImage } from "./themed-image";
 
@@ -40,9 +42,12 @@ function Nav() {
         <Link href="/login" className="lp-muted px-3.5 py-2.5 text-[15px] no-underline">
           {L.nav.login}
         </Link>
-        <a href={L.demoHref} className={`${BTN_PRIMARY} px-5 py-[11px] text-[15px] max-sm:hidden`}>
-          {L.nav.demo}
-        </a>
+        <Link
+          href="/signup"
+          className={`${BTN_PRIMARY} px-5 py-[11px] text-[15px] max-sm:hidden`}
+        >
+          {L.nav.signup}
+        </Link>
       </div>
     </header>
   );
@@ -65,15 +70,26 @@ function Hero() {
         {L.hero.lead}
       </p>
       <div className="mt-2 flex flex-wrap justify-center gap-3">
-        <a href={L.demoHref} className={`${BTN_PRIMARY} px-6 py-3.5 text-[16px]`}>
+        <Link href="/signup" className={`${BTN_PRIMARY} px-6 py-3.5 text-[16px]`}>
           {L.hero.primary}
-        </a>
-        <a
-          href="#oficina"
-          className="lp-link rounded-full border border-[var(--l-border)] px-[22px] py-3.5 text-[16px] font-medium no-underline"
-        >
-          {L.hero.secondary}
-        </a>
+        </Link>
+        {env.guestLoginEnabled ? (
+          <form action={guestDemo}>
+            <button
+              type="submit"
+              className="lp-link cursor-pointer rounded-full border border-[var(--l-border)] bg-transparent px-[22px] py-3.5 text-[16px] font-medium text-inherit"
+            >
+              {L.hero.secondary}
+            </button>
+          </form>
+        ) : (
+          <a
+            href="#oficina"
+            className="lp-link rounded-full border border-[var(--l-border)] px-[22px] py-3.5 text-[16px] font-medium no-underline"
+          >
+            {L.hero.secondaryFallback}
+          </a>
+        )}
       </div>
     </section>
   );
