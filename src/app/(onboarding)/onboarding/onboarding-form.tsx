@@ -70,7 +70,7 @@ export function OnboardingForm() {
       <div className="flex items-center gap-2 text-[13px]">
         <span className="bg-accent size-1.5 rounded-full" aria-hidden="true" />
         <span className="font-semibold">{t.onboarding.stepOf(step, 2)}</span>
-        <span className="text-[color:var(--a-mu)]">
+        <span className="text-[color:var(--text-muted)]">
           {step === 1 ? t.onboarding.stepPerson : t.onboarding.stepCompany}
         </span>
       </div>
@@ -163,7 +163,7 @@ export function OnboardingForm() {
             ) : null}
           </p>
         ) : null}
-        <p className="text-[13px] leading-normal text-[color:var(--a-mu)]">
+        <p className="text-[13px] leading-normal text-[color:var(--text-muted)]">
           {t.onboarding.trialNote}
         </p>
         <Button

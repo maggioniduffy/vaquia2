@@ -75,12 +75,12 @@ export function LoginForm({
       <form action={action} className="flex flex-col gap-4">
         <input type="hidden" name="next" value={next} />
         {signup && !codeStep ? (
-          <p className="text-sm text-[color:var(--a-mu)]">{t.auth.signUpHint}</p>
+          <p className="text-sm text-[color:var(--text-muted)]">{t.auth.signUpHint}</p>
         ) : null}
         {codeStep ? (
           <>
             <input type="hidden" name="email" value={state.email ?? ""} />
-            <p className="text-sm text-[color:var(--a-mu)]">{state.email}</p>
+            <p className="text-sm text-[color:var(--text-muted)]">{state.email}</p>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="code" className={authLabel}>
                 {t.auth.code}
@@ -199,7 +199,7 @@ export function LoginForm({
         </form>
       ) : null}
       {!codeStep ? (
-        <p className="text-center text-sm text-[color:var(--a-mu)]">
+        <p className="text-center text-sm text-[color:var(--text-muted)]">
           {signup ? t.auth.haveAccount : t.auth.noAccountYet}{" "}
           <Link
             href={signup ? "/login" : "/signup"}

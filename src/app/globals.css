@@ -245,9 +245,6 @@ html:has(.landing) {
 
 /* Auth/onboarding shell tokens (docs/spec/design.md "Auth/onboarding shell"). Scoped to .auth-shell; bg/text/accent reuse app tokens. */
 .auth-shell {
-  --a-mu: #4a5d6e;
-  --a-lab: #5e7387;
-  --a-bd: #c9d3dc;
   --a-inp: rgba(255, 255, 255, 0.65);
   --a-sc1: rgba(245, 247, 250, 0.9);
   --a-sc2: rgba(245, 247, 250, 0.7);
@@ -256,9 +253,6 @@ html:has(.landing) {
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .auth-shell {
-    --a-mu: #b4c2cf;
-    --a-lab: #8ca0b3;
-    --a-bd: #2b3a47;
     --a-inp: rgba(13, 24, 32, 0.55);
     --a-sc1: rgba(13, 24, 32, 0.88);
     --a-sc2: rgba(13, 24, 32, 0.7);
@@ -267,9 +261,6 @@ html:has(.landing) {
   }
 }
 :root[data-theme="dark"] .auth-shell {
-  --a-mu: #b4c2cf;
-  --a-lab: #8ca0b3;
-  --a-bd: #2b3a47;
   --a-inp: rgba(13, 24, 32, 0.55);
   --a-sc1: rgba(13, 24, 32, 0.88);
   --a-sc2: rgba(13, 24, 32, 0.7);
