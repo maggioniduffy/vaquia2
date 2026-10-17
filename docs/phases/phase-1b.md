@@ -9,6 +9,7 @@
 - Wizard: my persona (name, DNI) → company (name, CUIT with check digit). Duplicate CUIT is blocked with a "ask your admin" message that does not reveal the admin.
 - Plan `trial | paid | demo`, `trial_ends_at`. Expired trial = read-only, enforced in the DB (trigger, SQLSTATE `VQ001`). Payment out of scope: `paid` is set manually via script until phase 1c (tiers + Mercado Pago, spec/billing.md).
 - Guest/demo stays; landing gets "Crear cuenta" as primary CTA.
+- Review outcomes: access grants are **pending invitations** accepted by the invitee after sign-in (no pre-created users; pending invites never block creating one's own company). Google links to an existing user only when Google verified the email. CUIT squatting is an accepted risk: the duplicate message shows a support contact and ops resolves it manually; ownership verification comes with billing (1c). Revoking access (membership DELETE) works on expired trials.
 
 ## Tasks
 - [x] **1b.1** (implementer) `[test-now]` Migration: `plan` check + `trial_ends_at`, `company_writable()`, `app.assert_company_writable()` trigger on every business tenant table (append-only system tables exempt).
@@ -17,7 +18,8 @@
 - [x] **1b.4** (implementer) `/onboarding` wizard + `createCompany` action + redirects for zero-membership users.
 - [x] **1b.5** (implementer) Dashboard onboarding checklist, trial banner (office + field), `VQ001` → read-only message in action error handlers.
 - [x] **1b.6** (implementer) Landing CTAs + `scripts/company-plan.ts` (`pnpm company:plan <cuit> paid|trial [--days N]`).
-- [ ] **1b.7** (tester) DB tests (trigger, `create_company`), unit tests `cuit.ts`, e2e OTP sign-up → wizard → checklist.
+- [x] **1b.7** (tester) DB tests (trigger, `create_company`), unit tests `cuit.ts`, e2e OTP sign-up → wizard → checklist.
+- [ ] **1b.7b** (implementer) Review fixes: Google linking, pending invitations, checklist scoping, create_company length checks, membership revoke on expired trials, CUIT duplicate support contact.
 - [ ] **1b.8** (reviewer) Phase review: auth surface, security definer function, trigger coverage.
 
 ## Acceptance
