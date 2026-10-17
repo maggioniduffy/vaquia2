@@ -5,12 +5,15 @@ import { Table, TBody, Td, Th, THead, Tr } from "@/components/ui/table";
 import { t } from "@/i18n/es-AR";
 import { formatDateAr, todayInArt } from "@/lib/dates";
 import { formatDayMonth } from "@/lib/people/qualification-dates";
+import { getPersonaAccess } from "@/lib/people/access";
 import { getPersonaDetail, type CurrentQualificationRow } from "@/lib/people/qualifications";
 import { getSession } from "@/lib/session";
 import { getStorage } from "@/lib/storage";
+import { ChangeRoleSheet, GrantAccessSheet, RemoveAccessSheet } from "./access-controls";
 import { QualificationSheet } from "./qualification-sheet";
 
 const q = t.qualifications;
+const acc = t.access;
 
 function fileHref(key: string): string {
   return `/api/files/${key.split("/").map(encodeURIComponent).join("/")}`;
@@ -52,6 +55,8 @@ export default async function PersonaDetailPage({ params }: { params: Promise<{ 
   const { persona, current, history, types, fitness } = detail;
   const role = session.active?.role;
   const canWrite = role === "hse" || role === "admin";
+  const isAdmin = role === "admin";
+  const access = await getPersonaAccess(session.userId, persona.id);
   const storageAvailable = getStorage().isAvailable;
   const today = todayInArt();
   const sheetProps = { personaId: persona.id, types, storageAvailable, today };
@@ -79,6 +84,37 @@ export default async function PersonaDetailPage({ params }: { params: Promise<{ 
           </div>
         </dl>
       </header>
+
+      <section className="mb-8" aria-labelledby="access-title">
+        <h3 id="access-title" className="mb-3 text-base font-medium">
+          {acc.title}
+        </h3>
+        {access ? (
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <dl className="flex flex-wrap gap-x-8 gap-y-2 text-sm">
+              <div>
+                <dt className="text-muted text-xs">{acc.email}</dt>
+                <dd>{access.email}</dd>
+              </div>
+              <div>
+                <dt className="text-muted text-xs">{acc.role}</dt>
+                <dd>{t.roles[access.role]}</dd>
+              </div>
+            </dl>
+            {isAdmin ? (
+              <div className="flex flex-wrap gap-2">
+                <ChangeRoleSheet personaId={persona.id} currentRole={access.role} />
+                <RemoveAccessSheet personaId={persona.id} personaName={persona.full_name} />
+              </div>
+            ) : null}
+          </div>
+        ) : (
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <p className="text-muted text-sm">{acc.noAccess}</p>
+            {isAdmin ? <GrantAccessSheet personaId={persona.id} /> : null}
+          </div>
+        )}
+      </section>
 
       {fitness.length > 0 ? (
         <section className="mb-8" aria-labelledby="fitness-title">
