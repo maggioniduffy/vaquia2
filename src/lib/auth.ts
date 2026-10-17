@@ -6,7 +6,7 @@ import { t } from "@/i18n/es-AR";
 import { pool } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
 import { env } from "@/lib/env";
-import { authOptions } from "@/lib/auth-options";
+import { accountLinking, authOptions } from "@/lib/auth-options";
 
 // Guests always join this company (migration demo_company); it must have plan = 'demo'.
 const DEMO_COMPANY_ID = "30000000-0000-7000-8000-000000000001";
@@ -25,10 +25,10 @@ export const auth = betterAuth({
   secret: env.authSecret,
   baseURL: env.siteUrl,
   trustedOrigins,
-  // Invited users are pre-created (email_verified = true); signing in with Google links to them.
+  // Invited users are pre-created (email_verified = true); signing in with Google links to them only if Google verified the email.
   account: {
     ...authOptions.account,
-    accountLinking: { enabled: true, trustedProviders: ["google"] },
+    accountLinking,
   },
   ...(env.googleEnabled
     ? {
