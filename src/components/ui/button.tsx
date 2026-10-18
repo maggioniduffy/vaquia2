@@ -40,7 +40,7 @@ export function Button({
     <Comp
       type={asChild ? undefined : (type ?? "button")}
       className={cn(
-        "focus-visible:border-accent focus-visible:shadow-[0_0_0_3px_var(--accent-subtle)] focus-visible:outline-none disabled:border-border disabled:bg-hover disabled:text-muted inline-flex items-center justify-center gap-2 rounded-[var(--radius-control)] border font-medium whitespace-nowrap transition-colors disabled:pointer-events-none",
+        "focus-visible:border-accent disabled:border-border disabled:bg-hover disabled:text-muted inline-flex items-center justify-center gap-2 rounded-[var(--radius-control)] border font-medium whitespace-nowrap transition-colors focus-visible:shadow-[0_0_0_3px_var(--accent-subtle)] focus-visible:outline-none disabled:pointer-events-none",
         variants[variant],
         sizes[size],
         className,

@@ -130,7 +130,13 @@ describe("current_qualifications status edge cases", () => {
         [p, QT_MANEJO],
       );
       expect(current.qualification_id).toBe(later);
-      expect((await db.one("select count(*)::int as n from qualifications where id = any($1::uuid[])", [[earlier, later]])).n).toBe(2);
+      expect(
+        (
+          await db.one("select count(*)::int as n from qualifications where id = any($1::uuid[])", [
+            [earlier, later],
+          ])
+        ).n,
+      ).toBe(2);
     }));
 });
 
@@ -142,12 +148,21 @@ describe("qualification_status (persona x required type)", () => {
       const ok = await persona(db, "S-7");
       await qualification(db, ok, QT_ALTURA, -10, 300);
       await db.as(ids.userA);
-      const rows = await db.query<{ persona_id: string; qualification_type_id: string; status: string; qualification_id: string | null }>(
+      const rows = await db.query<{
+        persona_id: string;
+        qualification_type_id: string;
+        status: string;
+        qualification_id: string | null;
+      }>(
         "select persona_id, qualification_type_id, status, qualification_id from qualification_status where task_type_id = $1 and persona_id = any($2::uuid[])",
         [TT_ALTURA, [none, ok]],
       );
       const byPersona = Object.fromEntries(rows.map((r) => [r.persona_id, r]));
-      expect(byPersona[none]).toMatchObject({ qualification_type_id: QT_ALTURA, status: "missing", qualification_id: null });
+      expect(byPersona[none]).toMatchObject({
+        qualification_type_id: QT_ALTURA,
+        status: "missing",
+        qualification_id: null,
+      });
       expect(byPersona[ok]).toMatchObject({ qualification_type_id: QT_ALTURA, status: "valid" });
     }));
 });
@@ -229,7 +244,10 @@ describe("persona_task_fitness for a task type requiring two qualification types
       await qualification(db, p, QT_CONFINADO, -5, 360); // renewal
       await db.as(ids.userA);
       expect(
-        await db.one("select apto from persona_task_fitness where persona_id = $1 and task_type_id = $2", [p, tt]),
+        await db.one(
+          "select apto from persona_task_fitness where persona_id = $1 and task_type_id = $2",
+          [p, tt],
+        ),
       ).toEqual({ apto: true });
     }));
 });

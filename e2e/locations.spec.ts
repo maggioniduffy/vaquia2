@@ -79,7 +79,11 @@ async function withOwnerDb<T>(fn: (client: pg.Client) => Promise<T>): Promise<T>
 // Stubs external map services: Photon for search, OSM for tiles.
 async function stubMapServices(page: Page, photon: { body: unknown } = { body: PHOTON_BODY }) {
   await page.route("https://photon.komoot.io/**", (route) =>
-    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(photon.body) }),
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(photon.body),
+    }),
   );
   await page.route("https://tile.openstreetmap.org/**", (route) =>
     route.fulfill({ status: 200, contentType: "image/png", body: TRANSPARENT_PNG }),
@@ -105,9 +109,7 @@ async function createAdminCompany(page: Page): Promise<string> {
 
   await expect(page.getByRole("heading", { name: "Crear la empresa" })).toBeVisible();
   await page.getByLabel("Nombre completo", { exact: true }).fill("Admin E2E Ubicaciones");
-  await page
-    .getByLabel("DNI", { exact: true })
-    .fill(String(randomInt(10_000_000, 99_999_999)));
+  await page.getByLabel("DNI", { exact: true }).fill(String(randomInt(10_000_000, 99_999_999)));
   await page.getByRole("button", { name: "Continuar", exact: true }).click();
   await page.getByLabel("Nombre de la empresa", { exact: true }).fill(companyName);
   await page.getByLabel("CUIT de la empresa", { exact: true }).fill(randomCuit());
@@ -135,11 +137,7 @@ async function reopenLocation(page: Page) {
 }
 
 // Coordinates are numeric(9,6) in the database: the inputs show e.g. "-38.951600".
-async function expectCoords(
-  dialog: Locator,
-  lat: number,
-  lng: number,
-) {
+async function expectCoords(dialog: Locator, lat: number, lng: number) {
   await expect
     .poll(async () => Number(await dialog.locator("#lat").inputValue()))
     .toBeCloseTo(lat, 6);
@@ -165,7 +163,9 @@ test.describe("location picker", () => {
     });
   });
 
-  test("pasted Google Maps link is saved, kept on reopen, and the map renders", async ({ page }) => {
+  test("pasted Google Maps link is saved, kept on reopen, and the map renders", async ({
+    page,
+  }) => {
     await stubMapServices(page);
     await createAdminCompany(page);
     const locationName = `E2E Pegado ${stamp()}`;

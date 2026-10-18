@@ -30,9 +30,7 @@ export function Tr({
       className={cn(
         "border-border border-b transition-colors",
         "[&>td:first-child]:border-l-2 [&>td:first-child]:border-l-transparent",
-        selected
-          ? "bg-accent-subtle [&>td:first-child]:border-l-accent"
-          : "hover:bg-hover",
+        selected ? "bg-accent-subtle [&>td:first-child]:border-l-accent" : "hover:bg-hover",
         draft && "text-muted",
         className,
       )}

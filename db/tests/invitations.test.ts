@@ -50,12 +50,7 @@ async function invite(
   opts: { companyId: string; email?: string; personaId: string; role?: string; status?: string },
 ): Promise<string | null> {
   await db.as(as);
-  const params = [
-    opts.companyId,
-    opts.email ?? INVITEE_EMAIL,
-    opts.role ?? "hse",
-    opts.personaId,
-  ];
+  const params = [opts.companyId, opts.email ?? INVITEE_EMAIL, opts.role ?? "hse", opts.personaId];
   if (opts.status) {
     return db.errorCode(
       "insert into invitations (company_id, email, role, persona_id, status) values ($1, $2, $3, $4, $5)",
@@ -80,7 +75,9 @@ async function pendingId(db: TestDb, companyId: string, email = INVITEE_EMAIL): 
 
 async function statusOf(db: TestDb, id: string): Promise<string> {
   await db.as(null);
-  const row = await db.one<{ status: string }>("select status from invitations where id = $1", [id]);
+  const row = await db.one<{ status: string }>("select status from invitations where id = $1", [
+    id,
+  ]);
   return row.status;
 }
 
@@ -130,9 +127,9 @@ describe("invitations: admin-only writes (RLS)", () => {
   it("an admin cannot attach a persona from another company (composite FK)", () =>
     withRollback(async (db) => {
       await setup(db);
-      expect(
-        await invite(db, adminA, { companyId: ids.companyA, personaId: personaB }),
-      ).toBe(FK_VIOLATION);
+      expect(await invite(db, adminA, { companyId: ids.companyA, personaId: personaB })).toBe(
+        FK_VIOLATION,
+      );
     }));
 
   it("insert accepts only status 'pending'", () =>
@@ -231,7 +228,12 @@ describe("invitations: admin-only writes (RLS)", () => {
       await db.as(adminA);
       expect(await db.errorCode("delete from invitations")).toBe(RLS_DENIED);
       await db.as(null);
-      const privs = await db.one<{ select_: boolean; insert_: boolean; update_: boolean; delete_: boolean }>(
+      const privs = await db.one<{
+        select_: boolean;
+        insert_: boolean;
+        update_: boolean;
+        delete_: boolean;
+      }>(
         `select has_table_privilege('authenticated', 'public.invitations', 'SELECT') as select_,
                 has_table_privilege('authenticated', 'public.invitations', 'INSERT') as insert_,
                 has_table_privilege('authenticated', 'public.invitations', 'UPDATE') as update_,
@@ -356,10 +358,9 @@ describe("invitations: accept_invitation", () => {
       const id = await pendingId(db, ids.companyB);
 
       await db.as(invitee);
-      const accepted = await db.one<{ id: string }>(
-        "select public.accept_invitation($1) as id",
-        [id],
-      );
+      const accepted = await db.one<{ id: string }>("select public.accept_invitation($1) as id", [
+        id,
+      ]);
       expect(accepted.id).toBe(ids.companyB);
 
       await db.as(null);
@@ -472,7 +473,9 @@ describe("invitations: accept_invitation", () => {
       });
       const id = await pendingId(db, ids.companyB, "both@test.local");
       await db.as(ids.both);
-      expect(await db.errorCode("select public.accept_invitation($1)", [id])).toBe(UNIQUE_VIOLATION);
+      expect(await db.errorCode("select public.accept_invitation($1)", [id])).toBe(
+        UNIQUE_VIOLATION,
+      );
       expect(await statusOf(db, id)).toBe("pending");
     }));
 });
@@ -559,7 +562,11 @@ describe("invitations: trial and grants", () => {
 
       // create is blocked
       expect(
-        await invite(db, adminA, { companyId: ids.companyA, personaId: p4, email: "new@test.local" }),
+        await invite(db, adminA, {
+          companyId: ids.companyA,
+          personaId: p4,
+          email: "new@test.local",
+        }),
       ).toBe(READ_ONLY);
 
       // admin revoke succeeds

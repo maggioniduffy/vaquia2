@@ -110,11 +110,17 @@ type TenantSpec = {
 const TENANT_TABLES: TenantSpec[] = [
   {
     table: "locations",
-    insert: (c, l) => ({ sql: "insert into locations (company_id, name) values ($1, $2)", params: [c, l] }),
+    insert: (c, l) => ({
+      sql: "insert into locations (company_id, name) values ($1, $2)",
+      params: [c, l],
+    }),
   },
   {
     table: "crews",
-    insert: (c, l) => ({ sql: "insert into crews (company_id, name) values ($1, $2)", params: [c, l] }),
+    insert: (c, l) => ({
+      sql: "insert into crews (company_id, name) values ($1, $2)",
+      params: [c, l],
+    }),
   },
   {
     table: "personas",
@@ -166,7 +172,9 @@ async function addManagerA(db: TestDb) {
 // Owner-side count of the company B row of each table (to prove tenant A changed nothing).
 async function countB(db: TestDb, table: string): Promise<number> {
   await db.as(null);
-  const n = (await db.one(`select count(*)::int as n from ${table} where company_id = $1`, [ids.companyB])).n as number;
+  const n = (
+    await db.one(`select count(*)::int as n from ${table} where company_id = $1`, [ids.companyB])
+  ).n as number;
   return n;
 }
 
@@ -177,12 +185,34 @@ describe("people RLS: tenant tables", () => {
         withRollback(async (db) => {
           await seed(db);
           await db.as(ids.userA);
-          expect((await db.one(`select count(*)::int as n from ${spec.table} where company_id = $1`, [ids.companyB])).n).toBe(0);
-          expect((await db.one(`select count(*)::int as n from ${spec.table}`)).n).toBeGreaterThan(0);
-          expect(await db.query(`select 1 from ${spec.table} where company_id <> $1 and company_id is not null`, [ids.companyA])).toEqual([]);
+          expect(
+            (
+              await db.one(`select count(*)::int as n from ${spec.table} where company_id = $1`, [
+                ids.companyB,
+              ])
+            ).n,
+          ).toBe(0);
+          expect((await db.one(`select count(*)::int as n from ${spec.table}`)).n).toBeGreaterThan(
+            0,
+          );
+          expect(
+            await db.query(
+              `select 1 from ${spec.table} where company_id <> $1 and company_id is not null`,
+              [ids.companyA],
+            ),
+          ).toEqual([]);
 
-          expect(await db.query(`update ${spec.table} set created_at = created_at where company_id = $1 returning 1`, [ids.companyB])).toEqual([]);
-          expect(await db.query(`delete from ${spec.table} where company_id = $1 returning 1`, [ids.companyB])).toEqual([]);
+          expect(
+            await db.query(
+              `update ${spec.table} set created_at = created_at where company_id = $1 returning 1`,
+              [ids.companyB],
+            ),
+          ).toEqual([]);
+          expect(
+            await db.query(`delete from ${spec.table} where company_id = $1 returning 1`, [
+              ids.companyB,
+            ]),
+          ).toEqual([]);
           expect(await countB(db, spec.table)).toBe(1);
         }));
 
@@ -214,7 +244,13 @@ describe("people RLS: tenant tables", () => {
           }
           // ...but a worker can still read own company rows.
           await db.as(ids.workerA);
-          expect((await db.one(`select count(*)::int as n from ${spec.table} where company_id = $1`, [ids.companyA])).n).toBeGreaterThan(0);
+          expect(
+            (
+              await db.one(`select count(*)::int as n from ${spec.table} where company_id = $1`, [
+                ids.companyA,
+              ])
+            ).n,
+          ).toBeGreaterThan(0);
         }));
     });
   }
@@ -248,7 +284,9 @@ describe("people RLS: tenant tables", () => {
   it("qualifications: a persona of company B cannot be referenced by company A", () =>
     withRollback(async (db) => {
       const s = await seed(db);
-      const personaB = await db.one("select id from personas where company_id = $1", [ids.companyB]);
+      const personaB = await db.one("select id from personas where company_id = $1", [
+        ids.companyB,
+      ]);
       await db.as(ids.userA);
       expect(
         await db.errorCode(
@@ -264,11 +302,24 @@ describe("people RLS: global rows (company_id null)", () => {
     withRollback(async (db) => {
       await seed(db);
       await db.as(ids.userA);
-      expect((await db.one("select count(*)::int as n from qualification_types where company_id is null")).n).toBe(10);
-      expect((await db.one("select count(*)::int as n from task_types where company_id is null")).n).toBe(6);
-      expect((await db.one("select count(*)::int as n from task_requirements where company_id is null")).n).toBe(5);
+      expect(
+        (
+          await db.one(
+            "select count(*)::int as n from qualification_types where company_id is null",
+          )
+        ).n,
+      ).toBe(10);
+      expect(
+        (await db.one("select count(*)::int as n from task_types where company_id is null")).n,
+      ).toBe(6);
+      expect(
+        (await db.one("select count(*)::int as n from task_requirements where company_id is null"))
+          .n,
+      ).toBe(5);
       await db.as(ids.workerA);
-      expect(await db.query("select id from qualification_types where id = $1", [QTYPE_GLOBAL])).toHaveLength(1);
+      expect(
+        await db.query("select id from qualification_types where id = $1", [QTYPE_GLOBAL]),
+      ).toHaveLength(1);
     }));
 
   it("tenants cannot insert, update or delete global rows, even as hse/admin", () =>
@@ -276,10 +327,14 @@ describe("people RLS: global rows (company_id null)", () => {
       await seed(db);
       await db.as(ids.userA); // hse
       expect(
-        await db.errorCode("insert into qualification_types (company_id, name) values (null, 'Global X')"),
+        await db.errorCode(
+          "insert into qualification_types (company_id, name) values (null, 'Global X')",
+        ),
       ).toBe(INSUFFICIENT_PRIVILEGE);
       expect(
-        await db.errorCode("insert into task_types (company_id, code, name) values (null, 'x_global', 'X')"),
+        await db.errorCode(
+          "insert into task_types (company_id, code, name) values (null, 'x_global', 'X')",
+        ),
       ).toBe(INSUFFICIENT_PRIVILEGE);
       expect(
         await db.errorCode(
@@ -289,16 +344,29 @@ describe("people RLS: global rows (company_id null)", () => {
       ).toBe(INSUFFICIENT_PRIVILEGE);
 
       expect(
-        await db.query("update qualification_types set name = 'hacked' where id = $1 returning id", [QTYPE_GLOBAL]),
+        await db.query(
+          "update qualification_types set name = 'hacked' where id = $1 returning id",
+          [QTYPE_GLOBAL],
+        ),
       ).toEqual([]);
-      expect(await db.query("delete from task_types where id = $1 returning id", [TTYPE_GLOBAL])).toEqual([]);
-      expect(await db.query("delete from task_requirements where id = $1 returning id", [TREQ_GLOBAL])).toEqual([]);
+      expect(
+        await db.query("delete from task_types where id = $1 returning id", [TTYPE_GLOBAL]),
+      ).toEqual([]);
+      expect(
+        await db.query("delete from task_requirements where id = $1 returning id", [TREQ_GLOBAL]),
+      ).toEqual([]);
 
       await db.as(null);
-      expect((await db.one("select name from qualification_types where id = $1", [QTYPE_GLOBAL])).name).toBe(
-        "Inducción de operadora",
-      );
-      expect((await db.one("select count(*)::int as n from task_requirements where id = $1", [TREQ_GLOBAL])).n).toBe(1);
+      expect(
+        (await db.one("select name from qualification_types where id = $1", [QTYPE_GLOBAL])).name,
+      ).toBe("Inducción de operadora");
+      expect(
+        (
+          await db.one("select count(*)::int as n from task_requirements where id = $1", [
+            TREQ_GLOBAL,
+          ])
+        ).n,
+      ).toBe(1);
     }));
 });
 
@@ -314,11 +382,15 @@ describe("people RLS: operators (global catalog, no company_id)", () => {
     withRollback(async (db) => {
       await seed(db);
       await db.as(ids.userA);
-      expect(await db.errorCode("insert into operators (name, code) values ('X', 'X')")).toBe(INSUFFICIENT_PRIVILEGE);
-      expect(await db.errorCode("update operators set name = 'X' where id = $1", [OPERATOR_YPF])).toBe(
+      expect(await db.errorCode("insert into operators (name, code) values ('X', 'X')")).toBe(
         INSUFFICIENT_PRIVILEGE,
       );
-      expect(await db.errorCode("delete from operators where id = $1", [OPERATOR_YPF])).toBe(INSUFFICIENT_PRIVILEGE);
+      expect(
+        await db.errorCode("update operators set name = 'X' where id = $1", [OPERATOR_YPF]),
+      ).toBe(INSUFFICIENT_PRIVILEGE);
+      expect(await db.errorCode("delete from operators where id = $1", [OPERATOR_YPF])).toBe(
+        INSUFFICIENT_PRIVILEGE,
+      );
     }));
 });
 
@@ -327,7 +399,9 @@ describe("people RLS: memberships and persona link", () => {
     withRollback(async (db) => {
       await seed(db);
       await db.as(ids.userA);
-      expect(await db.query("select 1 from memberships where company_id = $1", [ids.companyB])).toEqual([]);
+      expect(
+        await db.query("select 1 from memberships where company_id = $1", [ids.companyB]),
+      ).toEqual([]);
       expect(
         await db.errorCode(
           "insert into memberships (company_id, user_id, role) values ($1, $2, 'worker')",
@@ -400,27 +474,46 @@ describe("people RLS: status views (security_invoker, cross-tenant)", () => {
     it(`${view}: company A users never see company B rows, but see their own`, () =>
       withRollback(async (db) => {
         const s = await seed(db);
-        const personaB = await db.one("select id from personas where company_id = $1", [ids.companyB]);
+        const personaB = await db.one("select id from personas where company_id = $1", [
+          ids.companyB,
+        ]);
         await addManagerA(db);
 
         // Owner-side: company B has rows in the view, so the isolation check below is not vacuous.
         await db.as(null);
         expect(
-          (await db.one(`select count(*)::int as n from ${view} where company_id = $1`, [ids.companyB])).n,
+          (
+            await db.one(`select count(*)::int as n from ${view} where company_id = $1`, [
+              ids.companyB,
+            ])
+          ).n,
         ).toBeGreaterThan(0);
 
         for (const user of [ids.userA, ids.workerA, managerA]) {
           await db.as(user);
           expect(
-            (await db.one(`select count(*)::int as n from ${view} where company_id = $1`, [ids.companyB])).n,
+            (
+              await db.one(`select count(*)::int as n from ${view} where company_id = $1`, [
+                ids.companyB,
+              ])
+            ).n,
           ).toBe(0);
-          expect(await db.query(`select 1 from ${view} where persona_id = $1`, [personaB.id])).toEqual([]);
           expect(
-            await db.query(`select 1 from ${view} where company_id is not null and company_id <> $1`, [ids.companyA]),
+            await db.query(`select 1 from ${view} where persona_id = $1`, [personaB.id]),
+          ).toEqual([]);
+          expect(
+            await db.query(
+              `select 1 from ${view} where company_id is not null and company_id <> $1`,
+              [ids.companyA],
+            ),
           ).toEqual([]);
           // Own rows are visible (persona A is linked to a qualification and to every task type).
           expect(
-            (await db.one(`select count(*)::int as n from ${view} where persona_id = $1`, [s.personaA])).n,
+            (
+              await db.one(`select count(*)::int as n from ${view} where persona_id = $1`, [
+                s.personaA,
+              ])
+            ).n,
           ).toBeGreaterThan(0);
         }
       }));

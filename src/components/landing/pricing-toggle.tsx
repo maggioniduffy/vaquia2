@@ -35,9 +35,7 @@ export function PricingToggle({ cards, labels }: Props) {
   const [annual, setAnnual] = useState(false);
   const seg = (active: boolean) =>
     `cursor-pointer rounded-full border-0 px-4 py-2 text-[14px] font-medium ${
-      active
-        ? "bg-[var(--l-btn)] text-[var(--l-btn-text)]"
-        : "bg-transparent text-[var(--l-muted)]"
+      active ? "bg-[var(--l-btn)] text-[var(--l-btn-text)]" : "bg-transparent text-[var(--l-muted)]"
     } focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]`;
   return (
     <>
@@ -47,14 +45,26 @@ export function PricingToggle({ cards, labels }: Props) {
           aria-label={labels.group}
           className="inline-flex gap-1 rounded-full border border-[var(--l-border)] p-1"
         >
-          <button type="button" aria-pressed={!annual} className={seg(!annual)} onClick={() => setAnnual(false)}>
+          <button
+            type="button"
+            aria-pressed={!annual}
+            className={seg(!annual)}
+            onClick={() => setAnnual(false)}
+          >
             {labels.monthly}
           </button>
-          <button type="button" aria-pressed={annual} className={seg(annual)} onClick={() => setAnnual(true)}>
+          <button
+            type="button"
+            aria-pressed={annual}
+            className={seg(annual)}
+            onClick={() => setAnnual(true)}
+          >
             {labels.annual}
           </button>
         </div>
-        <span className={`${MONO} text-accent rounded-full bg-[var(--l-pill)] px-3 py-[6px] text-[12px] tracking-[0.06em]`}>
+        <span
+          className={`${MONO} text-accent rounded-full bg-[var(--l-pill)] px-3 py-[6px] text-[12px] tracking-[0.06em]`}
+        >
           {labels.twoFree}
         </span>
       </div>
@@ -69,7 +79,9 @@ export function PricingToggle({ cards, labels }: Props) {
             <div className="flex items-center justify-between gap-3">
               <div className="text-[22px] font-semibold tracking-[-0.02em]">{c.name}</div>
               {c.highlighted ? (
-                <span className={`${MONO} text-accent rounded-full bg-[var(--l-pill)] px-3 py-[5px] text-[11px] tracking-[0.08em]`}>
+                <span
+                  className={`${MONO} text-accent rounded-full bg-[var(--l-pill)] px-3 py-[5px] text-[11px] tracking-[0.08em]`}
+                >
                   {labels.popular}
                 </span>
               ) : null}
@@ -81,7 +93,10 @@ export function PricingToggle({ cards, labels }: Props) {
                 </span>
                 <span className="text-[15px] text-[var(--l-muted)]">{labels.perMonth}</span>
               </div>
-              <div className="mt-2 min-h-[20px] text-[14px] text-[var(--l-muted)]" aria-live="polite">
+              <div
+                className="mt-2 min-h-[20px] text-[14px] text-[var(--l-muted)]"
+                aria-live="polite"
+              >
                 {annual ? `${c.annualTotal} ${labels.billedAnnually}` : ""}
               </div>
             </div>

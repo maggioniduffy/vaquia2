@@ -46,10 +46,7 @@ function Nav() {
         <Link href="/login" className="lp-muted px-3.5 py-2.5 text-[15px] no-underline">
           {L.nav.login}
         </Link>
-        <Link
-          href="/signup"
-          className={`${BTN_PRIMARY} px-5 py-[11px] text-[15px] max-sm:hidden`}
-        >
+        <Link href="/signup" className={`${BTN_PRIMARY} px-5 py-[11px] text-[15px] max-sm:hidden`}>
           {L.nav.signup}
         </Link>
       </div>
