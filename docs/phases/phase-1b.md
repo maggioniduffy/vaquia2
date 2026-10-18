@@ -19,9 +19,9 @@
 - [x] **1b.5** (implementer) Dashboard onboarding checklist, trial banner (office + field), `VQ001` → read-only message in action error handlers.
 - [x] **1b.6** (implementer) Landing CTAs + `scripts/company-plan.ts` (`pnpm company:plan <cuit> paid|trial [--days N]`).
 - [x] **1b.7** (tester) DB tests (trigger, `create_company`), unit tests `cuit.ts`, e2e OTP sign-up → wizard → checklist.
-- [ ] **1b.7b** (implementer) Review fixes: Google linking, pending invitations, checklist scoping, create_company length checks, membership revoke on expired trials, CUIT duplicate support contact.
-- [ ] **1b.9** (implementer) Location picker in the locations form: map (Leaflet + OpenStreetMap tiles, lazy-loaded, click/drag marker, centered on Neuquén or the saved point), place search with autocomplete (Photon/komoot, client-side, debounced; not Nominatim, whose policy forbids autocomplete), and paste a Google Maps link or `lat, lng` text. All three fill the existing `lat`/`lng` (no schema change); raw fields stay as an advanced option. Server keeps validating ranges. Free services only, with OSM attribution.
-- [ ] **1b.8** (reviewer) Phase review: auth surface, security definer function, trigger coverage.
+- [x] **1b.7b** (implementer) Review fixes: Google linking, pending invitations, checklist scoping, create_company length checks, membership revoke on expired trials, CUIT duplicate support contact.
+- [x] **1b.9** (implementer) Location picker in the locations form: map (Leaflet + OpenStreetMap tiles, lazy-loaded, click/drag marker, centered on Neuquén or the saved point), place search with autocomplete (Photon/komoot, client-side, debounced; not Nominatim, whose policy forbids autocomplete), and paste a Google Maps link or `lat, lng` text. All three fill the existing `lat`/`lng` (no schema change); raw fields stay as an advanced option. Server keeps validating ranges. Free services only, with OSM attribution.
+- [x] **1b.8** (reviewer) Phase review: auth surface, security definer function, trigger coverage.
 
 ## Acceptance
 - A new email (OTP) or Google account with no membership lands on `/onboarding`, creates company + persona, becomes admin on a 30-day trial.

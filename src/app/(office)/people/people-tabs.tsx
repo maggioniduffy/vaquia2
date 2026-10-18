@@ -18,7 +18,7 @@ export function PeopleTabs() {
   return (
     <nav
       aria-label={t.people.tabs.label}
-      className="border-border mb-4 flex gap-x-6 overflow-x-auto border-b text-sm"
+      className="border-border mb-4 flex [scrollbar-width:none] gap-x-6 overflow-x-auto overflow-y-hidden border-b text-sm [&::-webkit-scrollbar]:hidden"
     >
       {TABS.map((tab) => (
         <NavLink
