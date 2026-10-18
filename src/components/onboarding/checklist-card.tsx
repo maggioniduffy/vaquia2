@@ -32,7 +32,7 @@ export function ChecklistCard({ checklist }: { checklist: Checklist }) {
             <li key={key} className="border-border border-b last:border-b-0">
               <Link
                 href={href}
-                className="hover:bg-hover flex items-center gap-3 px-5 py-2.5 hover:text-text"
+                className="hover:bg-hover hover:text-text flex items-center gap-3 px-5 py-2.5"
               >
                 <span
                   aria-hidden

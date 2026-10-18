@@ -32,13 +32,14 @@ async function count(db: TestDb, sql: string, params: unknown[] = []): Promise<n
 // DNI also appears in the file; the import must never touch it.
 async function setup(db: TestDb) {
   await twoCompanies(db);
-  await db.query("insert into crews (company_id, name) values ($1, 'Cuadrilla Norte'), ($1, 'Cuadrilla Sur')", [
-    ids.companyA,
-  ]);
-  await db.query("insert into personas (company_id, full_name, dni) values ($1, 'Persona de B', $2)", [
-    ids.companyB,
-    PERSONA_B_DNI,
-  ]);
+  await db.query(
+    "insert into crews (company_id, name) values ($1, 'Cuadrilla Norte'), ($1, 'Cuadrilla Sur')",
+    [ids.companyA],
+  );
+  await db.query(
+    "insert into personas (company_id, full_name, dni) values ($1, 'Persona de B', $2)",
+    [ids.companyB, PERSONA_B_DNI],
+  );
   await db.as(ids.userA);
 }
 
@@ -66,18 +67,24 @@ describe("personas import (200 rows, 7 bad)", () => {
       expect(committed.counts).toMatchObject({ created: 193, errors: 7 });
 
       expect(await count(db, "select id from personas")).toBe(193);
-      expect(await count(db, "select id from personas where dni in ('1234', '12.ABC.345')")).toBe(0);
+      expect(await count(db, "select id from personas where dni in ('1234', '12.ABC.345')")).toBe(
+        0,
+      );
       // Dotted DNI "20.000.274" (line 4) is stored normalized.
       expect(await count(db, "select id from personas where dni = '20000274'")).toBe(1);
 
       await db.as(null);
       expect(
-        (await db.one("select full_name from personas where company_id = $1 and dni = $2", [
-          ids.companyB,
-          PERSONA_B_DNI,
-        ])).full_name,
+        (
+          await db.one("select full_name from personas where company_id = $1 and dni = $2", [
+            ids.companyB,
+            PERSONA_B_DNI,
+          ])
+        ).full_name,
       ).toBe("Persona de B");
-      expect(await count(db, "select id from personas where company_id = $1", [ids.companyB])).toBe(1);
+      expect(await count(db, "select id from personas where company_id = $1", [ids.companyB])).toBe(
+        1,
+      );
     }));
 
   it("re-running the same file updates the existing rows and creates no duplicates", () =>
@@ -123,7 +130,12 @@ describe("capacitaciones import (200 rows, 8 bad, 1 duplicate)", () => {
 
       expect(await count(db, "select id from qualifications")).toBe(191);
       // Line 40 (expires before issued) and the impossible date row must not land.
-      expect(await count(db, "select id from qualifications where issued_on = '2025-06-01' and expires_on = '2025-05-01'")).toBe(0);
+      expect(
+        await count(
+          db,
+          "select id from qualifications where issued_on = '2025-06-01' and expires_on = '2025-05-01'",
+        ),
+      ).toBe(0);
       // Line 2: altura, issued 2025-01-01, no vence -> 12 months later.
       const line2 = await db.one(
         `select q.expires_on::text as expires from qualifications q

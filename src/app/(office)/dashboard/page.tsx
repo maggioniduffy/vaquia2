@@ -22,7 +22,7 @@ function Group({ title, items }: { title: string; items: AttentionItem[] }) {
         <Link
           key={`${it.personaId}-${it.qualificationName}`}
           href={`/people/${it.personaId}`}
-          className="border-border text-text hover:bg-hover grid grid-cols-[12px_1fr_auto_16px] items-center gap-3 border-b px-5 py-2.5 hover:text-text"
+          className="border-border text-text hover:bg-hover hover:text-text grid grid-cols-[12px_1fr_auto_16px] items-center gap-3 border-b px-5 py-2.5"
         >
           <StatusDot status={it.status} />
           <span className="flex min-w-0 flex-col gap-0.5">

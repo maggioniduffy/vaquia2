@@ -46,7 +46,7 @@ export function VaquiaWordmark({
   return (
     <span className={`inline-flex items-center ${s.gap} ${className}`}>
       <VaquiaMark size={s.mark} className="shrink-0" />
-      <span className={`${s.text} font-semibold leading-none tracking-[-0.04em]`}>
+      <span className={`${s.text} leading-none font-semibold tracking-[-0.04em]`}>
         {t.app.name}
       </span>
     </span>

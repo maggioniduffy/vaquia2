@@ -83,10 +83,11 @@ try {
       companyIds.set(c.id, found.rows[0].id);
       continue;
     }
-    await client.query(
-      "insert into companies (id, name, cuit, plan) values ($1, $2, $3, 'paid')",
-      [c.id, c.name, c.cuit],
-    );
+    await client.query("insert into companies (id, name, cuit, plan) values ($1, $2, $3, 'paid')", [
+      c.id,
+      c.name,
+      c.cuit,
+    ]);
     companyIds.set(c.id, c.id);
   }
   for (const [i, m] of memberships.entries()) {

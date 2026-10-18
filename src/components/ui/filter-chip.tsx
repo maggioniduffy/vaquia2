@@ -18,7 +18,7 @@ export function FilterChip({
     <button
       type="button"
       className={cn(
-        "focus-visible:border-accent focus-visible:shadow-[0_0_0_3px_var(--accent-subtle)] focus-visible:outline-none bg-surface inline-flex h-8 items-center gap-1.5 rounded-[var(--radius-control)] border px-2.5 text-sm transition-colors",
+        "focus-visible:border-accent bg-surface inline-flex h-8 items-center gap-1.5 rounded-[var(--radius-control)] border px-2.5 text-sm transition-colors focus-visible:shadow-[0_0_0_3px_var(--accent-subtle)] focus-visible:outline-none",
         active ? "border-accent" : "border-border hover:bg-hover",
         className,
       )}
