@@ -5,6 +5,7 @@ import { anonymous, emailOTP } from "better-auth/plugins";
 import { t } from "@/i18n/es-AR";
 import { pool } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
+import { otpEmail } from "@/lib/email-templates";
 import { env } from "@/lib/env";
 import { accountLinking, authOptions, isUnverifiedSocialSignUp } from "@/lib/auth-options";
 
@@ -70,11 +71,7 @@ export const auth = betterAuth({
       storeOTP: "hashed",
       sendVerificationOTP: async ({ email, otp, type }) => {
         if (type !== "sign-in") return;
-        await sendEmail({
-          to: email,
-          subject: t.email.otpSubject,
-          text: `${t.email.otpBody} ${otp}\n\n${t.email.otpValidity}`,
-        });
+        await sendEmail({ to: email, ...otpEmail({ code: otp }) });
       },
     }),
     // Temporary demo feature (see docs/spec/architecture.md). Disabled unless flagged on.

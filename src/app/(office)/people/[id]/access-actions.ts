@@ -5,6 +5,7 @@ import { z } from "zod";
 import { t } from "@/i18n/es-AR";
 import { pool, withUser } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
+import { invitationEmail } from "@/lib/email-templates";
 import { env } from "@/lib/env";
 import { isReadOnlyError } from "@/lib/trial";
 import { getSession } from "@/lib/session";
@@ -138,8 +139,11 @@ export async function grantAccess(formData: FormData): Promise<AccessResult> {
     try {
       await sendEmail({
         to: email,
-        subject: t.access.invite.subject(company.name),
-        text: t.access.invite.body(fullName, company.name, `${env.siteUrl}/signup`),
+        ...invitationEmail({
+          personName: fullName,
+          companyName: company.name,
+          url: `${env.siteUrl}/signup`,
+        }),
       });
     } catch (error) {
       console.error("invitation email failed", error);

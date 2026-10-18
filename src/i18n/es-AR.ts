@@ -67,8 +67,15 @@ export const t = {
   },
   email: {
     otpSubject: "Código para ingresar a Vaquia",
-    otpBody: "Código para ingresar:",
-    otpValidity: "Vence en 5 minutos. Si no se pidió este código, ignorar el mensaje.",
+    otpEyebrow: "Código de ingreso",
+    otpTitle: "Tu código para ingresar a Vaquia",
+    otpBody: "Usá este código para ingresar a Vaquia:",
+    otpValidity: "Vence en 5 minutos.",
+    otpPreheader: (code: string) => `Tu código: ${code}`,
+    otpFooter: [
+      "Recibiste este correo porque se pidió un código para ingresar a Vaquia.",
+      "Si no pediste este código, ignorar este correo.",
+    ],
   },
   guest: {
     name: "Invitado",
@@ -122,8 +129,19 @@ export const t = {
     },
     invite: {
       subject: (company: string) => `Invitación a Vaquia - ${company}`,
-      body: (name: string, company: string, signupUrl: string) =>
-        `Hola,\n\nSe invitó a ${name} a Vaquia para la empresa ${company}.\n\nIngresar o crear la cuenta con este correo para aceptar la invitación: ${signupUrl}\n`,
+      eyebrow: "Invitación",
+      title: (company: string) => `Te invitaron a sumarte a ${company}`,
+      preheader: (company: string) => `Te invitaron a sumarte a ${company} en Vaquia`,
+      greeting: "Hola,",
+      intro: (name: string, company: string) =>
+        `Se invitó a ${name} a Vaquia para la empresa ${company}.`,
+      cta: "Aceptar invitación",
+      helper: "Ingresá o creá la cuenta con este correo para aceptar la invitación.",
+      fallback: "Si el botón no funciona, copiá este enlace en tu navegador:",
+      footer: [
+        "Recibiste este correo porque alguien te invitó a Vaquia.",
+        "Si no esperabas esta invitación, ignorar este correo.",
+      ],
     },
   },
   invitations: {
