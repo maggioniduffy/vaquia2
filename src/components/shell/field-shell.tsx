@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { t } from "@/i18n/es-AR";
 import { weekdayDayMonth } from "@/lib/field/format";
 import { getFieldToday } from "@/lib/field/today";
@@ -26,8 +26,10 @@ export async function FieldShell({ session, children }: { session: Session; chil
   );
   return (
     <div className="flex min-h-dvh flex-col text-base">
-      <TrialBanner userId={session.userId} />
-      <InvitationsNotice userId={session.userId} isGuest={session.isGuest} />
+      <Suspense fallback={null}>
+        <TrialBanner userId={session.userId} />
+        <InvitationsNotice userId={session.userId} isGuest={session.isGuest} />
+      </Suspense>
       <FieldHeader
         homeSubtitle={`${weekdayDayMonth()} · ${who}`}
         companyId={session.active?.companyId ?? null}

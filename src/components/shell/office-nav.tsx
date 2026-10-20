@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { ReactNode } from "react";
 import { t } from "@/i18n/es-AR";
 import { cn } from "@/lib/cn";
 import { activeNavHref, OFFICE_NAV } from "./office-nav-config";
@@ -10,7 +11,7 @@ export function OfficeNav({
   counts,
   onNavigate,
 }: {
-  counts: Partial<Record<string, number>>;
+  counts: Partial<Record<string, ReactNode>>;
   onNavigate?: () => void;
 }) {
   const active = activeNavHref(usePathname());
@@ -34,9 +35,7 @@ export function OfficeNav({
           >
             <Icon size={20} className="shrink-0" />
             <span className="flex-1">{label}</span>
-            {count ? (
-              <span className="text-muted font-mono text-xs tabular-nums">{count}</span>
-            ) : null}
+            {count}
           </Link>
         );
       })}
