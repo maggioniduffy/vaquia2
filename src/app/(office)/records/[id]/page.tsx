@@ -135,6 +135,8 @@ export default async function RecordDetailPage({ params }: { params: Promise<{ i
                 <img
                   src={`/api/files/${s.image_path}`}
                   alt={d.signatureAlt(s.persona_name)}
+                  loading="lazy"
+                  decoding="async"
                   className="bg-bg h-24 w-full object-contain"
                 />
                 <span className="text-sm font-medium">{s.persona_name}</span>
@@ -160,6 +162,8 @@ export default async function RecordDetailPage({ params }: { params: Promise<{ i
                   <img
                     src={`/api/files/${a.path}`}
                     alt=""
+                    loading="lazy"
+                    decoding="async"
                     className="border-border aspect-square w-full rounded-[var(--radius-control)] border object-cover"
                   />
                 </a>

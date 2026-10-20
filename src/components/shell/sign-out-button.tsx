@@ -2,12 +2,15 @@
 
 import { t } from "@/i18n/es-AR";
 import { signOut } from "@/lib/actions/auth";
-import { getDb } from "@/lib/offline/db";
-import { cleanupOnSignOut } from "@/lib/sync/outbox";
 
 // Every company this device holds local data for; companies with unsynced items are kept.
+// Dexie and the sync code load on click only, so office pages don't ship them for this button.
 async function cleanupLocalData() {
   try {
+    const [{ getDb }, { cleanupOnSignOut }] = await Promise.all([
+      import("@/lib/offline/db"),
+      import("@/lib/sync/outbox"),
+    ]);
     const db = getDb();
     const ids = new Set<string>();
     for (const table of [db.drafts, db.blobs, db.reference, db.outbox]) {
