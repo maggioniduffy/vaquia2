@@ -1,3 +1,4 @@
+import Form from "next/form";
 import Link from "next/link";
 import { FilterSelect } from "@/components/people/filter-select";
 import { Mono, PageTitle } from "@/components/people/page-title";
@@ -61,7 +62,7 @@ export default async function RecordsPage({ searchParams }: { searchParams: Sear
         subtitle={<Mono>{t.records.subtitle(rows.length)}</Mono>}
       />
 
-      <form method="get" role="search" className="flex flex-wrap items-center gap-2">
+      <Form action="/records" role="search" className="flex flex-wrap items-center gap-2">
         <FilterSelect
           name="type"
           label={f.type}
@@ -105,7 +106,7 @@ export default async function RecordsPage({ searchParams }: { searchParams: Sear
             {t.records.clearFilters}
           </Link>
         ) : null}
-      </form>
+      </Form>
 
       {rows.length === 0 ? (
         <EmptyState message={filtered ? t.records.emptyFiltered : t.empty.records} />

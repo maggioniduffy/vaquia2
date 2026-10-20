@@ -25,10 +25,13 @@ export type Session = {
 
 type CompanyRow = { company_id: string; name: string; role: Role; is_active: boolean };
 
+// Raw Better Auth session or null (no redirect), deduped per request; for public pages.
+export const getAuthSession = cache(async () => auth.api.getSession({ headers: await headers() }));
+
 // Validated session (cookie → sessions table). Redirects to /login if missing or expired.
 export const getUserId = cache(
   async (): Promise<{ userId: string; email: string; isGuest: boolean }> => {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await getAuthSession();
     if (!session) redirect("/login");
     const isGuest = (session.user as { isAnonymous?: boolean | null }).isAnonymous === true;
     return { userId: session.user.id, email: session.user.email, isGuest };

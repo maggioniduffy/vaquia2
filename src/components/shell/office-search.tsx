@@ -1,5 +1,6 @@
 "use client";
 
+import Form from "next/form";
 import { useEffect, useRef } from "react";
 import { SearchIcon } from "@/components/ui/icons";
 import { t } from "@/i18n/es-AR";
@@ -20,7 +21,7 @@ export function OfficeSearch() {
   }, []);
 
   return (
-    <form action="/people" method="get" role="search" className="hidden min-w-0 flex-1 md:block">
+    <Form action="/people" role="search" className="hidden min-w-0 flex-1 md:block">
       <label className="border-border bg-surface text-muted focus-within:border-accent mx-auto flex h-9 max-w-xl items-center gap-2 rounded-[var(--radius-control)] border px-3 focus-within:shadow-[0_0_0_3px_var(--accent-subtle)]">
         <SearchIcon size={18} className="shrink-0" />
         <input
@@ -36,6 +37,6 @@ export function OfficeSearch() {
           {t.officeShell.searchShortcut}
         </kbd>
       </label>
-    </form>
+    </Form>
   );
 }

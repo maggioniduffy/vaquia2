@@ -9,6 +9,10 @@ export const authOptions = {
     fields: { emailVerified: "email_verified", createdAt: "created_at", updatedAt: "updated_at" },
   },
   session: {
+    // Signed cookie copy of the session, re-validated against the DB after 60 s: saves one query
+    // per request. A revoked session stays usable for up to 60 s (tenant access is still enforced
+    // by RLS against live memberships on every query).
+    cookieCache: { enabled: true, maxAge: 60 },
     modelName: "sessions",
     fields: {
       expiresAt: "expires_at",
