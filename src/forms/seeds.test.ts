@@ -152,6 +152,23 @@ describe("seeds: ats@1", () => {
     expect(result.success).toBe(false);
     expect(issues(result)).toContain("steps.0.hazards.0.hazard: required");
   });
+
+  it.each([
+    ["steps.0.step", { hazards: [{ hazard: "Electrocución", controls: "Bloquear y etiquetar" }] }],
+    [
+      "steps.0.hazards.0.hazard",
+      { step: "Aislar la energía", hazards: [{ controls: "Bloquear" }] },
+    ],
+    [
+      "steps.0.hazards.0.controls",
+      { step: "Aislar la energía", hazards: [{ hazard: "Electrocución" }] },
+    ],
+  ])("fails when the required nested field %s is missing", (path, step) => {
+    const payload = { ...atsPayload, steps: [step] };
+    const result = compileForm(ats).safeParse(payload);
+    expect(result.success).toBe(false);
+    expect(issues(result)).toContain(`${path}: required`);
+  });
 });
 
 describe("seeds: version pinning (forms.md#Versions)", () => {
