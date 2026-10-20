@@ -5,6 +5,7 @@ import {
   MAX_OPTIONS,
   MAX_PHOTOS,
   MAX_SCHEMA_BYTES,
+  mergeSchemas,
   type Field,
   type FormSchema,
   type TextField,
@@ -185,6 +186,11 @@ describe("meta-schema: unique keys", () => {
     expect(hasIssue(issuesOf(doc), 'duplicate field key "child"')).toBe(true);
   });
 
+  it("rejects a nested field key that repeats a top level key", () => {
+    const doc = form([textField("dup"), groupField("g", [textField("dup")])]);
+    expect(hasIssue(issuesOf(doc), 'duplicate field key "dup"')).toBe(true);
+  });
+
   it("rejects a duplicated section key", () => {
     const doc: FormSchema = {
       title: "Form",
@@ -288,6 +294,14 @@ describe("validateExtension", () => {
       );
   });
 
+  it("accepts a merged base + extension of exactly 100 fields", () => {
+    const result = validateExtension(
+      form(manyFields(MAX_FIELDS - 1)),
+      extension([{ key: "x_extra", title: "Extra", fields: [textField("x_note")] }]),
+    );
+    expect(result.ok).toBe(true);
+  });
+
   it("enforces the size limit on the merged base + extension", () => {
     const bigBase = form(
       Array.from({ length: MAX_FIELDS }, (_, i) => textField(`f${i}`, { label: "x".repeat(700) })),
@@ -301,5 +315,45 @@ describe("validateExtension", () => {
       expect(
         result.issues.some((i) => i.includes(`schema JSON exceeds ${MAX_SCHEMA_BYTES} bytes`)),
       ).toBe(true);
+  });
+
+  it("keeps the core fields and appends the extension sections", () => {
+    const result = validateExtension(
+      base,
+      extension([{ key: "x_extra", title: "Extra", fields: [textField("x_note")] }]),
+    );
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      const merged = mergeSchemas(base, result.schema);
+      expect(merged.sections.map((s) => s.key)).toEqual(["main", "x_extra"]);
+      expect(merged.sections[0]?.fields.map((f) => f.key)).toEqual(["topic", "x_shared"]);
+    }
+  });
+
+  it("rejects an extension that is not a valid DSL document", () => {
+    const result = validateExtension(base, { title: "Extension", sections: [] });
+    expect(result.ok).toBe(false);
+  });
+});
+
+describe("meta-schema: contradictory bounds", () => {
+  it("rejects a group whose min is above its max", () => {
+    const doc = form([
+      {
+        key: "pasos",
+        type: "group",
+        label: "Pasos",
+        repeatable: true,
+        min: 3,
+        max: 2,
+        fields: [textField("paso")],
+      },
+    ]);
+    expect(hasIssue(issuesOf(doc), 'group "pasos": min > max')).toBe(true);
+  });
+
+  it("rejects a photos field whose min is above its max", () => {
+    const doc = form([{ key: "fotos", type: "photos", label: "Fotos", min: 5, max: 2 }]);
+    expect(hasIssue(issuesOf(doc), 'photos "fotos": min > max')).toBe(true);
   });
 });

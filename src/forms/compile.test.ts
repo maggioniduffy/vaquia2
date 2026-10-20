@@ -309,6 +309,67 @@ describe("compile: visibleIf", () => {
       expect(visible.data).toEqual({ vehiculo: { presion: 50, nota: "revisar" } });
   });
 
+  it("hides a field inside a group item by a root field of the record", () => {
+    const fields: Field[] = [
+      { key: "mostrar", type: "yesno", label: "¿Mostrar?" },
+      {
+        key: "vehiculo",
+        type: "group",
+        label: "Vehículo",
+        fields: [
+          { key: "dominio", type: "text", label: "Dominio" },
+          {
+            key: "detalle",
+            type: "text",
+            label: "Detalle",
+            required: true,
+            visibleIf: { "==": [{ var: "mostrar" }, "yes"] },
+          },
+        ],
+      },
+    ];
+    const hidden = parse(fields, {
+      mostrar: "no",
+      vehiculo: { dominio: "AB 123", detalle: "algo" },
+    });
+    expect(hidden.success).toBe(true);
+    if (hidden.success)
+      expect(hidden.data).toEqual({ mostrar: "no", vehiculo: { dominio: "AB 123" } });
+    const visible = parse(fields, {
+      mostrar: "yes",
+      vehiculo: { dominio: "AB 123", detalle: "algo" },
+    });
+    expect(visible.success).toBe(true);
+    if (visible.success)
+      expect(visible.data).toEqual({
+        mostrar: "yes",
+        vehiculo: { dominio: "AB 123", detalle: "algo" },
+      });
+  });
+
+  it("never requires a hidden field inside a group item", () => {
+    const fields: Field[] = [
+      { key: "mostrar", type: "yesno", label: "¿Mostrar?" },
+      {
+        key: "vehiculo",
+        type: "group",
+        label: "Vehículo",
+        fields: [
+          {
+            key: "detalle",
+            type: "text",
+            label: "Detalle",
+            required: true,
+            visibleIf: { "==": [{ var: "mostrar" }, "yes"] },
+          },
+        ],
+      },
+    ];
+    const ok = parse(fields, { mostrar: "no", vehiculo: {} });
+    expect(ok.success).toBe(true);
+    if (ok.success) expect(ok.data).toEqual({ mostrar: "no", vehiculo: {} });
+  });
+
   it("hides a field by a checklist item (forms.md DSL example)", () => {
     const fields: Field[] = [
       {
@@ -516,5 +577,78 @@ describe("visibleIf over checklist defaults (forms.md DSL example)", () => {
     const res = compileForm(schema).safeParse({ estado: { frenos: true }, observaciones: "x" });
     expect(res.success).toBe(true);
     expect(res.data).not.toHaveProperty("observaciones");
+  });
+});
+
+describe("compile: visibleIf inside a group sees the record root", () => {
+  const fields: Field[] = [
+    { key: "estado", type: "yesno", label: "¿Cumple?" },
+    {
+      key: "vehiculo",
+      type: "group",
+      label: "Vehículo",
+      fields: [
+        {
+          key: "nota",
+          type: "text",
+          label: "Nota",
+          required: true,
+          visibleIf: { "==": [{ var: "estado" }, "yes"] },
+        },
+      ],
+    },
+  ];
+
+  it("strips the nested field when the record level condition is false", () => {
+    const hidden = parse(fields, { estado: "no", vehiculo: { nota: "algo" } });
+    expect(hidden.success).toBe(true);
+    if (hidden.success) expect(hidden.data).toEqual({ estado: "no", vehiculo: {} });
+  });
+
+  it("keeps the nested field when the record level condition is true", () => {
+    const visible = parse(fields, { estado: "yes", vehiculo: { nota: "algo" } });
+    expect(visible.success).toBe(true);
+    if (visible.success)
+      expect(visible.data).toEqual({ estado: "yes", vehiculo: { nota: "algo" } });
+  });
+});
+
+describe("compile: photos of nested groups", () => {
+  const fields: Field[] = [
+    {
+      key: "vehiculo",
+      type: "group",
+      label: "Vehículo",
+      repeatable: true,
+      fields: [{ key: "fotos", type: "photos", label: "Fotos" }],
+    },
+  ];
+  const ids = (n: number) => Array.from({ length: n }, (_, i) => `att-${i}`);
+
+  it("counts the photos of every group item toward the 20 per record limit", () => {
+    const ok = parse(fields, { vehiculo: [{ fotos: ids(12) }, { fotos: ids(8) }] });
+    expect(ok.success).toBe(true);
+    const over = parse(fields, { vehiculo: [{ fotos: ids(12) }, { fotos: ids(9) }] });
+    expect(issues(over)).toContain("(root): at most 20 photos per record");
+  });
+});
+
+describe("compile: repeatable group minimum", () => {
+  it("enforces the minimum of a group that is not required", () => {
+    const fields: Field[] = [
+      {
+        key: "pasos",
+        type: "group",
+        label: "Pasos",
+        repeatable: true,
+        min: 2,
+        fields: [{ key: "paso", type: "text", label: "Paso" }],
+      },
+    ];
+    expect(issues(parse(fields, {}))).toEqual(["pasos: at least 2 required"]);
+    expect(issues(parse(fields, { pasos: [{ paso: "uno" }] }))).toEqual([
+      "pasos: at least 2 required",
+    ]);
+    expect(parse(fields, { pasos: [{ paso: "uno" }, { paso: "dos" }] }).success).toBe(true);
   });
 });
