@@ -12,6 +12,7 @@ Source of truth: `src/lib/billing/tiers.ts` (the landing reads it). Prices are *
 | `premium` | unlimited | $ 420.000 | $ 4.200.000 |
 
 - Every tier includes all modules. Premium adds voice + AI (phase 9, "próximamente" until then) and priority support.
+- Feature key `voice_ai` (premium only) gates every voice/LLM input: toolbox talk, ATS, finding report, incident quick-report, corrective-action closure evidence. Checked server-side; without it, the forms stay manual.
 - "Active field staff" = `personas` with `active = true` in the company.
 - Over the limit: creating, importing or reactivating active personas is blocked with a clear message (server-side). Existing data, field capture, closes and exports are never blocked by the limit.
 - Annual = 2 months free. Prices change via new Mercado Pago plans; existing subscriptions get their amount updated (notify admins beforehand).
