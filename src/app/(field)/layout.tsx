@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { ReferenceRefresher } from "@/components/offline/reference-refresher";
 import { FieldShell } from "@/components/shell/field-shell";
 import { NoMembership } from "@/components/shell/no-membership";
+import { SyncRunner } from "@/components/sync/sync-runner";
 import { noCompanyPath } from "@/lib/invitations";
 import { getSession } from "@/lib/session";
 
@@ -15,6 +16,7 @@ export default async function FieldLayout({ children }: { children: ReactNode })
   return (
     <FieldShell session={session}>
       <ReferenceRefresher />
+      <SyncRunner />
       {children}
     </FieldShell>
   );

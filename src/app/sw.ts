@@ -3,6 +3,7 @@
 import { defaultCache } from "@serwist/turbopack/worker";
 import type { PrecacheEntry, RuntimeCaching, SerwistGlobalConfig } from "serwist";
 import { NetworkFirst, Serwist } from "serwist";
+import { runSync } from "@/lib/sync/runner";
 
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
@@ -41,3 +42,15 @@ const serwist = new Serwist({
 });
 
 serwist.addEventListeners();
+
+// Background Sync (Android Chrome; not iOS, where the page syncs on startup / visibility / online
+// instead). Registered by src/lib/sync/trigger.ts. Rejecting makes the browser retry later.
+const SYNC_TAG = "vaquia-sync";
+self.addEventListener("sync", ((event: Event & { tag: string; waitUntil(p: Promise<unknown>): void }) => {
+  if (event.tag !== SYNC_TAG) return;
+  event.waitUntil(
+    runSync({ assumeOnline: true }).then((result) => {
+      if (result.retried > 0) throw new Error("sync: retryable items left");
+    }),
+  );
+}) as EventListener);

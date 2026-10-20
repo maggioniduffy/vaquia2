@@ -1,12 +1,19 @@
 import Dexie, { type EntityTable } from "dexie";
+import type { RecordEnvelope } from "@/lib/sync/envelope";
 
 // Device-local store for the field PWA. Every row carries company_id so switching company on a
 // shared device never mixes data. Rows are never deleted from this module: removal belongs to the
-// sync engine (phase 2.4), and only after the server confirmed the record.
+// sync engine (src/lib/sync), and only after the server confirmed the record.
 
 export type OutboxKind = "blob" | "record";
 export type OutboxStatus = "pending" | "sending" | "failed" | "kept";
 export type BlobKind = "signature" | "photo";
+
+/** Everything the record envelope needs besides what the draft already holds (frozen at enqueue). */
+export type RecordSubmission = Omit<
+  RecordEnvelope,
+  "company_id" | "id" | "schema_version" | "extension_version" | "payload"
+>;
 
 /** Local copy of a record being filled in. `id` is the client-generated UUIDv7 reused as the server record id. */
 export type DraftRow = {
@@ -18,6 +25,8 @@ export type DraftRow = {
   extension_version?: number;
   payload: Record<string, unknown>;
   updated_at: string; // ISO
+  /** Set when the draft is enqueued for sync; the draft is frozen from then on. */
+  submission?: RecordSubmission;
 };
 
 export type OutboxRow = {
@@ -38,6 +47,8 @@ export type BlobRow = {
   id: string;
   company_id: string;
   kind: BlobKind;
+  /** Owning record (drafts.id); required for photos because the server builds their key from it. */
+  record_id?: string;
   mime: string;
   bytes: Blob;
   sha256: string;
