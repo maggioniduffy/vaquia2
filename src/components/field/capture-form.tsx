@@ -110,6 +110,8 @@ export function CaptureForm({
   }, [done, draft.id, draft.capture?.geo_state, pinned.sections]);
 
   const crewField = findField(pinned.sections, "crew");
+  // Only the crew changes the option lists: keystrokes elsewhere must not rebuild them.
+  const crewId = crewField ? (payload[crewField.key] as string | undefined) : undefined;
   const references = useMemo(
     () =>
       buildReferences({
@@ -118,9 +120,9 @@ export function CaptureForm({
         locations: locations ?? [],
         taskTypes: taskTypes ?? [],
         qualifications: qualifications ?? [],
-        crewId: crewField ? (payload[crewField.key] as string | undefined) : undefined,
+        crewId,
       }),
-    [personas, crews, locations, taskTypes, qualifications, crewField, payload],
+    [personas, crews, locations, taskTypes, qualifications, crewId],
   );
 
   const onChange = (next: Payload) => {
