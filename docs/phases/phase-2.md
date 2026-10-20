@@ -4,8 +4,8 @@
 **Refs:** spec/workflow.md#Record states · spec/architecture.md#Offline sync · spec/data-model.md#Records · spec/forms.md · spec/design.md#Layout
 
 ## Unknowns → researcher
-- [ ] Serwist precache + runtime caching for App Router routes needed offline.
-- [ ] Background Sync API support on Android Chrome / iOS Safari (fallback: sync on `online` + app open).
+- [x] Serwist precache + runtime caching for App Router routes needed offline. → `@serwist/turbopack` (Turbopack supported, no webpack switch): `withSerwist()` in next.config, `app/sw.ts` with `defaultCache` + `/~offline` document fallback, SW served by a `createSerwistRoute` route handler (exempt it from the auth guard in `src/proxy.ts`). Field pages are visited online once (login) and served NetworkFirst from cache offline; capture screens are client shells over Dexie. Source: serwist.pages.dev/docs/next/turbo.
+- [x] Background Sync API support on Android Chrome / iOS Safari (fallback: sync on `online` + app open). → Android Chrome: yes; iOS Safari: no (not even installed PWAs), no guaranteed upload after the page closes. One Dexie-owned ordered outbox; the app retries on startup, `visibilitychange` → visible and `online`; `sync.register()` only as an optional Chrome wake-up. Serwist's BackgroundSyncQueue is not the outbox (transport failures only). Sources: caniuse.com/background-sync, serwist.pages.dev/docs/serwist/guide/background-syncing.
 
 ## Tasks
 - [ ] **2.1** (implementer) Migrations: `record_types` (with `company_id?`), `form_schemas`, `records`, `record_participants`, `signatures`, `attachments`. Status enum per spec/workflow.md#Record states.

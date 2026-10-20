@@ -48,12 +48,35 @@ Files (certificates): stored by `src/lib/storage` under `{company_id}/qualificat
 ## Records
 | Table | Key columns | Notes |
 |---|---|---|
-| `record_types` | company_id? (null = global built-in), code (unique per company; toolbox_talk, ats…), name, active | built-ins read-only; company types written by `admin` (spec/forms.md) |
-| `form_schemas` | record_type_id, company_id?, kind (base, extension), version, schema jsonb, status (draft, published, retired), published_at, published_by | published rows immutable; one published per type × kind × company; extensions only for global types |
-| `records` | type, schema_version, extension_version?, status enum, occurred_at, crew_id, location_id, task_type_id?, author_id, payload jsonb, geo, device_id, amends_record_id? | status per spec/workflow.md#Record states |
-| `record_participants` | record_id, persona_id, role (attendee, signer, responsible) | |
-| `signatures` | record_id, persona_id, image_path, signed_at, geo, content_hash | |
-| `attachments` | owner_type, owner_id, path, mime, taken_at, geo | photos/evidence |
+| `record_types` | company_id? (null = global built-in), code, name, active | built-ins seeded by migration with fixed ids, read-only; company types written by `admin` (phase 3b). Code unique per company (`nulls not distinct`), and a company code may not shadow a global code. Everyone reads global + own |
+| `form_schemas` | record_type_id, company_id?, kind (`base`, `extension`), version int, schema jsonb, status (`draft`, `published`, `retired`), published_at, published_by | unique (record_type, company, kind, version) `nulls not distinct`; at most one `published` per type × kind × company (partial unique index, `nulls not distinct`); extensions only for global types. Guard trigger (BEFORE UPDATE/DELETE, all roles): non-draft rows reject DELETE and only allow `published → retired`; `record_type_id, company_id, kind, version, schema, published_at, published_by` frozen once published. Members read global + own `published`/`retired`; drafts only `admin`/`hse`. Phase 2 grants select only; writes arrive in 3b |
+| `records` | id (client UUIDv7), record_type_id, schema_version, extension_version?, status `record_status`, occurred_at, crew_id, location_id, task_type_id?, author_id, payload jsonb, submission_hash, geo_lat/geo_lng/geo_accuracy?, device_id, client_created_at, submitted_at, amends_record_id? | see rules below |
+| `record_participants` | id, record_id, persona_id, role (`attendee`, `signer`, `responsible`) | unique (record, persona, role) |
+| `signatures` | id (client UUIDv7), record_id, persona_id, image_path, signed_at, geo_lat/geo_lng/geo_accuracy?, content_hash | unique (record, persona); never updated |
+| `attachments` | id (client UUIDv7), record_id?, (later) corrective_action_id?, path, mime, size, taken_at, geo_lat/geo_lng? | exactly one owner (`num_nonnulls(...) = 1`), composite FKs per owner; never updated |
+| `record_conflicts` | id, record_id, envelope jsonb, device_id, author_id, received_at | conflict copies for HSE; append-only (`reject_mutation()`) |
+
+### Rules
+- **References.** `record_type_id` and `task_type_id` are plain FKs checked by `check_global_or_own_ref` (global-or-own, as in qualifications). Crews, locations, personas, `amends_record_id`, and child → record links are composite `(company_id, x_id)` FKs. `records` has `unique (company_id, id)`.
+- **Version pin.** A trigger checks the record's versions exist as `published` or `retired`: base = `kind = 'base'` and `company_id is null or = records.company_id`; extension = `kind = 'extension'`, `company_id = records.company_id`, only when the type is global. `record_types.active` is not checked (offline drafts of a deactivated type still sync).
+- **Insert.** `supervisor`/`hse`/`admin`. A BEFORE INSERT trigger forces `status = 'submitted'`, `submitted_at = now()`, `author_id = app.current_user_id()`; RLS `with check` repeats `status = 'submitted' and author_id = app.current_user_id()`. Bounds: `octet_length(payload::text) <= 256 KB`, lat/lng ranges, client ids must be UUIDv7.
+- **Children.** Participants, signatures and attachments insert only when the parent record is authored by the caller, `status = 'submitted'` and `created_at = now()` (same transaction as the record). A signature's persona must be a `signer`/`attendee` participant of the record (trigger).
+- **Read.** Author, or `hse`/`manager`/`admin`. Exception: when the caller is an anonymous guest (`users.is_anonymous`), only their own records (guests share the demo company). Children are readable when their record is.
+- **Immutability.** `records_guard` (BEFORE UPDATE/DELETE, all roles): DELETE always rejected; UPDATE rejected when `old.status = 'locked'` or when any column other than `status` (and future `reviewed_*`) changes. `authenticated` gets select + insert only; status transitions come as functions in phase 3. A `blocked` or `locked` record is never edited: the fix is a **new record with `amends_record_id`** (workflow.md).
+- **Hashes.** `submission_hash` = sha256 of the canonical envelope (record columns + payload + participants + signature ids/content hashes), computed by the server; phase 3 reuses it as `input_hash`. `content_hash` of a signature = sha256 of the canonical envelope without signatures; the server recomputes it and rejects a mismatch. The form freezes once the first signature is taken: editing content clears every signature (UX rule, spec/forms.md).
+- **Files.** Keys are built by the server, never taken from the client: `signatures.image_path = company_id || '/signatures/' || id || '.png'`, `attachments.path = company_id || '/records/' || record_id || '/' || id || '.' || ext` (check constraints), so each image is single-use. `/api/files` authorizes these prefixes by reading the row under RLS.
+- **Triggers.** `assert_company_writable()` on all seven tables (global rows pass). `audit_row()` on `records`, `record_participants`, `signatures`, `attachments`, `record_conflicts`, and on `record_types`/`form_schemas` only for company rows (split triggers `when (new|old.company_id is not null)`, since `audit_log.company_id` is not null). None of the shared triggers read table-specific columns.
+
+### Sync endpoints (spec/architecture.md#Offline sync)
+- Every outbox item carries its `company_id`; the endpoint checks membership and runs `withUser()` scoped to that company, else `409 wrong_company`.
+- `POST /api/sync/blobs`: requires `supervisor`/`hse`/`admin` and `company_writable()` (no DB row protects it), sniffs PNG bytes, ≤ 200 KB, rate-limited per user. **Write-once**: conditional put (R2 `If-None-Match: *`, local `wx`); same sha256 already stored → `ok`; different → `409`. Guests may upload signatures only; photos are rejected server-side on `is_anonymous`.
+- `POST /api/sync/records`: inserts record + participants + signatures in one transaction with `on conflict (id) do nothing`, then:
+  - row visible, same `submission_hash` → `ok` (idempotent re-send);
+  - row visible, different hash → `record_conflicts` row (insert by the author or `hse`/`admin`) + `ok` with `conflict: true`;
+  - row invisible or conflict insert denied → `409 id_conflict`.
+- Terminal-but-kept errors: `read_only` (VQ001, trial expired while offline), `forbidden` (membership revoked), `wrong_company`, `id_conflict`. The device keeps and flags those items; it never retries them blindly and never drops them. Everything else retries with backoff.
+- Accepted risk: a uniform 409 tells a prober only whether a guessed UUIDv7 id exists (74 random bits).
+- Device heartbeat (architecture.md) is not part of phase 2.
 
 ## Validation & audit (append-only)
 | Table | Key columns | Notes |

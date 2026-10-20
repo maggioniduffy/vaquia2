@@ -7,8 +7,8 @@ Read only the current phase file. Status: `todo` · `doing` · `review` · `done
 | 0 | Foundations: repo, auth, tenancy, RLS, design system, CI | `phases/phase-0.md` | done |
 | 1 | People, crews, locations, qualifications | `phases/phase-1.md` | done |
 | 1b | Self-serve sign up, onboarding, trial | `phases/phase-1b.md` | done |
-| 1c | Billing: tiers + Mercado Pago subscriptions | `phases/phase-1c.md` | todo |
-| 2 | Field capture: toolbox talk + ATS, offline, signatures | `phases/phase-2.md` | todo |
+| 1c | Billing: tiers + Mercado Pago subscriptions | `phases/phase-1c.md` | todo (deferred) |
+| 2 | Field capture: toolbox talk + ATS, offline, signatures | `phases/phase-2.md` | doing |
 | 3 | Validation engine (Layer 1) + audit log | `phases/phase-3.md` | todo |
 | 3b | Company forms: builder, extensions of charla/ATS, field rules | `phases/phase-3b.md` | todo |
 | 4 | Findings + corrective actions | `phases/phase-4.md` | todo |
@@ -18,7 +18,7 @@ Read only the current phase file. Status: `todo` · `doing` · `review` · `done
 | 8 | **A3** operator export | `phases/phase-8.md` | todo |
 | 9 | Voice + LLM (Layer 3) — post-pilot | `phases/phase-9.md` | todo |
 
-**Current phase:** 1c
+**Current phase:** 2 (1c deferred)
 
 ## Phase protocol
 1. Opus reads the phase file and plans the task breakdown (plan mode → user approves).

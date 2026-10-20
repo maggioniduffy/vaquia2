@@ -70,6 +70,8 @@ Every field form (charla, ATS, company checklists) is a **versioned JSON schema*
 
 Common to every field: `key` (snake_case, unique in the form), `label` (es-AR), `help?`, `required?`, `visibleIf?`. `visibleIf` is json-logic over other fields of the same record; a hidden field is never required and is not stored.
 
+Signing freezes the form: once the first signature is taken, editing any content clears every signature, so every signer signs the same content (`signatures.content_hash`, spec/data-model.md#Records).
+
 Custom widgets keep built-in forms usable: the attendees picker (charla) and the steps → hazards → controls group (ATS) are `persona`/`group` fields with a `widget` hint that the renderer knows.
 
 ### Limits
