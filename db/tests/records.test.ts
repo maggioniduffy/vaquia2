@@ -1064,6 +1064,64 @@ describe("records: read access", () => {
     }));
 });
 
+describe("records: children follow the visibility of their record", () => {
+  it("a guest author sees their own record and its children only; hse flipped to guest loses the children too", () =>
+    withRollback(async (db) => {
+      const f = await seed(db);
+      await chainA(db, f, supA); // not the guest's
+      const own = await chainA(db, f, guestA);
+      await db.as(guestA);
+      expect((await db.query("select id from record_participants")).length).toBe(1);
+      expect((await db.one("select record_id from signatures")).record_id).toBe(own.rec);
+      expect((await db.one("select record_id from attachments")).record_id).toBe(own.rec);
+      await db.as(ids.userA);
+      expect(await count(db, "record_participants")).toBe(2);
+      expect(await count(db, "signatures")).toBe(2);
+      expect(await count(db, "attachments")).toBe(2);
+      await db.as(null);
+      await db.query("update users set is_anonymous = true where id = $1", [ids.userA]);
+      await db.as(ids.userA);
+      expect(await count(db, "records")).toBe(0);
+      expect(await count(db, "record_participants")).toBe(0);
+      expect(await count(db, "signatures")).toBe(0);
+      expect(await count(db, "attachments")).toBe(0);
+    }));
+
+  it("drift guard: per user, the visible children are exactly the children of the visible records", () =>
+    withRollback(async (db) => {
+      const f = await seed(db);
+      await chainA(db, f, supA);
+      await chainA(db, f, supA2);
+      await chainA(db, f, guestA);
+      await chainA(db, f, ids.userA);
+      for (const table of ["record_participants", "signatures", "attachments"]) {
+        for (const u of [
+          supA,
+          supA2,
+          ids.userA,
+          managerA,
+          adminA,
+          ids.workerA,
+          guestA,
+          ids.userB,
+        ]) {
+          await db.as(u);
+          const records = (await db.query("select id from records")).map((r) => r.id as string);
+          const visible = (await db.query(`select id from ${table}`))
+            .map((r) => r.id as string)
+            .sort();
+          await db.as(null);
+          const expected = (
+            await db.query(`select id from ${table} where record_id = any($1::uuid[])`, [records])
+          )
+            .map((r) => r.id as string)
+            .sort();
+          expect(visible, `${table} as ${u}`).toEqual(expected);
+        }
+      }
+    }));
+});
+
 describe("record_conflicts", () => {
   it("insert by the author for a record they can see; spoofed author or invisible record denied", () =>
     withRollback(async (db) => {

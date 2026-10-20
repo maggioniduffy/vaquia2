@@ -136,6 +136,47 @@ function rank(row: FitnessRow): number {
   return row.expiring ? 1 : 2;
 }
 
+/**
+ * Rows of the fitness page for task type $1 (optional crew $2, location $3). Issues and cells come
+ * from one grouped pass over qualification_status for the task type (not two correlated subqueries
+ * per persona).
+ */
+export const FITNESS_ROWS_SQL = `
+  select p.id as persona_id, p.full_name, p.dni, c.name as crew_name, f.apto,
+         coalesce(q.issues, '[]'::json) as issues,
+         coalesce(q.cells, '[]'::json) as cells
+    from public.persona_task_fitness f
+    join public.personas p on p.company_id = f.company_id and p.id = f.persona_id
+    left join public.crews c on c.company_id = p.company_id and c.id = p.crew_id
+    left join (
+      select qs.persona_id,
+             json_agg(
+               json_build_object(
+                 'name', qt.name,
+                 'status', qs.status,
+                 'expires_on', qs.expires_on,
+                 'days_left', qs.days_left
+               )
+               order by qt.name
+             ) filter (where qs.status <> 'valid') as issues,
+             json_agg(
+               json_build_object(
+                 'name', qt.name,
+                 'status', qs.status,
+                 'expires_on', qs.expires_on,
+                 'days_left', qs.days_left
+               )
+               order by qt.name
+             ) as cells
+        from public.qualification_status qs
+        join public.qualification_types qt on qt.id = qs.qualification_type_id
+       where qs.task_type_id = $1
+       group by qs.persona_id
+    ) q on q.persona_id = f.persona_id
+   where f.task_type_id = $1
+     and ($2::uuid is null or p.crew_id = $2)
+     and ($3::uuid is null or c.location_id = $3)`;
+
 export async function loadFitnessPage(db: Db, filters: FitnessFilters): Promise<FitnessPage> {
   const [taskTypesRes, crewsRes, locationsRes] = await Promise.all([
     db.query<{ id: string; code: string; name: string; requirements: string[] }>(
@@ -169,49 +210,11 @@ export async function loadFitnessPage(db: Db, filters: FitnessFilters): Promise<
 
   let all: FitnessRow[] = [];
   if (task) {
-    const res = await db.query<RowRecord>(
-      `select p.id as persona_id, p.full_name, p.dni, c.name as crew_name, f.apto,
-              coalesce(
-                (select json_agg(
-                          json_build_object(
-                            'name', qt.name,
-                            'status', qs.status,
-                            'expires_on', qs.expires_on,
-                            'days_left', qs.days_left
-                          )
-                          order by qt.name
-                        )
-                   from public.qualification_status qs
-                   join public.qualification_types qt on qt.id = qs.qualification_type_id
-                  where qs.persona_id = f.persona_id
-                    and qs.task_type_id = f.task_type_id
-                    and qs.status <> 'valid'),
-                '[]'::json
-              ) as issues,
-              coalesce(
-                (select json_agg(
-                          json_build_object(
-                            'name', qt.name,
-                            'status', qs.status,
-                            'expires_on', qs.expires_on,
-                            'days_left', qs.days_left
-                          )
-                          order by qt.name
-                        )
-                   from public.qualification_status qs
-                   join public.qualification_types qt on qt.id = qs.qualification_type_id
-                  where qs.persona_id = f.persona_id
-                    and qs.task_type_id = f.task_type_id),
-                '[]'::json
-              ) as cells
-         from public.persona_task_fitness f
-         join public.personas p on p.company_id = f.company_id and p.id = f.persona_id
-         left join public.crews c on c.company_id = p.company_id and c.id = p.crew_id
-        where f.task_type_id = $1
-          and ($2::uuid is null or p.crew_id = $2)
-          and ($3::uuid is null or c.location_id = $3)`,
-      [task.id, crewId ?? null, locationId ?? null],
-    );
+    const res = await db.query<RowRecord>(FITNESS_ROWS_SQL, [
+      task.id,
+      crewId ?? null,
+      locationId ?? null,
+    ]);
     all = res.rows
       .map((r): FitnessRow => {
         const issues = r.issues
