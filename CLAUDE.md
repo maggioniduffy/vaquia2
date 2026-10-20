@@ -45,6 +45,7 @@ Rules:
 - Every new tenant business table gets the `app.assert_company_writable()` trigger (expired trials are read-only).
 - Append-only tables (`audit_log`, `rule_evaluations`, `notifications`, `period_snapshots`, `exports`): no UPDATE/DELETE, ever.
 - Locked records are never edited — corrections are amendment records.
+- Published form schemas are immutable; records render and validate with their own schema version.
 - Migrations: plain SQL with dbmate (`db/migrations`, `-- migrate:up` / `-- migrate:down`). Never edit an applied migration.
 - **Databases:** development (local and Claude Code cloud sessions) uses only a local Postgres. Neon is production: it is migrated only by `.github/workflows/migrate.yml` after merging to `main`. `scripts/dbmate.mjs`, `test:db` and `test:e2e` refuse non-local `DATABASE_URL` outside GitHub Actions — never work around that guard.
 - **Migration gate:** every DB change passes `pnpm db:verify` (fresh migrate, rollback + re-up of the latest, full `test:db`) before commit. Migrations not yet merged to `main` may be fixed in place (re-run `db:verify`); after merge, only new migrations. Write the DB test that exercises the change (including INSERT/UPDATE/DELETE on *every* table a shared trigger/function touches) first. This overrides "tests once per phase" for DB changes.

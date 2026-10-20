@@ -17,7 +17,7 @@ Severity behavior: `block` = cannot finish/accept; `warn` = explicit ack require
 - Explanation templates with variables (`{persona}`, `{qualification}`, `{expires_on}`) → es-AR strings.
 
 ## Company rules (phase 3b)
-Admins build rules on their own form fields with a no-code builder (spec/forms.md#Rules on company fields). The builder emits json-logic for the same Layer 1 evaluator. `block` and `warn` are allowed. Company rules are stored with `company_id`, are versioned, and are logged exactly like global rules. They can never reference core fields of built-in forms.
+Admins build rules on their own form fields with a no-code builder (spec/forms.md#Rules on company fields). The builder emits json-logic for the same Layer 1 evaluator. Kinds include "creates finding if…" and "requires signer with qualification X". `block` and `warn` are allowed. Company rules are stored with `company_id`, are published together with their form version (spec/forms.md#Rules on company fields), and are logged exactly like global rules. They can never reference core fields of built-in forms.
 
 ## Non-negotiables
 1. Every alert has a human-readable explanation stating what and why. Never a bare "anomalía detectada".

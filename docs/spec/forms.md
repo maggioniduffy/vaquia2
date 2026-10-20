@@ -11,10 +11,11 @@ Every field form (charla, ATS, company checklists) is a **versioned JSON schema*
 | Renderer | `src/forms/render/` | generic field renderer for the field app (390px, touch ≥ 48px, spec/design.md), plus a few custom widgets |
 
 ## Versions
-- Every form type has versions `draft → published → retired`. A published version is **immutable**; editing it creates a new draft version.
-- Only one published version per form type (and per extension) at a time. Retired versions stay readable.
-- A record stores `record_type`, `schema_version` and `extension_version?`. It is always rendered and validated with those exact versions, never with a newer one.
-- A field `key` is stable across versions and is **never reused** for a different meaning. Removing a field just drops it from new versions.
+- Every form type has versions `draft → published → retired`. A published version is **immutable**; editing creates a new draft, and publishing it makes it current and retires the previous one (`retired_at`). One published version per type × kind × company. Retired versions stay readable.
+- A record stores `record_type`, `schema_version` and `extension_version?`. It is validated and rendered with those exact versions, forever, never with a newer one.
+- Field `key`s are stable: renaming changes the label only; removing a field drops it from new versions and old records keep it. A removed key is **never reused** (checked on publish against every past version).
+- Changing the type of an existing key is rejected on publish: the admin creates a new key.
+- Field rules and KPI tags live in the draft and are published with it.
 
 ## DSL
 ```json
@@ -68,7 +69,7 @@ Every field form (charla, ATS, company checklists) is a **versioned JSON schema*
 | `geo` | captured automatically | `{lat, lng, accuracy}` |
 | `group` | `repeatable`, `min`, `max`, `fields` (max depth 2) | object or object[] |
 
-Common to every field: `key` (snake_case, unique in the form), `label` (es-AR), `help?`, `required?`, `visibleIf?`. `visibleIf` is json-logic over other fields of the same record; a hidden field is never required and is not stored.
+Common to every field: `key` (snake_case, unique in the form), `label` (es-AR), `help?`, `required?`, `visibleIf?`, `kpiInput?` (see KPI inputs). `visibleIf` is json-logic over other fields of the same record; a hidden field is never required and is not stored.
 
 Signing freezes the form: once the first signature is taken, editing any content clears every signature, so every signer signs the same content (`signatures.content_hash`, spec/data-model.md#Records).
 
@@ -97,9 +98,11 @@ At most 100 fields per form (including extension fields), 20 photos per record, 
   - range,
   - required-if,
   - checklist item unchecked,
-  - yes/no answered "no".
+  - yes/no answered "no",
+  - creates finding if… (creates a `finding` when true),
+  - requires signer with qualification X.
 - The admin sets the severity (`block` or `warn`) and a message template using `{label}` placeholders (e.g. "Presión de neumáticos {presion} psi: por debajo de 150").
-- Stored in `rules` with `company_id` and `record_type`. A rule is versioned like any other rule: an edit is a new version, and past evaluations keep theirs.
+- Stored in `rules` with `company_id` and `record_type`. Field rules are edited in the form draft and compiled to Layer 1 rules on publish. Each `rules` row stores the `schema_version` it came from; past evaluations keep their rule version (and the record keeps its schema version).
 - Company rules can only reference the company's own fields (custom types or `x_` extension fields). Core rules stay global.
 
 ## Offline
@@ -111,7 +114,9 @@ At most 100 fields per form (including extension fields), 20 photos per record, 
 - Every signer (persona fields with `signature: true`) signs before submit; no "could not sign" option in phase 2. Signature PNG: white background, dark strokes, downscaled until ≤ 200 KB.
 - On submit the device stores the `compileForm` output as the payload and hashes that, so `content_hash` matches what the server stores.
 - Qualification status shown in pickers is informational (worst status per persona); blocking comes with the rules phase.
-- On sync, the server accepts a record on any version that was published when the draft was created. It validates with that version's compiled Zod plus the rules active for it.
+- New drafts always start on the current version.
+- On sync, the server accepts a record on the current version, or on a retired version if it arrives within 7 days of `retired_at`. It validates with that version's compiled Zod plus the rules published with it.
+- After the grace period the record gets the terminal kept error `schema_retired` (422). The device keeps the draft and offers "reiniciar en la versión actual", prefilling the fields whose keys still exist. Nothing is dropped.
 
 ## Permissions
 - `admin`: create, edit, publish and retire form types, extensions and field rules.
@@ -120,6 +125,17 @@ At most 100 fields per form (including extension fields), 20 photos per record, 
 - Global rows are read-only for all tenants. Every company row has `company_id` + RLS (spec/data-model.md).
 
 ## Downstream
-- KPIs only read core fields of built-in forms.
-- Export templates (phase 8) can map any `payload.<key>` path, including custom fields.
+- KPIs read core fields of built-in forms, plus custom fields tagged as KPI inputs (below).
+- Export templates (phase 8) reference custom fields by `record_type code + field key`, never by label. Before generating, every referenced key must exist in each schema version present in the period; otherwise a clear error lists record type, key and versions.
 - The office record detail renders any version with the same renderer in read-only mode.
+
+## KPI inputs
+- KPIs use built-in data only. A custom field (company type or `x_` extension field) counts only when the admin tags it with `kpiInput`. Allowed tags are a fixed list in code (`src/forms/kpi-inputs.ts`), never defined by admins:
+
+  | Tag | Compatible field |
+  |---|---|
+  | `observation_count`, `inspection_planned` | `number` |
+  | `near_miss`, `inspection_done` | `yesno` (`"yes"` counts) or a `checklist` item (`true` counts) |
+- The meta-schema rejects an incompatible tag on publish.
+- Tags are versioned with the schema: a change affects only records filled with the new version. Approved period snapshots never change.
+- The dashboard names the custom sources a KPI includes: "incluye datos de: Inspección de grúa v3".
