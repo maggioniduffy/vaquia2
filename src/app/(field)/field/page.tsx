@@ -9,8 +9,8 @@ import { getFieldToday } from "@/lib/field/today";
 import { getSession } from "@/lib/session";
 
 const TASKS = [
-  { href: "/field/capture", ...t.field.tasks.talk },
-  { href: "/field/capture", ...t.field.tasks.ats },
+  { href: "/field/capture#/new/toolbox_talk", ...t.field.tasks.talk },
+  { href: "/field/capture#/new/ats", ...t.field.tasks.ats },
   { href: "/field/actions", ...t.field.tasks.actions },
   { href: "/field/sync", ...t.field.tasks.sync },
 ];

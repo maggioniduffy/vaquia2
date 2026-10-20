@@ -28,7 +28,11 @@ export async function FieldShell({ session, children }: { session: Session; chil
     <div className="flex min-h-dvh flex-col text-base">
       <TrialBanner userId={session.userId} />
       <InvitationsNotice userId={session.userId} isGuest={session.isGuest} />
-      <FieldHeader homeSubtitle={`${weekdayDayMonth()} · ${who}`} end={end} />
+      <FieldHeader
+        homeSubtitle={`${weekdayDayMonth()} · ${who}`}
+        companyId={session.active?.companyId ?? null}
+        end={end}
+      />
       <main className="flex flex-1 flex-col">{children}</main>
     </div>
   );

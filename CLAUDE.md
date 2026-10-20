@@ -20,20 +20,22 @@ The main session (Opus) plans, analyzes, reviews and orchestrates. It does not w
 
 | Agent | Model | Use for |
 |---|---|---|
-| `researcher` | haiku | Look up docs/APIs, probe endpoints, inventory files, summarize long outputs |
-| `tester` | haiku | Write and run tests, long repetitive edits, fixtures, seed data |
-| `implementer` | sonnet | Features and fixes within an approved plan |
+| `researcher` | OpenCode CLI (haiku wrapper) | Look up docs/APIs, probe endpoints, inventory files, summarize long outputs |
+| `tester` | OpenCode CLI (haiku wrapper) | Write and run unit/DB tests, long repetitive edits, fixtures, seed data (not e2e) |
+| `implementer` | sonnet | Features and fixes within an approved plan; Playwright e2e specs |
 | `reviewer` | opus | Independent review at the end of each phase (fresh eyes, no prior context) |
+
+`researcher` and `tester` are thin haiku wrappers that hand the work to `opencode run` with the `vaquia-researcher` / `vaquia-tester` agents in `opencode.json` (model `opencode/deepseek-v4.1-flash-free`, free OpenCode Zen tier, zero retention and no training per opencode.ai/docs/zen; `.env*` reads denied, tester cannot commit/push/reset). They return only OpenCode's final answer. Give them paths, never file contents or secrets. Do not switch to a free model that may train on data (Big Pickle, MiMo, Nemotron); never send customer data.
 
 Rules:
 - One implementer task = one coherent change with clear acceptance criteria and file paths.
 - Run independent agents in parallel when tasks don't touch the same files.
-- **Tests run once per phase, not per task.** During tasks: only `pnpm lint && pnpm typecheck`. After the last implementer task: `tester` writes the phase's tests (from Acceptance + RLS for new tables) and runs the full suite → fixes (implementer) until green → `reviewer` → final fixes.
+- **Tests run once per phase, not per task.** During tasks: only `pnpm lint && pnpm typecheck`. After the last implementer task: `tester` writes the phase's unit/DB tests (from Acceptance + RLS for new tables) and `implementer` writes the e2e specs, then the full suite runs → fixes (implementer) until green → `reviewer` → final fixes.
 - **Exception `[test-now]`:** tasks marked so in the phase file (silent-failure cores: sync, rules evaluator, state machines, KPI math, period locking) get their unit/db tests from `tester` right after the task, before the next task starts. These tests count toward the end-of-phase suite.
 - Report agent results to the user in 1–3 lines; don't dump their output.
 - **Design review first:** in phases touching auth, permissions, RLS, security definer functions or shared triggers, `reviewer` reviews the plan + schema/migration design *before* the implementer starts (threat model, abuse cases, every table a shared trigger touches). The end-of-phase review still runs.
 - **Tests:** before running a new or changed test, read it and its fixtures and check its preconditions hold (right user/persona, state it assumes absent really is, selectors match the UI). Include this in every `tester` brief.
-- **Diagnosing failures:** `tester` (haiku) writes and runs tests; when a test fails and the cause isn't obvious from the output, the investigation goes to `implementer` (sonnet), not to `tester`.
+- **Diagnosing failures:** `tester` (OpenCode) writes and runs tests; when a test fails and the cause isn't obvious from the output, the investigation goes to `implementer` (sonnet), not to `tester`.
 - **One track at a time:** new requests that arrive mid-phase go to a later phase or the backlog unless the user marks them urgent. Commit each agent's work as soon as it reports.
 
 ## Conventions

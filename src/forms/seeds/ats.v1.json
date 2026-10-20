@@ -1,0 +1,67 @@
+{
+  "title": "Análisis de trabajo seguro (ATS)",
+  "sections": [
+    {
+      "key": "tarea",
+      "title": "Tarea",
+      "fields": [
+        { "key": "task_type", "type": "task_type", "label": "Tipo de tarea", "required": true },
+        {
+          "key": "steps",
+          "type": "group",
+          "label": "Pasos, peligros y controles",
+          "repeatable": true,
+          "min": 1,
+          "max": 30,
+          "required": true,
+          "widget": "steps_hazards_controls",
+          "fields": [
+            { "key": "step", "type": "text", "label": "Paso", "required": true, "maxLength": 300 },
+            {
+              "key": "hazards",
+              "type": "group",
+              "label": "Peligros",
+              "repeatable": true,
+              "min": 1,
+              "max": 20,
+              "required": true,
+              "fields": [
+                {
+                  "key": "hazard",
+                  "type": "text",
+                  "label": "Peligro",
+                  "required": true,
+                  "maxLength": 300
+                },
+                {
+                  "key": "controls",
+                  "type": "textarea",
+                  "label": "Controles",
+                  "required": true,
+                  "maxLength": 1000
+                }
+              ]
+            }
+          ]
+        },
+        { "key": "ppe", "type": "ppe", "label": "EPP requerido", "required": true }
+      ]
+    },
+    {
+      "key": "cierre",
+      "title": "Participantes",
+      "fields": [
+        {
+          "key": "participants",
+          "type": "persona",
+          "label": "Participantes",
+          "multiple": true,
+          "role": "signer",
+          "signature": true,
+          "required": true
+        },
+        { "key": "geo", "type": "geo", "label": "Ubicación" }
+      ]
+    }
+  ]
+}

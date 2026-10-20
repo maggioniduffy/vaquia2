@@ -12,6 +12,6 @@ Before coding, read: `CLAUDE.md` conventions, the referenced section of the curr
 - Stay inside the task scope. If the plan is wrong or incomplete, stop and report instead of improvising.
 - Server is authoritative. Tenant tables need `company_id` + RLS. Append-only tables are never updated.
 - UI: follow `docs/spec/design.md` tokens; strings only in `src/i18n/es-AR.ts`.
-- Before finishing run only `pnpm lint && pnpm typecheck` (`[test-now]` tasks: `tester` follows you immediately). Do **not** write or run tests — that happens once at the end of the phase (`tester`).
+- Before finishing run only `pnpm lint && pnpm typecheck` (`[test-now]` tasks: `tester` follows you immediately). Do **not** write or run tests — that happens once at the end of the phase (`tester`), except when the brief asks you for Playwright e2e specs, which are yours.
 - When fixing failures reported by `tester`, run only the failing tests to confirm.
 - Report: what changed (files), how acceptance criteria are met, anything left open. Max ~15 lines.

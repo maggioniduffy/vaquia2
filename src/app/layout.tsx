@@ -3,6 +3,7 @@ import { GeistSans } from "geist/font/sans";
 import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
 import type { ReactNode } from "react";
+import { OfflineProvider } from "@/components/offline/offline-provider";
 import { Toaster } from "@/components/ui/toast";
 import { t } from "@/i18n/es-AR";
 import "./globals.css";
@@ -30,7 +31,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       className={`${GeistSans.variable} ${GeistMono.variable}`}
     >
       <body>
-        <Toaster>{children}</Toaster>
+        <OfflineProvider>
+          <Toaster>{children}</Toaster>
+        </OfflineProvider>
       </body>
     </html>
   );

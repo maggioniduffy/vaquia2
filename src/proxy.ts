@@ -8,7 +8,10 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const hasSession = Boolean(getSessionCookie(request));
 
-  if (!hasSession && !isPublicPath(pathname)) {
+  // The service worker and its offline fallback must load without a session.
+  const isOfflineAsset = pathname.startsWith("/serwist/") || pathname === "/~offline";
+
+  if (!hasSession && !isPublicPath(pathname) && !isOfflineAsset) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.search = `?next=${encodeURIComponent(pathname)}`;

@@ -70,7 +70,11 @@ Every field form (charla, ATS, company checklists) is a **versioned JSON schema*
 
 Common to every field: `key` (snake_case, unique in the form), `label` (es-AR), `help?`, `required?`, `visibleIf?`. `visibleIf` is json-logic over other fields of the same record; a hidden field is never required and is not stored.
 
-Custom widgets keep built-in forms usable: the attendees picker (charla) and the steps → hazards → controls group (ATS) are `persona`/`group` fields with a `widget` hint that the renderer knows.
+Signing freezes the form: once the first signature is taken, editing any content clears every signature, so every signer signs the same content (`signatures.content_hash`, spec/data-model.md#Records).
+
+`ppe` items come from `FormReferences.ppeItems`. Phase 2 reference data carries no per-task-type PPE catalogue, so `ppeItems` is empty: the field shows a note and a single "Sin EPP específico" toggle that stores `{}` (required satisfied, nothing invented). Filling `ppeItems` needs a PPE catalogue per task type in `/api/sync/reference` (future phase).
+
+Custom widgets keep built-in forms usable: the attendees picker (charla) and the steps → hazards → controls group (ATS) are `persona`/`group` fields with a `widget` hint that the renderer knows. The ATS widget (`steps_hazards_controls`, repeatable group with child keys `step`, `hazards[]{hazard, controls}`) renders step cards with nested hazard cards; errors are shown per nested path (`steps.0.hazards.1.hazard`); read-only mode lists them as text.
 
 ### Limits
 At most 100 fields per form (including extension fields), 20 photos per record, 2 levels of nested groups, 50 options per select, and 64 KB of schema JSON. The meta-schema enforces all of these.
@@ -101,6 +105,12 @@ At most 100 fields per form (including extension fields), 20 photos per record, 
 ## Offline
 - Published schemas (base + extension) and company rules for the current company are cached on the device with the reference data (spec/architecture.md#Offline sync).
 - A draft keeps the versions it was started with.
+- Capture is one URL (`/field/capture`, draft id in the hash) so the service-worker page cache always matches offline. Drafts autosave to the device.
+- Deep links keep the pathname and query and use the hash: `/field/capture#/new/<record_type_code>` (e.g. `toolbox_talk`, `ats`) creates a draft of that type and replaces the hash with `#/<draftId>`.
+- `occurred_at` and `client_created_at` are frozen when the draft is created. Geo is requested then (8 s timeout, best effort): a denial never blocks submit, and a late fix is not applied once someone has signed.
+- Every signer (persona fields with `signature: true`) signs before submit; no "could not sign" option in phase 2. Signature PNG: white background, dark strokes, downscaled until ≤ 200 KB.
+- On submit the device stores the `compileForm` output as the payload and hashes that, so `content_hash` matches what the server stores.
+- Qualification status shown in pickers is informational (worst status per persona); blocking comes with the rules phase.
 - On sync, the server accepts a record on any version that was published when the draft was created. It validates with that version's compiled Zod plus the rules active for it.
 
 ## Permissions
