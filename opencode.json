@@ -1,0 +1,48 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "agent": {
+    "vaquia-researcher": {
+      "description": "Read-only research for the Claude Code researcher agent.",
+      "mode": "primary",
+      "model": "opencode/deepseek-v4.1-flash-free",
+      "prompt": "You gather facts. You never change files. Answer the exact question with findings, source (URL or file:line) and confidence. Say 'not found' or 'unclear' instead of guessing. Never read or print .env files or secrets.",
+      "permission": {
+        "read": { "*": "allow", "*.env": "deny", "*.env.*": "deny" },
+        "edit": "deny",
+        "task": "deny",
+        "webfetch": "allow",
+        "websearch": "allow",
+        "bash": {
+          "*": "deny",
+          "ls*": "allow",
+          "git status*": "allow",
+          "git log*": "allow",
+          "pnpm list*": "allow",
+          "pnpm why*": "allow",
+          "curl*": "allow"
+        }
+      }
+    },
+    "vaquia-tester": {
+      "description": "Writes and runs tests for the Claude Code tester agent.",
+      "mode": "primary",
+      "model": "opencode/deepseek-v4.1-flash-free",
+      "prompt": "You write and run tests and do mechanical edits. You never change product behavior to make a test pass, never commit, never read or print .env files or secrets, and only use a local DATABASE_URL.",
+      "permission": {
+        "read": { "*": "allow", "*.env": "deny", "*.env.*": "deny" },
+        "edit": { "*": "allow", "*.env": "deny", "*.env.*": "deny" },
+        "task": "deny",
+        "bash": {
+          "*": "allow",
+          "*.env*": "deny",
+          "git commit*": "deny",
+          "git push*": "deny",
+          "git reset*": "deny",
+          "git checkout*": "deny",
+          "git clean*": "deny",
+          "rm -rf*": "deny"
+        }
+      }
+    }
+  }
+}
