@@ -210,8 +210,8 @@ export const t = {
     errorHint: "Hay registros que el servidor no aceptó. Siguen guardados en este dispositivo.",
     errors: {
       read_only: "La prueba de la empresa venció: solo lectura.",
-      forbidden: "Ya no tenés permiso para enviar este registro.",
-      wrong_company: "Pertenece a otra empresa: cambiá de empresa para enviarlo.",
+      forbidden: "Sin permiso para enviar este registro.",
+      wrong_company: "Pertenece a otra empresa: hay que cambiar de empresa para enviarlo.",
       id_conflict: "Ese registro ya existe y no se puede enviar de nuevo.",
       invalid: "El servidor rechazó el contenido del registro.",
       blob_rejected: "El servidor rechazó una firma o foto del registro.",
@@ -750,7 +750,7 @@ export const t = {
   offline: {
     pageTitle: "Sin conexión",
     title: "Sin conexión",
-    body: "Esta pantalla todavía no está guardada en este dispositivo. Volvé a conectarte para abrirla; lo que ya cargaste está a salvo.",
+    body: "Esta pantalla todavía no está guardada en este dispositivo. Se abre al recuperar la conexión; lo que ya cargaste está a salvo.",
   },
   common: {
     close: "Cerrar",
