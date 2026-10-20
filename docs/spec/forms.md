@@ -103,6 +103,11 @@ At most 100 fields per form (including extension fields), 20 photos per record, 
 ## Offline
 - Published schemas (base + extension) and company rules for the current company are cached on the device with the reference data (spec/architecture.md#Offline sync).
 - A draft keeps the versions it was started with.
+- Capture is one URL (`/field/capture`, draft id in the hash) so the service-worker page cache always matches offline. Drafts autosave to the device.
+- `occurred_at` and `client_created_at` are frozen when the draft is created. Geo is requested then (8 s timeout, best effort): a denial never blocks submit, and a late fix is not applied once someone has signed.
+- Every signer (persona fields with `signature: true`) signs before submit; no "could not sign" option in phase 2. Signature PNG: white background, dark strokes, downscaled until ≤ 200 KB.
+- On submit the device stores the `compileForm` output as the payload and hashes that, so `content_hash` matches what the server stores.
+- Qualification status shown in pickers is informational (worst status per persona); blocking comes with the rules phase.
 - On sync, the server accepts a record on any version that was published when the draft was created. It validates with that version's compiled Zod plus the rules active for it.
 
 ## Permissions

@@ -6,6 +6,7 @@ import { FieldError, Input, Label, Textarea } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { cn } from "@/lib/cn";
 import { t } from "@/i18n/es-AR";
+import { AttendeesPicker } from "./attendees";
 import { isVisible, visibilityView, type Payload } from "../compile";
 import type { Field, GroupField, OptionItem } from "../dsl";
 import type { FormErrors, FormReferences } from "./types";
@@ -210,7 +211,17 @@ function Control(props: FieldProps) {
             ))}
           </Select>
         );
-      // `attendees` widget is built in 2.5; generic checkbox list for now.
+      if (field.widget === "attendees")
+        return (
+          <AttendeesPicker
+            id={path}
+            label={field.label}
+            value={(value as string[]) ?? []}
+            onChange={onChange}
+            references={references}
+            readOnly={readOnly}
+          />
+        );
       return (
         <ChoiceList
           name={field.label}
