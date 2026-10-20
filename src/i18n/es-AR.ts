@@ -671,6 +671,11 @@ export const t = {
     geoValue: (lat: string, lng: string, acc: string) => `${lat}, ${lng} (±${acc} m)`,
     required: "Obligatorio",
   },
+  offline: {
+    pageTitle: "Sin conexión",
+    title: "Sin conexión",
+    body: "Esta pantalla todavía no está guardada en este dispositivo. Volvé a conectarte para abrirla; lo que ya cargaste está a salvo.",
+  },
   common: {
     close: "Cerrar",
     cancel: "Cancelar",

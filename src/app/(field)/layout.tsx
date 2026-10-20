@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
+import { ReferenceRefresher } from "@/components/offline/reference-refresher";
 import { FieldShell } from "@/components/shell/field-shell";
 import { NoMembership } from "@/components/shell/no-membership";
 import { noCompanyPath } from "@/lib/invitations";
@@ -11,5 +12,10 @@ export default async function FieldLayout({ children }: { children: ReactNode })
     if (!session.isGuest) redirect(await noCompanyPath(session));
     return <NoMembership />;
   }
-  return <FieldShell session={session}>{children}</FieldShell>;
+  return (
+    <FieldShell session={session}>
+      <ReferenceRefresher />
+      {children}
+    </FieldShell>
+  );
 }
