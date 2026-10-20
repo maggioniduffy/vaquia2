@@ -54,13 +54,18 @@ type DeleteConfig = {
  */
 export function EntitySheet({
   trigger,
+  open: controlledOpen,
+  onOpenChange,
   title,
   action,
   successMessage,
   remove,
   children,
 }: {
-  trigger: ReactNode;
+  /** Omit `trigger` and pass `open`/`onOpenChange` to drive a single shared sheet from outside. */
+  trigger?: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   title: string;
   action: (formData: FormData) => Promise<ActionResult>;
   successMessage: string;
@@ -68,7 +73,8 @@ export function EntitySheet({
   children: (fieldErrors: FieldErrors) => ReactNode;
 }) {
   const toast = useToast();
-  const [open, setOpen] = useState(false);
+  const [innerOpen, setOpen] = useState(false);
+  const open = controlledOpen ?? innerOpen;
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -76,6 +82,7 @@ export function EntitySheet({
 
   function handleOpenChange(next: boolean) {
     setOpen(next);
+    onOpenChange?.(next);
     setError(null);
     setFieldErrors({});
     setConfirming(false);
@@ -110,7 +117,7 @@ export function EntitySheet({
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
-      <SheetTrigger asChild>{trigger}</SheetTrigger>
+      {trigger ? <SheetTrigger asChild>{trigger}</SheetTrigger> : null}
       <SheetContent title={title}>
         <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
           {children(fieldErrors)}

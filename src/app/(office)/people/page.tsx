@@ -1,7 +1,10 @@
+import Form from "next/form";
 import Link from "next/link";
+import { Suspense } from "react";
 import { FilterSelect } from "@/components/people/filter-select";
 import { Mono, PageTitle } from "@/components/people/page-title";
-import { PersonaSheet } from "@/components/people/persona-sheet";
+import { EditButton } from "@/components/people/edit-host";
+import { PersonaEditHost, PersonaSheet } from "@/components/people/persona-sheet";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/badge";
@@ -104,7 +107,7 @@ export default async function PeoplePage({ searchParams }: { searchParams: Searc
         }
       />
 
-      <form method="get" role="search" className="flex flex-wrap items-center gap-2">
+      <Form action="/people" role="search" className="flex flex-wrap items-center gap-2">
         {selectedId ? <input type="hidden" name="persona" value={selectedId} /> : null}
         <label className="bg-surface border-border text-muted focus-within:border-accent flex h-8 w-full items-center gap-2 rounded-[var(--radius-control)] border px-2.5 focus-within:shadow-[0_0_0_3px_var(--accent-subtle)] sm:w-60">
           <SearchIcon size={14} />
@@ -142,7 +145,7 @@ export default async function PeoplePage({ searchParams }: { searchParams: Searc
             {t.people.clearFilters}
           </Link>
         ) : null}
-      </form>
+      </Form>
 
       <div
         className={cn("grid items-start gap-4", selectedId && "xl:grid-cols-[minmax(0,1fr)_520px]")}
@@ -151,7 +154,7 @@ export default async function PeoplePage({ searchParams }: { searchParams: Searc
           {personas.length === 0 ? (
             <EmptyState message={filtered ? t.people.emptyFiltered : t.people.empty} />
           ) : (
-            <>
+            <PersonaEditHost personas={canWrite ? personas : []} crews={crews}>
               <div className="bg-surface border-border hidden overflow-hidden rounded-[var(--radius-panel)] border md:block">
                 <Table>
                   <THead>
@@ -189,7 +192,7 @@ export default async function PeoplePage({ searchParams }: { searchParams: Searc
                         </Td>
                         {canWrite ? (
                           <Td className="text-right">
-                            <PersonaSheet persona={p} crews={crews} />
+                            <EditButton id={p.id} label={t.people.edit} />
                           </Td>
                         ) : null}
                       </Tr>
@@ -212,17 +215,19 @@ export default async function PeoplePage({ searchParams }: { searchParams: Searc
                         <Aptitude persona={p} />
                       </span>
                     </Link>
-                    {canWrite ? <PersonaSheet persona={p} crews={crews} /> : null}
+                    {canWrite ? <EditButton id={p.id} label={t.people.edit} /> : null}
                   </li>
                 ))}
               </ul>
-            </>
+            </PersonaEditHost>
           )}
         </div>
 
         {selectedId ? (
           <aside className="bg-surface border-border hidden overflow-hidden rounded-[var(--radius-panel)] border xl:block">
-            <PersonaDetail personaId={selectedId} panel closeHref={closeHref} />
+            <Suspense fallback={<DetailSkeleton />}>
+              <PersonaDetail personaId={selectedId} panel closeHref={closeHref} />
+            </Suspense>
           </aside>
         ) : null}
       </div>
@@ -236,5 +241,15 @@ function PersonaName({ persona }: { persona: PersonaRow }) {
       <span className={cn(!persona.active && "text-muted")}>{persona.full_name}</span>
       <Mono className="text-muted text-xs">{persona.dni}</Mono>
     </>
+  );
+}
+
+function DetailSkeleton() {
+  return (
+    <div className="flex flex-col gap-3 p-4" aria-hidden>
+      <div className="bg-hover h-5 w-1/2 animate-pulse rounded" />
+      <div className="bg-hover h-4 w-1/3 animate-pulse rounded" />
+      <div className="bg-hover h-24 w-full animate-pulse rounded" />
+    </div>
   );
 }

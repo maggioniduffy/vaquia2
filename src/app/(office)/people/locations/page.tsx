@@ -1,4 +1,5 @@
-import { LocationSheet } from "@/components/people/location-sheet";
+import { EditButton } from "@/components/people/edit-host";
+import { LocationEditHost, LocationSheet } from "@/components/people/location-sheet";
 import { Mono, PageTitle } from "@/components/people/page-title";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Table, TBody, Td, Th, THead, Tr } from "@/components/ui/table";
@@ -30,7 +31,7 @@ export default async function LocationsPage() {
       {locations.length === 0 ? (
         <EmptyState message={t.locations.empty} />
       ) : (
-        <>
+        <LocationEditHost locations={locations} operators={operators}>
           <div className="bg-surface border-border hidden overflow-hidden rounded-[var(--radius-panel)] border md:block">
             <Table>
               <THead>
@@ -55,7 +56,7 @@ export default async function LocationsPage() {
                     <Td className="text-muted font-mono tabular-nums">{coords(l)}</Td>
                     {canWrite ? (
                       <Td className="text-right">
-                        <LocationSheet location={l} operators={operators} />
+                        <EditButton id={l.id} label={t.locations.edit} />
                       </Td>
                     ) : null}
                   </Tr>
@@ -77,11 +78,11 @@ export default async function LocationsPage() {
                     ) : null}
                   </span>
                 </div>
-                {canWrite ? <LocationSheet location={l} operators={operators} /> : null}
+                {canWrite ? <EditButton id={l.id} label={t.locations.edit} /> : null}
               </li>
             ))}
           </ul>
-        </>
+        </LocationEditHost>
       )}
     </div>
   );

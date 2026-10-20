@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -7,6 +8,7 @@ import { Select } from "@/components/ui/select";
 import { t } from "@/i18n/es-AR";
 import { savePersona } from "@/lib/people/actions";
 import type { Option, PersonaRow } from "@/lib/people/queries";
+import { EditProvider, useEditHost } from "./edit-host";
 import { controlClass, EntitySheet, Field } from "./entity-sheet";
 
 /** Create (no `persona`) or edit a persona. Personas are never deleted, only deactivated. */
@@ -14,19 +16,26 @@ export function PersonaSheet({
   persona,
   crews,
   primary = false,
+  open,
+  onOpenChange,
 }: {
   persona?: PersonaRow;
   crews: Option[];
   primary?: boolean;
+  /** Controlled mode (shared edit host): no trigger is rendered. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }) {
   const editing = Boolean(persona);
   return (
     <EntitySheet
+      open={open}
+      onOpenChange={onOpenChange}
       title={editing ? t.people.editTitle : t.people.newTitle}
       action={savePersona}
       successMessage={editing ? t.people.updated : t.people.created}
       trigger={
-        primary ? (
+        open !== undefined ? undefined : primary ? (
           <Button variant="primary" className="h-10 md:h-8">
             {t.people.new}
           </Button>
@@ -96,5 +105,30 @@ export function PersonaSheet({
         </>
       )}
     </EntitySheet>
+  );
+}
+
+/** One edit sheet for the whole list; wrap the rows and render `EditButton`s inside. */
+export function PersonaEditHost({
+  personas,
+  crews,
+  children,
+}: {
+  personas: PersonaRow[];
+  crews: Option[];
+  children: ReactNode;
+}) {
+  const host = useEditHost(personas);
+  return (
+    <EditProvider openEdit={host.openEdit}>
+      {children}
+      <PersonaSheet
+        key={host.item?.id}
+        persona={host.item}
+        crews={crews}
+        open={host.open}
+        onOpenChange={host.onOpenChange}
+      />
+    </EditProvider>
   );
 }

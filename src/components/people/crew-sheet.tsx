@@ -1,11 +1,13 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { t } from "@/i18n/es-AR";
 import { deleteCrew, saveCrew } from "@/lib/people/actions";
 import type { CrewRow, Option, PersonaOption } from "@/lib/people/queries";
+import { EditProvider, useEditHost } from "./edit-host";
 import { controlClass, EntitySheet, Field } from "./entity-sheet";
 
 /** Create (no `crew`) or edit a crew; delete is offered when editing (blocked server-side if it has personas). */
@@ -14,15 +16,22 @@ export function CrewSheet({
   personas,
   locations,
   primary = false,
+  open,
+  onOpenChange,
 }: {
   crew?: CrewRow;
   personas: PersonaOption[];
   locations: Option[];
   primary?: boolean;
+  /** Controlled mode (shared edit host): no trigger is rendered. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }) {
   const supervisors = personas.filter((p) => p.active || p.id === crew?.supervisor_persona_id);
   return (
     <EntitySheet
+      open={open}
+      onOpenChange={onOpenChange}
       title={crew ? t.crews.editTitle : t.crews.newTitle}
       action={saveCrew}
       successMessage={crew ? t.crews.updated : t.crews.created}
@@ -38,7 +47,7 @@ export function CrewSheet({
           : undefined
       }
       trigger={
-        primary ? (
+        open !== undefined ? undefined : primary ? (
           <Button variant="primary" className="h-10 md:h-8">
             {t.crews.new}
           </Button>
@@ -97,5 +106,33 @@ export function CrewSheet({
         </>
       )}
     </EntitySheet>
+  );
+}
+
+/** One edit sheet for the whole list; wrap the rows and render `EditButton`s inside. */
+export function CrewEditHost({
+  crews,
+  personas,
+  locations,
+  children,
+}: {
+  crews: CrewRow[];
+  personas: PersonaOption[];
+  locations: Option[];
+  children: ReactNode;
+}) {
+  const host = useEditHost(crews);
+  return (
+    <EditProvider openEdit={host.openEdit}>
+      {children}
+      <CrewSheet
+        key={host.item?.id}
+        crew={host.item}
+        personas={personas}
+        locations={locations}
+        open={host.open}
+        onOpenChange={host.onOpenChange}
+      />
+    </EditProvider>
   );
 }
