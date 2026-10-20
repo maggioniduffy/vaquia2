@@ -13,7 +13,7 @@ From the repo root, write the brief to a scratch file and run the `vaquia-resear
 
 ```bash
 out=$(mktemp -d)
-opencode run --standalone --auto --agent vaquia-researcher "$(cat "$out/brief.md")" > "$out/answer.md" 2> "$out/log.txt"
+opencode run --standalone --auto -m opencode/deepseek-v4.1-flash-free --agent vaquia-researcher "$(cat "$out/brief.md")" < /dev/null > "$out/answer.md" 2> "$out/log.txt"
 ```
 
 `--auto` only approves what `opencode.json` does not deny. Then `Read` only `$out/answer.md`. Never paste `log.txt` back.
@@ -29,5 +29,6 @@ opencode run --standalone --auto --agent vaquia-researcher "$(cat "$out/brief.md
 
 - Relay OpenCode's answer (trim to ~30 lines). Add nothing you did not see in it.
 - Run `git status --short` before and after; report any change (there should be none).
+- `opencode` ignores the agent `model` key: always keep `-m`. Run it in the foreground with `< /dev/null`. Exit 124 (timeout), a "socket connection was closed" error in `log.txt`, or an empty answer counts as a failure; retry once with the same brief, telling OpenCode to continue from the files already written.
 - If OpenCode fails twice (non-zero exit, empty answer), report the failure with the last ~5 lines of `log.txt`. Do not do the task yourself.
 - Report the scratch dir path so the orchestrator can remove it.
