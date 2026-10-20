@@ -91,7 +91,7 @@ To view the reference, open `design/Landing Final.dc.html` in a browser. It need
 - **Giant wordmark (margin-top 120, gap 36, aligned to the bottom):**
   - Mark at 300×230.
   - "Vaquia": Geist 600, **318px**, letter-spacing −0.06em, line-height .74.
-- **Bottom row (margin-top 56, mono 13, `--footer-text`):** "Tecnología que impulsa la salud" on the left, "© 2026 Vaquia" on the right.
+- **Bottom row (margin-top 56, mono 13, `--footer-text`):** "Tecnología que impulsa la seguridad" on the left, "© 2026 Vaquia" on the right.
 
 ## Interactions & behavior
 - **Theme toggle:** switches between `light` (the default) and `dark`. It swaps every token below, the product screenshots (light or dark versions), and the ASCII palette, and redraws the canvas. In production:

@@ -762,7 +762,8 @@ export const t = {
     },
     attendees: {
       count: (n: number) => (n === 1 ? "1 asistente" : `${n} asistentes`),
-      addCrew: (n: number) => (n === 1 ? "Agregar 1 persona de la cuadrilla" : `Agregar ${n} personas de la cuadrilla`),
+      addCrew: (n: number) =>
+        n === 1 ? "Agregar 1 persona de la cuadrilla" : `Agregar ${n} personas de la cuadrilla`,
       search: "Buscar por nombre o DNI",
       noResults: "No hay personas que coincidan.",
       status: {
@@ -778,7 +779,8 @@ export const t = {
     start: "Empezar",
     drafts: "Borradores",
     noDrafts: "No hay borradores en este dispositivo.",
-    noTypes: "Todavía no hay formularios guardados en este dispositivo. Se descargan al abrir la app con conexión.",
+    noTypes:
+      "Todavía no hay formularios guardados en este dispositivo. Se descargan al abrir la app con conexión.",
     loading: "Cargando…",
     draftLine: (title: string, when: string) => `${title} · ${when}`,
     resume: "Continuar",
@@ -786,7 +788,8 @@ export const t = {
     discardConfirm: "Se pierde lo cargado y las firmas de este borrador.",
     discardYes: "Descartar",
     notFound: "No se encontró el borrador en este dispositivo.",
-    schemaMissing: "Falta la versión del formulario con la que se empezó este borrador. Se descarga al abrir la app con conexión.",
+    schemaMissing:
+      "Falta la versión del formulario con la que se empezó este borrador. Se descarga al abrir la app con conexión.",
     back: "Volver a registros",
     steps: { fill: "Datos", sign: "Firmas" },
     saved: "Guardado en el dispositivo",
@@ -796,7 +799,8 @@ export const t = {
     submitted: "Guardado. Se envía cuando haya conexión.",
     newOne: "Nuevo registro",
     editClearsSignatures: "Si se cambia algún dato, se borran las firmas ya tomadas.",
-    signaturesCleared: "Cambió el contenido: se borraron las firmas. Cada persona debe firmar de nuevo.",
+    signaturesCleared:
+      "Cambió el contenido: se borraron las firmas. Cada persona debe firmar de nuevo.",
     invalidValue: "Valor no válido",
     fixErrors: "Revisar los campos marcados.",
     geoPending: "Ubicación: obteniendo…",
@@ -990,7 +994,7 @@ export const t = {
       contactLabel: "Contacto",
       email: "hola@vaquia.com",
       location: "Neuquén, Argentina",
-      tagline: "Tecnología que impulsa la salud",
+      tagline: "Tecnología que impulsa la seguridad",
       copyright: "© 2026 Vaquia",
     },
   },
