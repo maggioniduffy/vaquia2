@@ -99,6 +99,76 @@ try {
       [companyIds.get(m.companyId), userIds.get(m.userId), m.role, i],
     );
   }
+
+  // Demo records for Petrosur (office records list). Fixed UUIDv7 ids + natural keys keep it
+  // idempotent. Inserted as the table owner; app.user_id feeds the author-forcing trigger.
+  const pid = companyIds.get(PETROSUR)!;
+  const seedRow = async (sql: string, args: unknown[]) => (await client.query(sql, args)).rows[0];
+  const location = await seedRow(
+    `insert into locations (company_id, name, field) values ($1, 'Loma Campana', 'Vaca Muerta')
+     on conflict (company_id, name) do update set name = excluded.name returning id`,
+    [pid],
+  );
+  const crewIds: string[] = [];
+  for (const name of ["Cuadrilla Norte", "Cuadrilla Sur"]) {
+    const crew = await seedRow(
+      `insert into crews (company_id, name, location_id) values ($1, $2, $3)
+       on conflict (company_id, name) do update set name = excluded.name returning id`,
+      [pid, name, location.id],
+    );
+    crewIds.push(crew.id);
+  }
+  const personaIds: string[] = [];
+  for (const [i, name] of ["Carlos Ruiz", "Diego Soto", "Marcos Vera", "Pablo Luna"].entries()) {
+    const persona = await seedRow(
+      `insert into personas (company_id, full_name, dni, crew_id) values ($1, $2, $3, $4)
+       on conflict (company_id, dni) do update set dni = excluded.dni returning id`,
+      [pid, name, `3000000${i}`, crewIds[i % 2]],
+    );
+    personaIds.push(persona.id);
+  }
+  const demoRecords = [
+    { n: 1, type: "501", daysAgo: 1, crew: 0, author: users[1]!.id, people: [0, 2] },
+    { n: 2, type: "501", daysAgo: 3, crew: 1, author: users[1]!.id, people: [1, 3] },
+    { n: 3, type: "502", daysAgo: 6, crew: 0, author: users[0]!.id, people: [0, 1, 2] },
+  ];
+  for (const r of demoRecords) {
+    const id = `01900000-0000-7000-8000-00000000d${String(r.n).padStart(3, "0")}`;
+    const exists = await client.query("select 1 from records where id = $1", [id]);
+    if (exists.rowCount) continue;
+    await client.query("select set_config('app.user_id', $1, true)", [userIds.get(r.author)]);
+    const payload =
+      r.type === "501"
+        ? {
+            topic: "Trabajo en altura",
+            crew: crewIds[r.crew],
+            location: location.id,
+            attendees: r.people.map((i) => personaIds[i]),
+          }
+        : {};
+    await client.query(
+      `insert into records (id, company_id, record_type_id, schema_version, occurred_at, crew_id, location_id,
+                            payload, submission_hash, device_id, client_created_at)
+       values ($1, $2, $3, 1, now() - make_interval(days => $4), $5, $6, $7, $8, 'seed-device',
+               now() - make_interval(days => $4))`,
+      [
+        id,
+        pid,
+        `90000000-0000-7000-8000-000000000${r.type}`,
+        r.daysAgo,
+        crewIds[r.crew],
+        location.id,
+        JSON.stringify(payload),
+        "0".repeat(63) + r.n,
+      ],
+    );
+    for (const i of r.people) {
+      await client.query(
+        "insert into record_participants (company_id, record_id, persona_id, role) values ($1, $2, $3, 'attendee')",
+        [pid, id, personaIds[i]],
+      );
+    }
+  }
   await client.query("commit");
   console.log(`Seeded ${users.length} users, ${companies.length} companies.`);
 } catch (error) {

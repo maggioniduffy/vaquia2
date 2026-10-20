@@ -6,6 +6,23 @@ import { isSafeKey, isUuid } from "@/lib/storage/keys";
 
 export const dynamic = "force-dynamic";
 
+const SIGNATURE_FILE = /^[0-9a-f-]{36}\.png$/i;
+const ATTACHMENT_FILE = /^[0-9a-f-]{36}\.(jpg|jpeg|png|webp)$/i;
+
+// `{company}/signatures/{id}.png` or `{company}/records/{record_id}/{id}.{ext}`; anything else is
+// treated as a qualification key (existing behavior).
+function recordFileKind(segments: string[]): "signature" | "attachment" | null {
+  if (segments.length === 3 && segments[1] === "signatures") {
+    const [, , file = ""] = segments;
+    return SIGNATURE_FILE.test(file) && isUuid(file.slice(0, 36)) ? "signature" : null;
+  }
+  if (segments.length === 4 && segments[1] === "records" && isUuid(segments[2] ?? "")) {
+    const [, , , file = ""] = segments;
+    return ATTACHMENT_FILE.test(file) && isUuid(file.slice(0, 36)) ? "attachment" : null;
+  }
+  return null;
+}
+
 const notFound = () => new NextResponse("Not found", { status: 404 });
 
 // Authenticated download. The key must start with the caller's current company AND belong to a
@@ -26,6 +43,16 @@ export async function GET(
       "select public.current_company_id() as id",
     );
     if (company.rows[0]?.id !== segments[0]) return false;
+    // Signatures and record attachments: authorized by reading the row under RLS (records are only
+    // visible to their author or hse/manager/admin; children follow their record).
+    if (recordFileKind(segments) === "signature") {
+      const found = await db.query("select 1 from public.signatures where image_path = $1", [key]);
+      return (found.rowCount ?? 0) > 0;
+    }
+    if (recordFileKind(segments) === "attachment") {
+      const found = await db.query("select 1 from public.attachments where path = $1", [key]);
+      return (found.rowCount ?? 0) > 0;
+    }
     const found = await db.query("select 1 from public.qualifications where file_path = $1", [key]);
     return (found.rowCount ?? 0) > 0;
   });
