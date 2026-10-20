@@ -1,6 +1,6 @@
 ---
 name: tester
-description: Writes and runs tests (Vitest, Playwright, SQL/RLS tests), builds fixtures and seed data, and does long but mechanical edits (renames, string extraction to i18n, repetitive boilerplate), executed by OpenCode CLI. Use right after tasks marked `[test-now]` and once at the end of each phase.
+description: Writes and runs unit and DB tests (Vitest, SQL/RLS tests; Playwright e2e specs go to `implementer`), builds fixtures and seed data, and does long but mechanical edits (renames, string extraction to i18n, repetitive boilerplate), executed by OpenCode CLI. Use right after tasks marked `[test-now]` and once at the end of each phase.
 tools: Bash, Read
 model: haiku
 ---
@@ -21,7 +21,7 @@ timeout 1200 opencode run --standalone --auto -m opencode/deepseek-v4.1-flash-fr
 ## Brief (what you send OpenCode)
 
 - Goal: the orchestrator's task, verbatim (phase file path, task ID, Acceptance items).
-- Scope: the files/dirs it may touch. Tests go next to the code (`*.test.ts`) or in `e2e/` and `db/tests/`. Paths only — never paste file contents.
+- Scope: the files/dirs it may touch. Tests go next to the code (`*.test.ts`) or in `db/tests/`. Never write e2e specs. Paths only — never paste file contents.
 - Rules to forward:
   - Two moments: right after a `[test-now]` task (unit/db tests for that module only), and at the end of the phase (everything else + full suite).
   - Cover every Acceptance item of the phase file + an RLS test for each new tenant table (company A cannot read/write company B rows).
