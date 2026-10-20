@@ -1,0 +1,26 @@
+{
+  "title": "Charla de seguridad",
+  "sections": [
+    {
+      "key": "charla",
+      "title": "Charla",
+      "fields": [
+        { "key": "topic", "type": "text", "label": "Tema", "required": true, "maxLength": 200 },
+        { "key": "crew", "type": "crew", "label": "Cuadrilla", "required": true },
+        { "key": "location", "type": "location", "label": "Locación", "required": true },
+        {
+          "key": "attendees",
+          "type": "persona",
+          "label": "Asistentes",
+          "multiple": true,
+          "role": "attendee",
+          "signature": true,
+          "required": true,
+          "widget": "attendees"
+        },
+        { "key": "notes", "type": "textarea", "label": "Observaciones", "maxLength": 2000 },
+        { "key": "geo", "type": "geo", "label": "Ubicación" }
+      ]
+    }
+  ]
+}
