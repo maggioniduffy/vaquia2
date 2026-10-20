@@ -40,11 +40,10 @@ export async function upsertRecord(db: SyncDb, storage: Storage, raw: unknown): 
   ];
   if (keys.length > 0) {
     if (!storage.isAvailable) return fail("blob_missing");
-    for (const key of keys) {
-      const file = await storage.get(key);
-      if (!file) return fail("blob_missing");
-      await file.body.cancel().catch(() => {});
-    }
+    // Checked in parallel (one storage round trip, not one per blob); bodies are never read.
+    const files = await Promise.all(keys.map((key) => storage.get(key)));
+    await Promise.all(files.map((file) => file?.body.cancel().catch(() => {})));
+    if (files.some((file) => !file)) return fail("blob_missing");
   }
 
   await db.query("savepoint sync_record");
