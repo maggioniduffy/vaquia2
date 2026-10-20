@@ -6,7 +6,7 @@ import { FieldError, Input, Label, Textarea } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { cn } from "@/lib/cn";
 import { t } from "@/i18n/es-AR";
-import { isVisible, type Payload } from "../compile";
+import { isVisible, visibilityView, type Payload } from "../compile";
 import type { Field, GroupField, OptionItem } from "../dsl";
 import type { FormErrors, FormReferences } from "./types";
 
@@ -418,7 +418,7 @@ export function FieldList({
   return (
     <div className="flex flex-col gap-4">
       {fields
-        .filter((f) => isVisible(f, { ...scope, ...value }))
+        .filter((f) => isVisible(f, visibilityView(fields, value, scope)))
         .map((f) => (
           <FieldRow
             key={f.key}

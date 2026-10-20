@@ -30,6 +30,24 @@ export function isVisible(field: Pick<Field, "visibleIf">, data: Payload): boole
   }
 }
 
+/**
+ * The data `visibleIf` sees for `fields`: `scope` (record root / enclosing items) plus `data`, with
+ * checklist items defaulted to `false` so an unchecked item compares as false, not undefined.
+ */
+export function visibilityView(fields: readonly Field[], data: Payload, scope: Payload = {}): Payload {
+  const view: Payload = { ...scope, ...data };
+  for (const field of fields) {
+    if (field.type !== "checklist") continue;
+    const current = data[field.key];
+    const items = current && typeof current === "object" ? (current as Payload) : {};
+    view[field.key] = {
+      ...Object.fromEntries(field.items.map((item) => [item.key, false])),
+      ...items,
+    };
+  }
+  return view;
+}
+
 function isEmpty(value: unknown): boolean {
   return (
     value === undefined ||
@@ -111,7 +129,7 @@ function validateFields(
 ): Payload {
   const out: Payload = {};
   // Inside a group item, visibleIf sees the item's own fields plus the record root.
-  const view: Payload = { ...scope, ...data };
+  const view = visibilityView(fields, data, scope);
   for (const field of fields) {
     if (!isVisible(field, view)) continue;
     const p = [...path, field.key];
