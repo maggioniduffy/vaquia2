@@ -7,6 +7,7 @@ import { Select } from "@/components/ui/select";
 import { cn } from "@/lib/cn";
 import { t } from "@/i18n/es-AR";
 import { AttendeesPicker } from "./attendees";
+import { StepsHazardsControls } from "./steps-hazards";
 import { isVisible, visibilityView, type Payload } from "../compile";
 import type { Field, GroupField, OptionItem } from "../dsl";
 import type { FormErrors, FormReferences } from "./types";
@@ -268,6 +269,27 @@ function Control(props: FieldProps) {
     case "ppe": {
       const items = field.type === "checklist" ? field.items : (references.ppeItems ?? []);
       const current = (value as Record<string, boolean>) ?? {};
+      if (field.type === "ppe" && items.length === 0) {
+        // No PPE catalogue is cached for the task type: never invent items.
+        const done = value !== undefined && value !== null;
+        const marked = Object.keys(current).filter((k) => current[k]);
+        if (readOnly)
+          return <p className="text-base">{marked.length ? marked.join(", ") : t.forms.none}</p>;
+        return (
+          <div className="flex flex-col gap-2" id={path}>
+            <p className="text-muted text-sm">{t.forms.ppe.noItems}</p>
+            <Button
+              type="button"
+              role="checkbox"
+              aria-checked={done}
+              className={cn("h-12 text-base", done && "border-accent bg-accent-subtle")}
+              onClick={() => onChange(done ? undefined : {})}
+            >
+              {t.forms.ppe.noneRequired}
+            </Button>
+          </div>
+        );
+      }
       return (
         <div className="flex flex-col">
           {items.map((o) => (
@@ -316,6 +338,18 @@ function GroupControl({
   readOnly,
   scope,
 }: FieldProps<GroupField>) {
+  if (field.widget === "steps_hazards_controls" && field.repeatable)
+    return (
+      <StepsHazardsControls
+        id={path}
+        field={field}
+        value={(value as Payload[]) ?? []}
+        onChange={onChange}
+        errors={errors}
+        path={path}
+        readOnly={readOnly}
+      />
+    );
   if (!field.repeatable) {
     const obj = (value as Payload) ?? {};
     return (

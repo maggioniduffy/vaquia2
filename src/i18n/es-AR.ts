@@ -746,6 +746,20 @@ export const t = {
     geoPending: "Ubicación pendiente",
     geoValue: (lat: string, lng: string, acc: string) => `${lat}, ${lng} (±${acc} m)`,
     required: "Obligatorio",
+    ats: {
+      step: "Paso",
+      stepN: (n: number) => `Paso ${n}`,
+      hazard: "Peligro",
+      hazards: "Peligros",
+      hazardN: (n: number) => `Peligro ${n}`,
+      controls: "Controles",
+      addStep: "Agregar paso",
+      addHazard: "Agregar peligro",
+    },
+    ppe: {
+      noItems: "No hay EPP definido para este tipo de tarea.",
+      noneRequired: "Sin EPP específico",
+    },
     attendees: {
       count: (n: number) => (n === 1 ? "1 asistente" : `${n} asistentes`),
       addCrew: (n: number) => (n === 1 ? "Agregar 1 persona de la cuadrilla" : `Agregar ${n} personas de la cuadrilla`),

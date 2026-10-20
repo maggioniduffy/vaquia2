@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CaptureForm } from "@/components/field/capture-form";
 import { useCaptureRoute } from "@/components/field/use-capture-route";
 import { FieldContent } from "@/components/shell/field-action-bar";
@@ -11,13 +11,14 @@ import { createDraft, discardDraft, getDraft, useOpenDrafts, type CaptureDraft }
 import { capturableTypes, latestSchemas, pinnedSchemas } from "@/lib/field/capture/schema";
 import { formatDateTimeAr } from "@/lib/field/capture/time";
 import { useReference } from "@/lib/offline/reference";
+import type { RefFormSchema } from "@/lib/offline/reference-types";
 
 /**
  * Entry of the shared field capture flow (one URL, draft id in the hash, see use-capture-route).
  * Lists the capturable record types and open drafts; opens `CaptureForm` for the chosen draft.
  */
 export function CaptureHub({ companyId }: { companyId: string }) {
-  const { draftId, open } = useCaptureRoute();
+  const { draftId, newType, open } = useCaptureRoute();
   const recordTypes = useReference(companyId, "record_types");
   const formSchemas = useReference(companyId, "form_schemas");
   const drafts = useOpenDrafts(companyId);
@@ -29,6 +30,8 @@ export function CaptureHub({ companyId }: { companyId: string }) {
     [recordTypes, formSchemas],
   );
 
+  if (newType)
+    return <NewDraft companyId={companyId} code={newType} formSchemas={formSchemas} open={open} />;
   if (draftId)
     return (
       <CaptureLoader
@@ -169,4 +172,49 @@ function CaptureLoader({
       </FieldContent>
     );
   return <CaptureForm companyId={companyId} draft={draft} pinned={pinned} onExit={onExit} />;
+}
+
+/** Deep link `#/new/<code>`: creates the draft once the cached schemas are ready, then swaps the hash. */
+function NewDraft({
+  companyId,
+  code,
+  formSchemas,
+  open,
+}: {
+  companyId: string;
+  code: string;
+  formSchemas: RefFormSchema[] | undefined;
+  open: (id: string | null, opts?: { replace?: boolean }) => void;
+}) {
+  const started = useRef(false);
+  const [storageFailed, setFailed] = useState(false);
+  const pinned = formSchemas ? latestSchemas(formSchemas, code) : undefined;
+  const ready = formSchemas !== undefined;
+  const failed = storageFailed || (ready && !pinned);
+
+  useEffect(() => {
+    if (!ready || started.current) return;
+    if (!pinned) return;
+    started.current = true;
+    createDraft({ companyId, recordTypeCode: code, pinned })
+      .then((d) => open(d.id, { replace: true }))
+      .catch(() => setFailed(true));
+  }, [ready, pinned, companyId, code, open]);
+
+  return (
+    <FieldContent>
+      {failed ? (
+        <EmptyState
+          message={pinned ? t.capture.errors.storage : t.capture.noTypes}
+          action={
+            <Button type="button" className="h-12" onClick={() => open(null, { replace: true })}>
+              {t.capture.back}
+            </Button>
+          }
+        />
+      ) : (
+        <p className="text-muted text-sm">{t.capture.loading}</p>
+      )}
+    </FieldContent>
+  );
 }
