@@ -12,7 +12,7 @@
 - [x] **2.2** (implementer) `[test-now]` Forms as data (spec/forms.md): meta-schema, DSL → Zod compiler in `src/forms/` (shared client/server), generic field renderer. Seed `toolbox_talk@1` and `ats@1` as global `form_schemas` rows.
 - [x] **2.3** (implementer) Offline layer: Dexie DB (drafts, outbox, blobs), cached reference data (personas, crews, task types, qualifications status) refreshed on login/online.
 - [x] **2.4** (implementer) `[test-now]` Sync engine: outbox, UUIDv7 ids, idempotent upsert endpoint, blobs first then record, conflict copy (never overwrite), retry with backoff. `SyncIndicator` component.
-- [ ] **2.5** (implementer) Toolbox talk form (seed schema + attendees widget): topic, crew, location (auto from crew), attendees picker, notes, signatures (SignaturePad per attendee), auto geo + timestamp.
+- [x] **2.5** (implementer) Toolbox talk form (seed schema + attendees widget): topic, crew, location (auto from crew), attendees picker, notes, signatures (SignaturePad per attendee), auto geo + timestamp.
 - [ ] **2.6** (implementer) ATS form (seed schema + steps → hazards → controls group widget): task type, steps → hazards → controls (repeatable), required PPE checklist, participants, signatures.
 - [x] **2.7** (implementer) Office: records list (filters: type, crew, date, status) + read-only detail.
 - [ ] **2.8** (tester) e2e with network offline → create → online → assert server record + signatures; duplicate submit = one record; unit tests for the compiler and both seed schemas (render, validate, version pinning).
