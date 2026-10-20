@@ -4,6 +4,7 @@
 **Refs:** spec/rules-engine.md · spec/workflow.md#Record states · spec/data-model.md#Validation & audit
 
 ## Tasks
+- [ ] **3.0** (implementer) Detailed styling consistent with our design guidelines across dropdown menus..
 - [ ] **3.1** (implementer) Migrations: `rules` (versioned), `rule_evaluations`, `alert_feedback` (append-only where noted).
 - [ ] **3.1b** (implementer) PPE catalogue: global seeded PPE items (casco, botines de seguridad, guantes, anteojos, protección auditiva, ropa ignífuga, arnés…) + company-own items (`company_id?`, global-or-own like task types), and required PPE per task type. Admin screen to add company items and set each task type's required PPE. Include PPE in `/api/sync/reference` and fill `ppeItems` in `buildReferences` (replaces the phase-2 "Sin EPP específico" fallback, spec/forms.md). Needed by 3.4.
 - [ ] **3.2** (implementer) `[test-now]` Engine `src/rules/`: evaluate json-logic rules against a normalized record context (record + participants + their qualification status + task requirements). Pure function, same code client/server. Output: `{ruleCode, version, result, severity, explanation}`.
