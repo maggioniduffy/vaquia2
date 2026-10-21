@@ -38,6 +38,27 @@ export type PersonaDetail = {
   fitness: FitnessRow[];
 };
 
+/**
+ * Qualification history of persona $1, newest first. is_current marks the latest per type
+ * (issued_on, created_at, id desc: the current_qualifications rule), computed over this persona's
+ * rows only instead of joining the company-wide DISTINCT ON view.
+ */
+export const PERSONA_HISTORY_SQL = `
+  select q.id, q.type_id, qt.name as type_name,
+         q.issued_on::text as issued_on, q.expires_on::text as expires_on,
+         q.file_path, q.created_at::text as created_at, q.is_current
+    from (
+      select q.*,
+             (row_number() over (
+                partition by q.type_id
+                order by q.issued_on desc, q.created_at desc, q.id desc
+              ) = 1) as is_current
+        from public.qualifications q
+       where q.persona_id = $1
+    ) q
+    join public.qualification_types qt on qt.id = q.type_id
+   order by q.issued_on desc, q.created_at desc, q.id desc`;
+
 // date columns are cast to text so `pg` does not turn them into JS Dates (timezone shifts).
 async function load(db: Db, personaId: string): Promise<PersonaDetail | null> {
   const personaRes = await db.query<PersonaHeader>(
@@ -60,18 +81,7 @@ async function load(db: Db, personaId: string): Promise<PersonaDetail | null> {
         order by qt.name`,
     [personaId],
   );
-  const history = await db.query<QualificationRow>(
-    `select q.id, q.type_id, qt.name as type_name,
-              q.issued_on::text as issued_on, q.expires_on::text as expires_on,
-              q.file_path, q.created_at::text as created_at,
-              (cq.qualification_id is not null) as is_current
-         from public.qualifications q
-         join public.qualification_types qt on qt.id = q.type_id
-         left join public.current_qualifications cq on cq.qualification_id = q.id
-        where q.persona_id = $1
-        order by q.issued_on desc, q.created_at desc, q.id desc`,
-    [personaId],
-  );
+  const history = await db.query<QualificationRow>(PERSONA_HISTORY_SQL, [personaId]);
   const types = await db.query<PersonaDetail["types"][number]>(
     `select id, name, default_validity_months
          from public.qualification_types

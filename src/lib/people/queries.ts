@@ -54,7 +54,13 @@ function escapeLike(value: string): string {
   return value.replace(/[\\%_]/g, (c) => `\\${c}`);
 }
 
-export async function listPersonas(userId: string, filters: PersonaFilters): Promise<PersonaRow[]> {
+/**
+ * Personas list SQL. Personas are filtered, ordered and limited first (CTE); the fitness counters are
+ * then computed only for those rows, with a single qualification_status pass per persona:
+ * unfit = task types with a missing/expired requirement (= not apto in persona_task_fitness),
+ * expiring = distinct required qualification types expiring.
+ */
+export function personasSql(filters: PersonaFilters): { sql: string; params: unknown[] } {
   const q = filters.q.trim();
   const dniDigits = q.replace(/\D/g, "");
   const params: unknown[] = [];
@@ -80,39 +86,50 @@ export async function listPersonas(userId: string, filters: PersonaFilters): Pro
   if (filters.active === "0") where.push("not p.active");
 
   const sql = `
-    select p.id, p.full_name, p.dni, p.crew_id, c.name as crew_name, p.active,
-      coalesce(uf.n, 0)::int as unfit_tasks,
-      coalesce(ex.n, 0)::int as expiring_count
-    from public.personas p
-    left join (select persona_id, count(*) as n from public.persona_task_fitness
-      where not apto group by persona_id) uf on uf.persona_id = p.id
-    left join (select persona_id, count(distinct qualification_type_id) as n
-      from public.qualification_status where status = 'expiring' group by persona_id) ex
-      on ex.persona_id = p.id
-    left join public.crews c on c.company_id = p.company_id and c.id = p.crew_id
-    ${where.length ? `where ${where.join(" and ")}` : ""}
-    order by lower(p.full_name), p.id
-    limit ${LIST_LIMIT}`;
+    with page as (
+      select p.id, p.company_id, p.full_name, p.dni, p.crew_id, c.name as crew_name, p.active
+        from public.personas p
+        left join public.crews c on c.company_id = p.company_id and c.id = p.crew_id
+        ${where.length ? `where ${where.join(" and ")}` : ""}
+        order by lower(p.full_name), p.id
+        limit ${LIST_LIMIT})
+    select page.id, page.full_name, page.dni, page.crew_id, page.crew_name, page.active,
+      coalesce(f.unfit, 0)::int as unfit_tasks,
+      coalesce(f.expiring, 0)::int as expiring_count
+    from page
+    left join lateral (
+      select count(distinct qs.task_type_id) filter (where qs.status in ('missing', 'expired')) as unfit,
+             count(distinct qs.qualification_type_id) filter (where qs.status = 'expiring') as expiring
+        from public.qualification_status qs
+       where qs.persona_id = page.id
+    ) f on true
+    order by lower(page.full_name), page.id`;
+  return { sql, params };
+}
 
+export async function listPersonas(userId: string, filters: PersonaFilters): Promise<PersonaRow[]> {
+  const { sql, params } = personasSql(filters);
   return withUser(userId, async (db) => (await db.query<PersonaRow>(sql, params)).rows);
 }
 
+/** Crews with their persona count (one grouped join instead of a correlated count per crew). */
+export const CREWS_SQL = `
+  select c.id, c.name, c.supervisor_persona_id, s.full_name as supervisor_name,
+         c.location_id, l.name as location_name,
+         coalesce(pc.n, 0)::int as persona_count
+    from public.crews c
+    left join public.personas s on s.company_id = c.company_id and s.id = c.supervisor_persona_id
+    left join public.locations l on l.company_id = c.company_id and l.id = c.location_id
+    left join (
+      select company_id, crew_id, count(*) as n
+        from public.personas
+       where crew_id is not null
+       group by company_id, crew_id
+    ) pc on pc.company_id = c.company_id and pc.crew_id = c.id
+   order by lower(c.name), c.id`;
+
 export async function listCrews(userId: string): Promise<CrewRow[]> {
-  return withUser(
-    userId,
-    async (db) =>
-      (
-        await db.query<CrewRow>(`
-          select c.id, c.name, c.supervisor_persona_id, s.full_name as supervisor_name,
-                 c.location_id, l.name as location_name,
-                 (select count(*) from public.personas p
-                   where p.company_id = c.company_id and p.crew_id = c.id)::int as persona_count
-          from public.crews c
-          left join public.personas s on s.company_id = c.company_id and s.id = c.supervisor_persona_id
-          left join public.locations l on l.company_id = c.company_id and l.id = c.location_id
-          order by lower(c.name), c.id`)
-      ).rows,
-  );
+  return withUser(userId, async (db) => (await db.query<CrewRow>(CREWS_SQL)).rows);
 }
 
 export async function listLocations(userId: string): Promise<LocationRow[]> {

@@ -52,7 +52,15 @@ async function doRefresh(): Promise<RefreshResult> {
       data: key === "form_schemas" ? [...byId.values()] : payload[key],
       fetched_at: payload.fetched_at,
     }));
-    await db.reference.bulkPut(rows);
+    // Rewrite only rows whose data changed: every put re-fires the live queries reading that key
+    // (an open capture form re-renders on each app foreground otherwise). "personas" is always
+    // written because its fetched_at is the "last updated" shown to the user.
+    const current = await db.reference.bulkGet(rows.map((r) => [companyId, r.key]));
+    const changed = rows.filter(
+      (row, i) =>
+        row.key === "personas" || JSON.stringify(current[i]?.data) !== JSON.stringify(row.data),
+    );
+    await db.reference.bulkPut(changed);
   });
   return { ok: true, companyId };
 }

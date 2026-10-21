@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Dialog as D } from "radix-ui";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { VaquiaWordmark } from "@/components/ui/brand";
 import { CloseIcon, MenuIcon } from "@/components/ui/icons";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -22,7 +22,7 @@ export function MobileMenu({
   theme,
   version,
 }: {
-  counts: Partial<Record<string, number>>;
+  counts: Partial<Record<string, ReactNode>>;
   companies: CompanyMembership[];
   name: string;
   initials: string;

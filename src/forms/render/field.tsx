@@ -460,10 +460,13 @@ export function FieldList({
   readOnly: boolean;
   scope: Payload;
 }) {
+  // Built once per render, not once per field.
+  const view = visibilityView(fields, value, scope);
+  const childScope = { ...scope, ...value };
   return (
     <div className="flex flex-col gap-4">
       {fields
-        .filter((f) => isVisible(f, visibilityView(fields, value, scope)))
+        .filter((f) => isVisible(f, view))
         .map((f) => (
           <FieldRow
             key={f.key}
@@ -474,7 +477,7 @@ export function FieldList({
             errors={errors}
             path={pathPrefix ? `${pathPrefix}.${f.key}` : f.key}
             readOnly={readOnly}
-            scope={{ ...scope, ...value }}
+            scope={childScope}
           />
         ))}
     </div>

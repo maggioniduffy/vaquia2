@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { LandingPage } from "@/components/landing/landing-page";
 import { t } from "@/i18n/es-AR";
-import { auth } from "@/lib/auth";
 import { noCompanyPath } from "@/lib/invitations";
-import { homePathFor, getSession } from "@/lib/session";
+import { getAuthSession, homePathFor, getSession } from "@/lib/session";
 
 export const metadata: Metadata = {
   title: t.landing.meta.title,
@@ -14,7 +12,7 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   // Not getSession(): it redirects to /login when there is no session, and "/" is public.
-  const raw = await auth.api.getSession({ headers: await headers() });
+  const raw = await getAuthSession();
   if (raw) {
     const session = await getSession();
     if (!session.active && !session.isGuest) redirect(await noCompanyPath(session));

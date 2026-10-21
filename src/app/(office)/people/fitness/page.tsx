@@ -1,3 +1,4 @@
+import Form from "next/form";
 import Link from "next/link";
 import { FilterSelect } from "@/components/people/filter-select";
 import { Mono, PageTitle } from "@/components/people/page-title";
@@ -106,7 +107,7 @@ export default async function FitnessPage({ searchParams }: { searchParams: Sear
         }
       />
 
-      <form method="get" className="flex flex-wrap items-center gap-2">
+      <Form action="/people/fitness" className="flex flex-wrap items-center gap-2">
         <FilterSelect
           name="task"
           label={f.filterTask}
@@ -163,7 +164,7 @@ export default async function FitnessPage({ searchParams }: { searchParams: Sear
             ),
           )}
         </p>
-      </form>
+      </Form>
 
       <section
         aria-label={f.soon.title}

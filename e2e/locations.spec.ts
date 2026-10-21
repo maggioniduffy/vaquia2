@@ -146,6 +146,10 @@ async function expectCoords(dialog: Locator, lat: number, lng: number) {
     .toBeCloseTo(lng, 6);
 }
 
+// The app service worker (Serwist defaultCache) handles cross-origin GETs itself, and Playwright's
+// page.route cannot intercept requests the worker answers: block it so the Photon/OSM stubs apply.
+test.use({ serviceWorkers: "block" });
+
 test.describe("location picker", () => {
   test.afterAll(async () => {
     // Best effort: companies stay (audit_log RESTRICT); users with companies stay (created_by FK).

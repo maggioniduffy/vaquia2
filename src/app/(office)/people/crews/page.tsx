@@ -1,4 +1,5 @@
-import { CrewSheet } from "@/components/people/crew-sheet";
+import { EditButton } from "@/components/people/edit-host";
+import { CrewEditHost, CrewSheet } from "@/components/people/crew-sheet";
 import { Mono, PageTitle } from "@/components/people/page-title";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Table, TBody, Td, Th, THead, Tr } from "@/components/ui/table";
@@ -27,7 +28,7 @@ export default async function CrewsPage() {
       {crews.length === 0 ? (
         <EmptyState message={t.crews.empty} />
       ) : (
-        <>
+        <CrewEditHost crews={crews} personas={personas} locations={locations}>
           <div className="bg-surface border-border hidden overflow-hidden rounded-[var(--radius-panel)] border md:block">
             <Table>
               <THead>
@@ -52,7 +53,7 @@ export default async function CrewsPage() {
                     <Td numeric>{c.persona_count}</Td>
                     {canWrite ? (
                       <Td className="text-right">
-                        <CrewSheet crew={c} personas={personas} locations={locations} />
+                        <EditButton id={c.id} label={t.crews.edit} />
                       </Td>
                     ) : null}
                   </Tr>
@@ -74,11 +75,11 @@ export default async function CrewsPage() {
                     </span>
                   </span>
                 </div>
-                {canWrite ? <CrewSheet crew={c} personas={personas} locations={locations} /> : null}
+                {canWrite ? <EditButton id={c.id} label={t.crews.edit} /> : null}
               </li>
             ))}
           </ul>
-        </>
+        </CrewEditHost>
       )}
     </div>
   );

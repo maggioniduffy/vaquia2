@@ -1,11 +1,13 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { t } from "@/i18n/es-AR";
 import { deleteLocation, saveLocation } from "@/lib/people/actions";
 import type { LocationRow, Option } from "@/lib/people/queries";
+import { EditProvider, useEditHost } from "./edit-host";
 import { controlClass, EntitySheet, Field } from "./entity-sheet";
 import { LocationPicker } from "./location-picker";
 
@@ -14,13 +16,20 @@ export function LocationSheet({
   location,
   operators,
   primary = false,
+  open,
+  onOpenChange,
 }: {
   location?: LocationRow;
   operators: Option[];
   primary?: boolean;
+  /** Controlled mode (shared edit host): no trigger is rendered. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }) {
   return (
     <EntitySheet
+      open={open}
+      onOpenChange={onOpenChange}
       title={location ? t.locations.editTitle : t.locations.newTitle}
       action={saveLocation}
       successMessage={location ? t.locations.updated : t.locations.created}
@@ -36,7 +45,7 @@ export function LocationSheet({
           : undefined
       }
       trigger={
-        primary ? (
+        open !== undefined ? undefined : primary ? (
           <Button variant="primary" className="h-10 md:h-8">
             {t.locations.new}
           </Button>
@@ -97,5 +106,30 @@ export function LocationSheet({
         </>
       )}
     </EntitySheet>
+  );
+}
+
+/** One edit sheet for the whole list; wrap the rows and render `EditButton`s inside. */
+export function LocationEditHost({
+  locations,
+  operators,
+  children,
+}: {
+  locations: LocationRow[];
+  operators: Option[];
+  children: ReactNode;
+}) {
+  const host = useEditHost(locations);
+  return (
+    <EditProvider openEdit={host.openEdit}>
+      {children}
+      <LocationSheet
+        key={host.item?.id}
+        location={host.item}
+        operators={operators}
+        open={host.open}
+        onOpenChange={host.onOpenChange}
+      />
+    </EditProvider>
   );
 }

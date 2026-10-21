@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { VaquiaWordmark } from "@/components/ui/brand";
 import { BellIcon, ChevronDownIcon } from "@/components/ui/icons";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -25,12 +25,20 @@ export async function OfficeShell({
   children: ReactNode;
 }) {
   const { active, companies } = session;
-  const habilitaciones = await countHabilitaciones(session.userId);
   const themeCookie = (await cookies()).get("theme")?.value;
   const theme = themeCookie === "light" || themeCookie === "dark" ? themeCookie : undefined;
   const name = displayNameFromEmail(session.email);
   const role = active ? t.roles[active.role] : undefined;
-  const counts = { "/people/fitness": habilitaciones };
+  // Streamed: the badge query must not hold back the shell. One promise, shared by the desktop nav
+  // and the mobile menu.
+  const habilitaciones = countHabilitaciones(session.userId);
+  const counts = {
+    "/people/fitness": (
+      <Suspense fallback={null}>
+        <NavCount count={habilitaciones} />
+      </Suspense>
+    ),
+  };
 
   return (
     <div className="flex min-h-dvh flex-col md:flex-row">
@@ -53,8 +61,10 @@ export async function OfficeShell({
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <TrialBanner userId={session.userId} />
-        <InvitationsNotice userId={session.userId} isGuest={session.isGuest} />
+        <Suspense fallback={null}>
+          <TrialBanner userId={session.userId} />
+          <InvitationsNotice userId={session.userId} isGuest={session.isGuest} />
+        </Suspense>
         <header className="border-border bg-bg sticky top-0 z-10 flex h-16 shrink-0 items-center gap-3 border-b px-4 md:static md:z-auto md:gap-4 md:bg-transparent md:px-6">
           <div className="flex min-w-0 flex-1 items-center gap-3 md:hidden">
             <MobileMenu
@@ -98,4 +108,9 @@ export async function OfficeShell({
       </div>
     </div>
   );
+}
+
+async function NavCount({ count }: { count: Promise<number> }) {
+  const n = await count;
+  return n ? <span className="text-muted font-mono text-xs tabular-nums">{n}</span> : null;
 }

@@ -122,6 +122,8 @@ export type RecordDetail = {
   };
 };
 
+const UUID_IN_TEXT = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
+
 /** Null when the record does not exist or RLS hides it. */
 export async function getRecordDetail(userId: string, id: string): Promise<RecordDetail | null> {
   return withUser(userId, async (db) => {
@@ -162,6 +164,9 @@ export async function getRecordDetail(userId: string, id: string): Promise<Recor
       [r.record_type_id, r.schema_version, r.extension_version, r.company_id],
     );
 
+    // Labels only for the ids the payload actually references (read-only render), not whole tables.
+    const refIds = [...new Set(JSON.stringify(r.payload ?? null).match(UUID_IN_TEXT) ?? [])];
+
     const [parts, sigs, atts, conflicts, personas, crews, locations, tasks] = await Promise.all([
       db.query<RecordDetail["participants"][number]>(
         `select p.persona_id, pe.full_name, p.role
@@ -189,16 +194,20 @@ export async function getRecordDetail(userId: string, id: string): Promise<Recor
         [id],
       ),
       db.query<{ key: string; label: string }>(
-        "select id as key, full_name as label from public.personas order by full_name",
+        "select id as key, full_name as label from public.personas where id = any($1::uuid[]) order by full_name",
+        [refIds],
       ),
       db.query<{ key: string; label: string }>(
-        "select id as key, name as label from public.crews order by name",
+        "select id as key, name as label from public.crews where id = any($1::uuid[]) order by name",
+        [refIds],
       ),
       db.query<{ key: string; label: string }>(
-        "select id as key, name as label from public.locations order by name",
+        "select id as key, name as label from public.locations where id = any($1::uuid[]) order by name",
+        [refIds],
       ),
       db.query<{ key: string; label: string }>(
-        "select id as key, name as label from public.task_types order by name",
+        "select id as key, name as label from public.task_types where id = any($1::uuid[]) order by name",
+        [refIds],
       ),
     ]);
 

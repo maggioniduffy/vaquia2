@@ -13,16 +13,18 @@ declare global {
 
 declare const self: ServiceWorkerGlobalScope;
 
-// Pages visited online keep working offline: same-origin HTML navigations and RSC payloads are
-// served network-first and fall back to the last cached copy. API and auth traffic is never cached
-// here (the app talks to /api/sync/* itself and stores results in Dexie).
+// Field pages visited online keep working offline: their HTML navigations and RSC payloads are
+// served network-first and fall back to the last cached copy. Only /field (the offline surface):
+// office pages and router prefetches go straight to the network, so they never wait on this
+// handler or fill the cache. API and auth traffic is never cached here (the app talks to
+// /api/sync/* itself and stores results in Dexie).
 const fieldPages: RuntimeCaching = {
   matcher: ({ request, sameOrigin, url }) =>
     sameOrigin &&
-    !url.pathname.startsWith("/api/") &&
-    !url.pathname.startsWith("/serwist/") &&
+    (url.pathname === "/field" || url.pathname.startsWith("/field/")) &&
+    request.headers.get("Next-Router-Prefetch") !== "1" &&
     (request.mode === "navigate" || request.headers.get("RSC") === "1"),
-  handler: new NetworkFirst({ cacheName: "field-pages", networkTimeoutSeconds: 4 }),
+  handler: new NetworkFirst({ cacheName: "field-pages", networkTimeoutSeconds: 2 }),
 };
 
 const serwist = new Serwist({

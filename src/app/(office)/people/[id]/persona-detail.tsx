@@ -88,7 +88,13 @@ export async function PersonaDetail({
   closeHref?: string;
 }) {
   const session = await getSession();
-  const detail = await getPersonaDetail(session.userId, personaId);
+  const isAdmin = session.active?.role === "admin";
+  // Independent lookups run in parallel (each withUser has its own connection).
+  const [detail, access, pendingInvitation] = await Promise.all([
+    getPersonaDetail(session.userId, personaId),
+    isAdmin ? getPersonaAccess(session.userId, personaId) : null,
+    isAdmin ? getPersonaInvitation(session.userId, personaId) : null,
+  ]);
   if (!detail) {
     if (!panel) notFound();
     return <EmptyState message={t.people.errors.notFound} />;
@@ -97,11 +103,8 @@ export async function PersonaDetail({
   const { persona, current, history, types, fitness } = detail;
   const role = session.active?.role;
   const canWrite = role === "hse" || role === "admin";
-  const isAdmin = role === "admin";
   // The linked login email is only shown to admins.
-  const access = isAdmin ? await getPersonaAccess(session.userId, persona.id) : null;
-  const invitation =
-    isAdmin && !access ? await getPersonaInvitation(session.userId, persona.id) : null;
+  const invitation = access ? null : pendingInvitation;
   const storageAvailable = getStorage().isAvailable;
   const today = todayInArt();
   const sheetProps = { personaId: persona.id, types, storageAvailable, today };

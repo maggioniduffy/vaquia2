@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
+import { FieldPageCache } from "@/components/offline/field-page-cache";
 import { ReferenceRefresher } from "@/components/offline/reference-refresher";
 import { FieldShell } from "@/components/shell/field-shell";
 import { NoMembership } from "@/components/shell/no-membership";
@@ -15,6 +16,7 @@ export default async function FieldLayout({ children }: { children: ReactNode })
   }
   return (
     <FieldShell session={session}>
+      <FieldPageCache />
       <ReferenceRefresher />
       <SyncRunner />
       {children}
