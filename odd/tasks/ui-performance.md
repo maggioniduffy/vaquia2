@@ -21,7 +21,7 @@ Plan: `~/.claude/plans/la-ui-responde-muy-sharded-pebble.md`
 | T1 loading.tsx + Suspense | S6 | inline | done | 0ea6e31 |
 | T2 service worker scope | S3,S6 | inline | done | 4c2c069 |
 | T3 requests & caching (cookieCache, withUser, next/form) | S3,S7 | inline | done | 0bbc30d |
-| T4 RLS + views migration | S4 | delegated (implementer), reviewer design review first | doing | — |
+| T4 RLS + views migration | S4 | delegated (implementer), reviewer design review first | done | 9d54782 |
 | T5 server N+1 | S4 | inline | done | 4db1dcb |
 | T6 single sheet per list | S1 | delegated (implementer), parallel to T4 | done | 440df5e |
 | T7 React Compiler + capture form/Dexie renders | S1,S8 | inline | done | f44899a |
@@ -35,3 +35,6 @@ Plan: `~/.claude/plans/la-ui-responde-muy-sharded-pebble.md`
 - L5 T4 design review verdict: proceed with conditions (helpers wrapped one by one, alter policy, no memberships_insert, security_invoker views, drift-guard + guest-children + pg_policies catalog tests, replace qualifications index).
 - L6 After T1-T8 client JS: / 211, people 228, crews 223, records 218, record detail 260, dashboard 219, field 240, capture 290, login 208 KB (office -10/12%; field +2/7 KB = compiler runtime).
 - L7 Skipped on evidence: sync indicator (outbox rows hold no blobs), /api/files cache headers (no-store kept on purpose: personal documents on shared devices), SVG grain (raster tile cached by browser; design-owned), patagonia.png (landing/login only, read by canvas), Geist Mono (used in 27 files).
+- L8 (2026-10-20) Close: `pnpm db:verify` green (rollback + re-up of the T4 migration, 214 DB tests); `pnpm test` 428 passed. EXPLAIN before/after for T4 was not recorded in the Log (equivalence covered by `db/tests/query-equivalence.test.ts`).
+- L9 (2026-10-20) Independent review of `main...HEAD`: ready, no blockers (T4 policies keep per-role/guest/author visibility; down restores all 50). Fixed: sync blob check uses `allSettled` so bodies are cancelled when one lookup rejects. Follow-ups (not regressions): field-page warming posts plain requests the `fieldPages` matcher never sees, so offline reload of a client-navigated field page is not guaranteed (`field-page-cache.tsx:20`, `sw.ts:22`); `sw.ts:16` comment overstates "network only" and `/` lacks the 4 s timeout; 60 s cookie cache keeps a revoked session valid up to 60 s (document in auth spec); qualifications index leads with `company_id` (confirm with EXPLAIN); `personas` reference always rewritten.
+- L10 (2026-10-20) `pnpm test:e2e` 40 passed, 0 failed (36 project-conditional skips), run against the HEAD build on :3100. `e2e/locations.spec.ts` place-search test now blocks service workers: Serwist `defaultCache` answers cross-origin GETs, so `page.route` never saw the Photon request (cross-origin handling unchanged by this branch). `pnpm test:db` after e2e failed one invitations test only because e2e left 6 invitations in the shared DB (test counts the whole table); fresh `db:verify` green, 214/214. Bundle not rebuilt: T4 changed no client code, L6 numbers stand.
